@@ -18,7 +18,7 @@ import { lazy, Suspense } from "react";
 
 // Lazy load admin components
 const ProductManager = lazy(() => import("@/components/admin/product-manager"));
-const PriceManager = lazy(() => import("@/components/admin/price-manager-new"));
+const PriceManager = lazy(() => import("@/components/admin/price-manager-simple"));
 const UsedPhonesManager = lazy(() => import("@/components/admin/used-iphones-manager"));
 const AnalyticsDashboard = lazy(() => import("@/components/admin/analytics-dashboard"));
 const ErrorMonitor = lazy(() => import("@/components/admin/error-monitor"));

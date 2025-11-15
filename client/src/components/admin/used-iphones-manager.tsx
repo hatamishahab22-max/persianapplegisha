@@ -44,38 +44,53 @@ export default function UsedIphonesManager() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: any) => apiRequest("/api/used-phones", "POST", data),
+    mutationFn: (data: any) => apiRequest("POST", "/api/used-phones", data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/used-phones"] });
       toast({ title: "گوشی با موفقیت اضافه شد" });
       resetForm();
     },
-    onError: () => {
-      toast({ title: "خطا در افزودن گوشی", variant: "destructive" });
+    onError: (error: any) => {
+      console.error('Create error:', error);
+      toast({ 
+        title: "خطا در افزودن گوشی", 
+        description: error?.message || "لطفاً دوباره تلاش کنید",
+        variant: "destructive" 
+      });
     },
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: any }) =>
-      apiRequest(`/api/used-phones/${id}`, "PATCH", data),
+      apiRequest("PATCH", `/api/used-phones/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/used-phones"] });
       toast({ title: "گوشی با موفقیت ویرایش شد" });
       resetForm();
     },
-    onError: () => {
-      toast({ title: "خطا در ویرایش گوشی", variant: "destructive" });
+    onError: (error: any) => {
+      console.error('Update error:', error);
+      toast({ 
+        title: "خطا در ویرایش گوشی",
+        description: error?.message || "لطفاً دوباره تلاش کنید",
+        variant: "destructive" 
+      });
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => apiRequest(`/api/used-phones/${id}`, "DELETE"),
+    mutationFn: (id: string) => apiRequest("DELETE", `/api/used-phones/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/used-phones"] });
       toast({ title: "گوشی با موفقیت حذف شد" });
     },
-    onError: () => {
-      toast({ title: "خطا در حذف گوشی", variant: "destructive" });
+    onError: (error: any) => {
+      console.error('Delete error:', error);
+      toast({ 
+        title: "خطا در حذف گوشی", 
+        description: error?.message || "لطفاً دوباره تلاش کنید",
+        variant: "destructive" 
+      });
     },
   });
 
