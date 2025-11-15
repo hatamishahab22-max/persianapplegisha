@@ -850,6 +850,95 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Seed database endpoint
+  app.post("/api/admin/seed", requireAdmin, async (req: Request, res: Response) => {
+    try {
+      console.log('🌱 Starting database seed...');
+      
+      // 1. Categories
+      const iphoneCategory = await storage.createCategory({ 
+        name: 'iPhone', nameFa: 'آیفون', slug: 'iphone' 
+      });
+      const ipadCategory = await storage.createCategory({ 
+        name: 'iPad', nameFa: 'آیپد', slug: 'ipad' 
+      });
+      const airpodsCategory = await storage.createCategory({ 
+        name: 'AirPods', nameFa: 'ایرپاد', slug: 'airpods' 
+      });
+      
+      // 2. Colors
+      const colors = [
+        { name: 'Black', nameFa: 'مشکی', hexCode: '#000000' },
+        { name: 'White', nameFa: 'سفید', hexCode: '#FFFFFF' },
+        { name: 'Silver', nameFa: 'نقره‌ای', hexCode: '#C0C0C0' },
+        { name: 'Gold', nameFa: 'طلایی', hexCode: '#FFD700' },
+        { name: 'Blue', nameFa: 'آبی', hexCode: '#1E90FF' },
+        { name: 'Pink', nameFa: 'صورتی', hexCode: '#FFB6C1' },
+        { name: 'Purple', nameFa: 'بنفش', hexCode: '#800080' },
+        { name: 'Red', nameFa: 'قرمز', hexCode: '#FF0000' },
+      ];
+      for (const color of colors) {
+        await storage.createColor(color);
+      }
+      
+      // 3. Storage Options
+      const storages = [
+        { name: '128GB', nameFa: '۱۲۸ گیگابایت' },
+        { name: '256GB', nameFa: '۲۵۶ گیگابایت' },
+        { name: '512GB', nameFa: '۵۱۲ گیگابایت' },
+        { name: '1TB', nameFa: '۱ ترابایت' },
+      ];
+      for (const s of storages) {
+        await storage.createStorageOption(s);
+      }
+      
+      // 4. iPhone Models
+      const iphoneModels = [
+        { name: 'iPhone 16', nameFa: 'آیفون ۱۶', categoryId: iphoneCategory.id },
+        { name: 'iPhone 16 Plus', nameFa: 'آیفون ۱۶ پلاس', categoryId: iphoneCategory.id },
+        { name: 'iPhone 16 Pro', nameFa: 'آیفون ۱۶ پرو', categoryId: iphoneCategory.id },
+        { name: 'iPhone 16 Pro Max', nameFa: 'آیفون ۱۶ پرو مکس', categoryId: iphoneCategory.id },
+        { name: 'iPhone 15', nameFa: 'آیفون ۱۵', categoryId: iphoneCategory.id },
+        { name: 'iPhone 15 Plus', nameFa: 'آیفون ۱۵ پلاس', categoryId: iphoneCategory.id },
+        { name: 'iPhone 15 Pro', nameFa: 'آیفون ۱۵ پرو', categoryId: iphoneCategory.id },
+        { name: 'iPhone 15 Pro Max', nameFa: 'آیفون ۱۵ پرو مکس', categoryId: iphoneCategory.id },
+        { name: 'iPhone 14', nameFa: 'آیفون ۱۴', categoryId: iphoneCategory.id },
+        { name: 'iPhone 14 Plus', nameFa: 'آیفون ۱۴ پلاس', categoryId: iphoneCategory.id },
+        { name: 'iPhone 14 Pro', nameFa: 'آیفون ۱۴ پرو', categoryId: iphoneCategory.id },
+        { name: 'iPhone 14 Pro Max', nameFa: 'آیفون ۱۴ پرو مکس', categoryId: iphoneCategory.id },
+        { name: 'iPhone 13', nameFa: 'آیفون ۱۳', categoryId: iphoneCategory.id },
+        { name: 'iPhone 13 mini', nameFa: 'آیفون ۱۳ مینی', categoryId: iphoneCategory.id },
+        { name: 'iPhone 13 Pro', nameFa: 'آیفون ۱۳ پرو', categoryId: iphoneCategory.id },
+        { name: 'iPhone 13 Pro Max', nameFa: 'آیفون ۱۳ پرو مکس', categoryId: iphoneCategory.id },
+        { name: 'iPhone 12', nameFa: 'آیفون ۱۲', categoryId: iphoneCategory.id },
+        { name: 'iPhone 12 mini', nameFa: 'آیفون ۱۲ مینی', categoryId: iphoneCategory.id },
+        { name: 'iPhone 12 Pro', nameFa: 'آیفون ۱۲ پرو', categoryId: iphoneCategory.id },
+        { name: 'iPhone 12 Pro Max', nameFa: 'آیفون ۱۲ پرو مکس', categoryId: iphoneCategory.id },
+        { name: 'iPhone 11', nameFa: 'آیفون ۱۱', categoryId: iphoneCategory.id },
+        { name: 'iPhone 11 Pro', nameFa: 'آیفون ۱۱ پرو', categoryId: iphoneCategory.id },
+        { name: 'iPhone 11 Pro Max', nameFa: 'آیفون ۱۱ پرو مکس', categoryId: iphoneCategory.id },
+      ];
+      for (const model of iphoneModels) {
+        await storage.createModel(model);
+      }
+      
+      console.log('✅ Database seeded successfully!');
+      res.json({ 
+        success: true, 
+        message: 'Database seeded successfully',
+        stats: {
+          categories: 3,
+          colors: colors.length,
+          storages: storages.length,
+          models: iphoneModels.length
+        }
+      });
+    } catch (error: any) {
+      console.error('❌ Seed error:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

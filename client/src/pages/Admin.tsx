@@ -25,6 +25,7 @@ const ErrorMonitor = lazy(() => import("@/components/admin/error-monitor"));
 const WhatsappOrdersManager = lazy(() => import("@/components/admin/whatsapp-orders-manager"));
 const SettingsManager = lazy(() => import("@/components/admin/settings-manager"));
 const QRCodeGenerator = lazy(() => import("@/components/admin/qr-code-generator"));
+const SeedDatabase = lazy(() => import("@/components/admin/seed-database"));
 
 export default function Admin() {
   const [match, params] = useRoute("/admin/:section");
@@ -85,6 +86,13 @@ export default function Admin() {
       icon: QrCode, 
       path: "/admin/qr-code",
       description: "تولید و دانلود QR Code سایت"
+    },
+    { 
+      title: "Seed دیتابیس", 
+      titleEn: "Seed Database",
+      icon: Package, 
+      path: "/admin/seed",
+      description: "پر کردن دیتابیس با مدل‌ها و رنگ‌ها"
     },
   ];
 
@@ -156,6 +164,9 @@ export default function Admin() {
               </Route>
               <Route path="/admin/qr-code">
                 <QRCodeGenerator />
+              </Route>
+              <Route path="/admin/seed">
+                <SeedDatabase />
               </Route>
               <Route>
                 <DefaultDashboard menuItems={menuItems} />
