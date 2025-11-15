@@ -850,12 +850,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Seed database endpoint
+  // Seed database endpoint with comprehensive data
   app.post("/api/admin/seed", requireAdmin, async (req: Request, res: Response) => {
     try {
-      console.log('🌱 Starting database seed...');
+      console.log('🌱 Starting comprehensive database seed...');
       
-      // 1. Categories
+      // 1. Create Categories
       const iphoneCategory = await storage.createCategory({ 
         name: 'iPhone', nameFa: 'آیفون', slug: 'iphone' 
       });
@@ -866,71 +866,221 @@ export async function registerRoutes(app: Express): Promise<Server> {
         name: 'AirPods', nameFa: 'ایرپاد', slug: 'airpods' 
       });
       
-      // 2. Colors
-      const colors = [
+      // 2. Create all unique colors from the data
+      const colorData = [
+        { name: 'Space Gray', nameFa: 'خاکستری فضایی', hexCode: '#4A4A4A' },
+        { name: 'Silver', nameFa: 'نقره‌ای', hexCode: '#C0C0C0' },
         { name: 'Black', nameFa: 'مشکی', hexCode: '#000000' },
         { name: 'White', nameFa: 'سفید', hexCode: '#FFFFFF' },
-        { name: 'Silver', nameFa: 'نقره‌ای', hexCode: '#C0C0C0' },
-        { name: 'Gold', nameFa: 'طلایی', hexCode: '#FFD700' },
         { name: 'Blue', nameFa: 'آبی', hexCode: '#1E90FF' },
-        { name: 'Pink', nameFa: 'صورتی', hexCode: '#FFB6C1' },
+        { name: 'Yellow', nameFa: 'زرد', hexCode: '#FFD700' },
+        { name: 'Coral', nameFa: 'مرجانی', hexCode: '#FF7F50' },
+        { name: '(PRODUCT)RED', nameFa: 'قرمز', hexCode: '#FF0000' },
+        { name: 'Gold', nameFa: 'طلایی', hexCode: '#FFD700' },
+        { name: 'Green', nameFa: 'سبز', hexCode: '#00FF00' },
         { name: 'Purple', nameFa: 'بنفش', hexCode: '#800080' },
-        { name: 'Red', nameFa: 'قرمز', hexCode: '#FF0000' },
+        { name: 'Graphite', nameFa: 'گرافیت', hexCode: '#36454F' },
+        { name: 'Pacific Blue', nameFa: 'آبی اقیانوسی', hexCode: '#1CA9C9' },
+        { name: 'Starlight', nameFa: 'ستاره‌ای', hexCode: '#F5F5DC' },
+        { name: 'Midnight', nameFa: 'نیمه‌شب', hexCode: '#191970' },
+        { name: 'Pink', nameFa: 'صورتی', hexCode: '#FFB6C1' },
+        { name: 'Sierra Blue', nameFa: 'آبی سیرا', hexCode: '#69C2D0' },
+        { name: 'Alpine Green', nameFa: 'سبز آلپاین', hexCode: '#506C64' },
+        { name: 'Space Black', nameFa: 'مشکی فضایی', hexCode: '#1C1C1C' },
+        { name: 'Deep Purple', nameFa: 'بنفش عمیق', hexCode: '#663399' },
       ];
-      for (const color of colors) {
-        await storage.createColor(color);
+      
+      const createdColors = new Map();
+      for (const color of colorData) {
+        const created = await storage.createColor(color);
+        createdColors.set(color.name, created);
       }
       
-      // 3. Storage Options
-      const storages = [
-        { name: '128GB', nameFa: '۱۲۸ گیگابایت' },
-        { name: '256GB', nameFa: '۲۵۶ گیگابایت' },
-        { name: '512GB', nameFa: '۵۱۲ گیگابایت' },
+      // 3. Create all unique storage options
+      const storageData = [
+        { name: '64GB', nameFa: '۶۴ گیگ' },
+        { name: '128GB', nameFa: '۱۲۸ گیگ' },
+        { name: '256GB', nameFa: '۲۵۶ گیگ' },
+        { name: '512GB', nameFa: '۵۱۲ گیگ' },
         { name: '1TB', nameFa: '۱ ترابایت' },
+        { name: 'N/A', nameFa: 'N/A' },
       ];
-      for (const s of storages) {
-        await storage.createStorageOption(s);
+      
+      const createdStorages = new Map();
+      for (const storageOption of storageData) {
+        const created = await storage.createStorageOption(storageOption);
+        createdStorages.set(storageOption.name, created);
       }
       
-      // 4. iPhone Models
-      const iphoneModels = [
-        { name: 'iPhone 16', nameFa: 'آیفون ۱۶', categoryId: iphoneCategory.id },
-        { name: 'iPhone 16 Plus', nameFa: 'آیفون ۱۶ پلاس', categoryId: iphoneCategory.id },
-        { name: 'iPhone 16 Pro', nameFa: 'آیفون ۱۶ پرو', categoryId: iphoneCategory.id },
-        { name: 'iPhone 16 Pro Max', nameFa: 'آیفون ۱۶ پرو مکس', categoryId: iphoneCategory.id },
-        { name: 'iPhone 15', nameFa: 'آیفون ۱۵', categoryId: iphoneCategory.id },
-        { name: 'iPhone 15 Plus', nameFa: 'آیفون ۱۵ پلاس', categoryId: iphoneCategory.id },
-        { name: 'iPhone 15 Pro', nameFa: 'آیفون ۱۵ پرو', categoryId: iphoneCategory.id },
-        { name: 'iPhone 15 Pro Max', nameFa: 'آیفون ۱۵ پرو مکس', categoryId: iphoneCategory.id },
-        { name: 'iPhone 14', nameFa: 'آیفون ۱۴', categoryId: iphoneCategory.id },
-        { name: 'iPhone 14 Plus', nameFa: 'آیفون ۱۴ پلاس', categoryId: iphoneCategory.id },
-        { name: 'iPhone 14 Pro', nameFa: 'آیفون ۱۴ پرو', categoryId: iphoneCategory.id },
-        { name: 'iPhone 14 Pro Max', nameFa: 'آیفون ۱۴ پرو مکس', categoryId: iphoneCategory.id },
-        { name: 'iPhone 13', nameFa: 'آیفون ۱۳', categoryId: iphoneCategory.id },
-        { name: 'iPhone 13 mini', nameFa: 'آیفون ۱۳ مینی', categoryId: iphoneCategory.id },
-        { name: 'iPhone 13 Pro', nameFa: 'آیفون ۱۳ پرو', categoryId: iphoneCategory.id },
-        { name: 'iPhone 13 Pro Max', nameFa: 'آیفون ۱۳ پرو مکس', categoryId: iphoneCategory.id },
-        { name: 'iPhone 12', nameFa: 'آیفون ۱۲', categoryId: iphoneCategory.id },
-        { name: 'iPhone 12 mini', nameFa: 'آیفون ۱۲ مینی', categoryId: iphoneCategory.id },
-        { name: 'iPhone 12 Pro', nameFa: 'آیفون ۱۲ پرو', categoryId: iphoneCategory.id },
-        { name: 'iPhone 12 Pro Max', nameFa: 'آیفون ۱۲ پرو مکس', categoryId: iphoneCategory.id },
-        { name: 'iPhone 11', nameFa: 'آیفون ۱۱', categoryId: iphoneCategory.id },
-        { name: 'iPhone 11 Pro', nameFa: 'آیفون ۱۱ پرو', categoryId: iphoneCategory.id },
-        { name: 'iPhone 11 Pro Max', nameFa: 'آیفون ۱۱ پرو مکس', categoryId: iphoneCategory.id },
+      // 4. Create all models with their variants
+      const modelData = [
+        // iPhone Models
+        { name: 'iPhone X', nameFa: 'آیفون X', categoryId: iphoneCategory.id },
+        { name: 'iPhone XR', nameFa: 'آیفون XR', categoryId: iphoneCategory.id },
+        { name: 'iPhone XS', nameFa: 'آیفون XS', categoryId: iphoneCategory.id },
+        { name: 'iPhone XS Max', nameFa: 'آیفون XS Max', categoryId: iphoneCategory.id },
+        { name: 'iPhone 11', nameFa: 'آیفون 11', categoryId: iphoneCategory.id },
+        { name: 'iPhone 12', nameFa: 'آیفون 12', categoryId: iphoneCategory.id },
+        { name: 'iPhone 12 Pro', nameFa: 'آیفون 12 پرو', categoryId: iphoneCategory.id },
+        { name: 'iPhone 13', nameFa: 'آیفون 13', categoryId: iphoneCategory.id },
+        { name: 'iPhone 13 Pro', nameFa: 'آیفون 13 پرو', categoryId: iphoneCategory.id },
+        { name: 'iPhone 14', nameFa: 'آیفون 14', categoryId: iphoneCategory.id },
+        { name: 'iPhone 14 Pro', nameFa: 'آیفون 14 پرو', categoryId: iphoneCategory.id },
+        { name: 'iPhone 15', nameFa: 'آیفون 15', categoryId: iphoneCategory.id },
+        { name: 'iPhone 15 Pro', nameFa: 'آیفون 15 پرو', categoryId: iphoneCategory.id },
+        { name: 'iPhone 16', nameFa: 'آیفون 16', categoryId: iphoneCategory.id },
+        { name: 'iPhone 16 Pro', nameFa: 'آیفون 16 پرو', categoryId: iphoneCategory.id },
+        { name: 'iPhone 17', nameFa: 'آیفون 17', categoryId: iphoneCategory.id },
+        { name: 'iPhone 17 Pro', nameFa: 'آیفون 17 پرو', categoryId: iphoneCategory.id },
+        // iPad Models
+        { name: 'iPad Pro 11 2023', nameFa: 'آیپد پرو ۱۱ ۲۰۲۳', categoryId: ipadCategory.id },
+        { name: 'iPad Pro 12.9 2023', nameFa: 'آیپد پرو ۱۲.۹ ۲۰۲۳', categoryId: ipadCategory.id },
+        { name: 'iPad Air 2023', nameFa: 'آیپد ایر ۲۰۲۳', categoryId: ipadCategory.id },
+        // AirPods Models
+        { name: 'AirPods 2', nameFa: 'ایرپاد ۲', categoryId: airpodsCategory.id },
+        { name: 'AirPods 3', nameFa: 'ایرپاد ۳', categoryId: airpodsCategory.id },
+        { name: 'AirPods Pro', nameFa: 'ایرپاد پرو', categoryId: airpodsCategory.id },
+        { name: 'AirPods Pro 2', nameFa: 'ایرپاد پرو ۲', categoryId: airpodsCategory.id },
       ];
-      for (const model of iphoneModels) {
-        await storage.createModel(model);
+      
+      const createdModels = new Map();
+      for (const model of modelData) {
+        const created = await storage.createModel(model);
+        createdModels.set(model.name, created);
+      }
+      
+      // 5. Create product prices for all combinations from the CSV data
+      const priceData = [
+        // iPhone X
+        { model: 'iPhone X', color: 'Space Gray', storage: '64GB', price: 0 },
+        { model: 'iPhone X', color: 'Silver', storage: '256GB', price: 0 },
+        // iPhone XR
+        { model: 'iPhone XR', color: 'Black', storage: '64GB', price: 0 },
+        { model: 'iPhone XR', color: 'White', storage: '128GB', price: 0 },
+        { model: 'iPhone XR', color: 'Blue', storage: '256GB', price: 0 },
+        { model: 'iPhone XR', color: 'Yellow', storage: '64GB', price: 0 },
+        { model: 'iPhone XR', color: 'Coral', storage: '128GB', price: 0 },
+        { model: 'iPhone XR', color: '(PRODUCT)RED', storage: '256GB', price: 0 },
+        // iPhone XS
+        { model: 'iPhone XS', color: 'Space Gray', storage: '64GB', price: 0 },
+        { model: 'iPhone XS', color: 'Silver', storage: '256GB', price: 0 },
+        { model: 'iPhone XS', color: 'Gold', storage: '512GB', price: 0 },
+        // iPhone XS Max
+        { model: 'iPhone XS Max', color: 'Space Gray', storage: '64GB', price: 0 },
+        { model: 'iPhone XS Max', color: 'Silver', storage: '256GB', price: 0 },
+        { model: 'iPhone XS Max', color: 'Gold', storage: '512GB', price: 0 },
+        // iPhone 11
+        { model: 'iPhone 11', color: 'Black', storage: '64GB', price: 0 },
+        { model: 'iPhone 11', color: 'Green', storage: '128GB', price: 0 },
+        { model: 'iPhone 11', color: 'Yellow', storage: '256GB', price: 0 },
+        { model: 'iPhone 11', color: 'Purple', storage: '64GB', price: 0 },
+        { model: 'iPhone 11', color: 'White', storage: '128GB', price: 0 },
+        { model: 'iPhone 11', color: '(PRODUCT)RED', storage: '256GB', price: 0 },
+        // iPhone 12
+        { model: 'iPhone 12', color: 'Black', storage: '64GB', price: 0 },
+        { model: 'iPhone 12', color: 'White', storage: '128GB', price: 0 },
+        { model: 'iPhone 12', color: '(PRODUCT)RED', storage: '256GB', price: 0 },
+        { model: 'iPhone 12', color: 'Green', storage: '64GB', price: 0 },
+        { model: 'iPhone 12', color: 'Blue', storage: '128GB', price: 0 },
+        { model: 'iPhone 12', color: 'Purple', storage: '256GB', price: 0 },
+        // iPhone 12 Pro
+        { model: 'iPhone 12 Pro', color: 'Graphite', storage: '128GB', price: 0 },
+        { model: 'iPhone 12 Pro', color: 'Silver', storage: '256GB', price: 0 },
+        { model: 'iPhone 12 Pro', color: 'Gold', storage: '512GB', price: 0 },
+        { model: 'iPhone 12 Pro', color: 'Pacific Blue', storage: '128GB', price: 0 },
+        // iPhone 13
+        { model: 'iPhone 13', color: 'Starlight', storage: '128GB', price: 0 },
+        { model: 'iPhone 13', color: 'Midnight', storage: '256GB', price: 0 },
+        { model: 'iPhone 13', color: 'Blue', storage: '512GB', price: 0 },
+        { model: 'iPhone 13', color: 'Pink', storage: '128GB', price: 0 },
+        { model: 'iPhone 13', color: 'Green', storage: '256GB', price: 0 },
+        { model: 'iPhone 13', color: '(PRODUCT)RED', storage: '512GB', price: 0 },
+        // iPhone 13 Pro
+        { model: 'iPhone 13 Pro', color: 'Graphite', storage: '128GB', price: 0 },
+        { model: 'iPhone 13 Pro', color: 'Silver', storage: '256GB', price: 0 },
+        { model: 'iPhone 13 Pro', color: 'Gold', storage: '512GB', price: 0 },
+        { model: 'iPhone 13 Pro', color: 'Sierra Blue', storage: '128GB', price: 0 },
+        { model: 'iPhone 13 Pro', color: 'Alpine Green', storage: '1TB', price: 0 },
+        // iPhone 14
+        { model: 'iPhone 14', color: 'Midnight', storage: '128GB', price: 0 },
+        { model: 'iPhone 14', color: 'Starlight', storage: '256GB', price: 0 },
+        { model: 'iPhone 14', color: 'Blue', storage: '512GB', price: 0 },
+        { model: 'iPhone 14', color: 'Purple', storage: '128GB', price: 0 },
+        { model: 'iPhone 14', color: 'Yellow', storage: '256GB', price: 0 },
+        { model: 'iPhone 14', color: '(PRODUCT)RED', storage: '512GB', price: 0 },
+        // iPhone 14 Pro
+        { model: 'iPhone 14 Pro', color: 'Space Black', storage: '128GB', price: 0 },
+        { model: 'iPhone 14 Pro', color: 'Silver', storage: '256GB', price: 0 },
+        { model: 'iPhone 14 Pro', color: 'Gold', storage: '512GB', price: 0 },
+        { model: 'iPhone 14 Pro', color: 'Deep Purple', storage: '1TB', price: 0 },
+        // iPhone 15
+        { model: 'iPhone 15', color: 'Black', storage: '128GB', price: 0 },
+        { model: 'iPhone 15', color: 'White', storage: '256GB', price: 0 },
+        { model: 'iPhone 15', color: 'Blue', storage: '512GB', price: 0 },
+        // iPhone 15 Pro
+        { model: 'iPhone 15 Pro', color: 'Graphite', storage: '128GB', price: 0 },
+        { model: 'iPhone 15 Pro', color: 'Silver', storage: '256GB', price: 0 },
+        { model: 'iPhone 15 Pro', color: 'Gold', storage: '512GB', price: 0 },
+        { model: 'iPhone 15 Pro', color: 'Green', storage: '1TB', price: 0 },
+        // iPhone 16
+        { model: 'iPhone 16', color: 'Black', storage: '128GB', price: 0 },
+        { model: 'iPhone 16', color: 'White', storage: '256GB', price: 0 },
+        { model: 'iPhone 16', color: 'Blue', storage: '512GB', price: 0 },
+        // iPhone 16 Pro
+        { model: 'iPhone 16 Pro', color: 'Graphite', storage: '128GB', price: 0 },
+        { model: 'iPhone 16 Pro', color: 'Silver', storage: '256GB', price: 0 },
+        { model: 'iPhone 16 Pro', color: 'Gold', storage: '512GB', price: 0 },
+        { model: 'iPhone 16 Pro', color: 'Deep Purple', storage: '1TB', price: 0 },
+        // iPhone 17
+        { model: 'iPhone 17', color: 'Black', storage: '128GB', price: 0 },
+        { model: 'iPhone 17', color: 'White', storage: '256GB', price: 0 },
+        { model: 'iPhone 17', color: 'Blue', storage: '512GB', price: 0 },
+        // iPhone 17 Pro
+        { model: 'iPhone 17 Pro', color: 'Graphite', storage: '128GB', price: 0 },
+        { model: 'iPhone 17 Pro', color: 'Silver', storage: '256GB', price: 0 },
+        { model: 'iPhone 17 Pro', color: 'Gold', storage: '512GB', price: 0 },
+        { model: 'iPhone 17 Pro', color: 'Deep Purple', storage: '1TB', price: 0 },
+        // iPad
+        { model: 'iPad Pro 11 2023', color: 'Silver', storage: '128GB', price: 0 },
+        { model: 'iPad Pro 11 2023', color: 'Space Gray', storage: '256GB', price: 0 },
+        { model: 'iPad Pro 12.9 2023', color: 'Silver', storage: '128GB', price: 0 },
+        { model: 'iPad Pro 12.9 2023', color: 'Space Gray', storage: '512GB', price: 0 },
+        { model: 'iPad Air 2023', color: 'Pink', storage: '64GB', price: 0 },
+        { model: 'iPad Air 2023', color: 'Blue', storage: '256GB', price: 0 },
+        // AirPods
+        { model: 'AirPods 2', color: 'White', storage: 'N/A', price: 0 },
+        { model: 'AirPods 3', color: 'White', storage: 'N/A', price: 0 },
+        { model: 'AirPods Pro', color: 'White', storage: 'N/A', price: 0 },
+        { model: 'AirPods Pro 2', color: 'White', storage: 'N/A', price: 0 },
+      ];
+      
+      let pricesCreated = 0;
+      for (const item of priceData) {
+        const model = createdModels.get(item.model);
+        const color = createdColors.get(item.color);
+        const storageOpt = createdStorages.get(item.storage);
+        
+        if (model && color && storageOpt) {
+          await storage.createProductPrice({
+            modelId: model.id,
+            colorId: color.id,
+            storageId: storageOpt.id,
+            price: item.price.toString(),
+          });
+          pricesCreated++;
+        }
       }
       
       console.log('✅ Database seeded successfully!');
       res.json({ 
         success: true, 
-        message: 'Database seeded successfully',
+        message: 'Database seeded with comprehensive data',
         stats: {
           categories: 3,
-          colors: colors.length,
-          storages: storages.length,
-          models: iphoneModels.length
+          colors: colorData.length,
+          storages: storageData.length,
+          models: modelData.length,
+          prices: pricesCreated
         }
       });
     } catch (error: any) {
