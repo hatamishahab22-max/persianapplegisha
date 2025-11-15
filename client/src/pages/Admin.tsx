@@ -10,7 +10,8 @@ import {
   Users,
   Settings,
   Home,
-  MessageSquare
+  MessageSquare,
+  QrCode
 } from "lucide-react";
 
 import { lazy, Suspense } from "react";
@@ -23,6 +24,7 @@ const AnalyticsDashboard = lazy(() => import("@/components/admin/analytics-dashb
 const ErrorMonitor = lazy(() => import("@/components/admin/error-monitor"));
 const WhatsappOrdersManager = lazy(() => import("@/components/admin/whatsapp-orders-manager"));
 const SettingsManager = lazy(() => import("@/components/admin/settings-manager"));
+const QRCodeGenerator = lazy(() => import("@/components/admin/qr-code-generator"));
 
 export default function Admin() {
   const [match, params] = useRoute("/admin/:section");
@@ -76,6 +78,13 @@ export default function Admin() {
       icon: Settings, 
       path: "/admin/settings",
       description: "تنظیمات فروشگاه و ظاهر"
+    },
+    { 
+      title: "QR Code", 
+      titleEn: "QR Code",
+      icon: QrCode, 
+      path: "/admin/qr-code",
+      description: "تولید و دانلود QR Code سایت"
     },
   ];
 
@@ -144,6 +153,9 @@ export default function Admin() {
               </Route>
               <Route path="/admin/settings">
                 <SettingsManager />
+              </Route>
+              <Route path="/admin/qr-code">
+                <QRCodeGenerator />
               </Route>
               <Route>
                 <DefaultDashboard menuItems={menuItems} />
