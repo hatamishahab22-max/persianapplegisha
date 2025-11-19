@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>اپل آیدی با اصالت | پرشین اپل گیشا</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family: 'Vazirmatn', sans-serif; background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); color: #fff; min-height: 100vh; padding: 20px 10px; }
+    .container { max-width: 460px; margin: 0 auto; background: rgba(255,255,255,0.05); backdrop-filter: blur(20px); border-radius: 28px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.6); border: 1px solid rgba(0,255,136,0.2); }
+    header { background: linear-gradient(45deg, #00ff88, #00c853); color: #000; padding: 35px 20px; text-align: center; }
+    header h1 { font-size: 28px; font-weight: bold; }
+    header p { font-size: 16px; margin-top: 8px; opacity: 0.9; }
+    .badge { background: #000; color: #00ff88; padding: 8px 20px; border-radius: 50px; font-weight: bold; display: inline-block; margin-top: 12px; font-size: 14px; }
+    .form { padding: 35px; }
+    input { width:100%; padding:18px; margin:15px 0; border:none; border-radius:18px; background:rgba(255,255,255,0.12); color:#fff; font-size:16px; }
+    input::placeholder { color:#ccc; }
+    .jalali { display:flex; gap:12px; justify-content:center; }
+    .jalali input { flex:1; text-align:center; }
+    button { width:100%; padding:20px; background:#00ff88; color:#000; border:none; border-radius:18px; font-size:20px; font-weight:bold; margin-top:30px; cursor:pointer; transition:0.3s; }
+    button:hover { transform:scale(1.03); }
+    .guarantee { text-align:center; margin-top:30px; padding:20px; background:rgba(0,255,136,0.1); border-radius:18px; font-size:14px; line-height:2; }
+    .whatsapp { color:#00ff88; font-weight:bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🍏 اپل آیدی با اصالت</h1>
+      <p>ساخته شده با سیم‌کارت واقعی انگلستان • تضمین مادام‌العمر</p>
+      <div class="badge">تحویل آنی زیر ۸ دقیقه</div>
+    </header>
+
+    <div class="form">
+      <form action="https://t.me/persianapplegisha_bot" method="get">
+        <input type="text" name="start" value="order_appleid" hidden />
+        <input type="text" placeholder="اسم (به انگلیسی)" required />
+        <input type="text" placeholder="فامیلی (به انگلیسی)" required />
+        <input type="text" placeholder="شماره واتس‌اپ (۰۹...)" required />
+        
+        <div style="text-align:center; margin:20px 0; color:#00ff88;">
+          تاریخ تولد شمسی:
+          <div class="jalali">
+            <input type="number" placeholder="سال" min="1320" max="1404" required />
+            <input type="number" placeholder="ماه" min="1" max="12" required />
+            <input type="number" placeholder="روز" min="1" max="31" required />
+          </div>
+        </div>
+
+        <input type="email" placeholder="ایمیل دلخواه (اختیاری)" />
+
+        <button type="submit">ساخت اپل آیدی حرفه‌ای - ۳۴۹,۰۰۰ تومان</button>
+      </form>
+
+      <div class="guarantee">
+        ✅ تضمین ۱۰۰٪ دائمی و بدون بلاک<br>
+        ✅ تحویل مستقیم تو واتس‌اپ<br>
+        ✅ پشتیبانی ۲۴ ساعته: <span class="whatsapp">@PersianAppleGisha</span><br>
+        ✅ بیش از ۲۲,۰۰۰ مشتری راضی
+      </div>
+    </div>
+  </div>
+</body>
+</html>

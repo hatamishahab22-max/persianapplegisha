@@ -1,0 +1,84 @@
+iPhone Model,مدل آیفون,Color (EN),رنگ (FA),Storage (EN),ظرفیت (FA),Price (تومان)
+iPhone X,آیفون X,Space Gray,خاکستری فضایی,64GB,۶۴ گیگ,0
+iPhone X,آیفون X,Silver,نقره‌ای,256GB,۲۵۶ گیگ,0
+iPhone XR,آیفون XR,Black,مشکی,64GB,۶۴ گیگ,0
+iPhone XR,آیفون XR,White,سفید,128GB,۱۲۸ گیگ,0
+iPhone XR,آیفون XR,Blue,آبی,256GB,۲۵۶ گیگ,0
+iPhone XR,آیفون XR,Yellow,زرد,64GB,۶۴ گیگ,0
+iPhone XR,آیفون XR,Coral,مرجانی,128GB,۱۲۸ گیگ,0
+iPhone XR,آیفون XR,(PRODUCT)RED,قرمز,256GB,۲۵۶ گیگ,0
+iPhone XS,آیفون XS,Space Gray,خاکستری فضایی,64GB,۶۴ گیگ,0
+iPhone XS,آیفون XS,Silver,نقره‌ای,256GB,۲۵۶ گیگ,0
+iPhone XS,آیفون XS,Gold,طلایی,512GB,۵۱۲ گیگ,0
+iPhone XS Max,آیفون XS Max,Space Gray,خاکستری فضایی,64GB,۶۴ گیگ,0
+iPhone XS Max,آیفون XS Max,Silver,نقره‌ای,256GB,۲۵۶ گیگ,0
+iPhone XS Max,آیفون XS Max,Gold,طلایی,512GB,۵۱۲ گیگ,0
+iPhone 11,آیفون 11,Black,مشکی,64GB,۶۴ گیگ,0
+iPhone 11,آیفون 11,Green,سبز,128GB,۱۲۸ گیگ,0
+iPhone 11,آیفون 11,Yellow,زرد,256GB,۲۵۶ گیگ,0
+iPhone 11,آیفون 11,Purple,بنفش,64GB,۶۴ گیگ,0
+iPhone 11,آیفون 11,White,سفید,128GB,۱۲۸ گیگ,0
+iPhone 11,آیفون 11,(PRODUCT)RED,قرمز,256GB,۲۵۶ گیگ,0
+iPhone 12,آیفون 12,Black,مشکی,64GB,۶۴ گیگ,0
+iPhone 12,آیفون 12,White,سفید,128GB,۱۲۸ گیگ,0
+iPhone 12,آیفون 12,(PRODUCT)RED,قرمز,256GB,۲۵۶ گیگ,0
+iPhone 12,آیفون 12,Green,سبز,64GB,۶۴ گیگ,0
+iPhone 12,آیفون 12,Blue,آبی,128GB,۱۲۸ گیگ,0
+iPhone 12,آیفون 12,Purple,بنفش,256GB,۲۵۶ گیگ,0
+iPhone 12 Pro,آیفون 12 پرو,Graphite,گرافیت,128GB,۱۲۸ گیگ,0
+iPhone 12 Pro,آیفون 12 پرو,Silver,نقره‌ای,256GB,۲۵۶ گیگ,0
+iPhone 12 Pro,آیفون 12 پرو,Gold,طلایی,512GB,۵۱۲ گیگ,0
+iPhone 12 Pro,آیفون 12 پرو,Pacific Blue,آبی اقیانوسی,128GB,۱۲۸ گیگ,0
+iPhone 13,آیفون 13,Starlight,ستاره‌ای,128GB,۱۲۸ گیگ,0
+iPhone 13,آیفون 13,Midnight,نیمه‌شب,256GB,۲۵۶ گیگ,0
+iPhone 13,آیفون 13,Blue,آبی,512GB,۵۱۲ گیگ,0
+iPhone 13,آیفون 13,Pink,صورتی,128GB,۱۲۸ گیگ,0
+iPhone 13,آیفون 13,Green,سبز,256GB,۲۵۶ گیگ,0
+iPhone 13,آیفون 13,(PRODUCT)RED,قرمز,512GB,۵۱۲ گیگ,0
+iPhone 13 Pro,آیفون 13 پرو,Graphite,گرافیت,128GB,۱۲۸ گیگ,0
+iPhone 13 Pro,آیفون 13 پرو,Silver,نقره‌ای,256GB,۲۵۶ گیگ,0
+iPhone 13 Pro,آیفون 13 پرو,Gold,طلایی,512GB,۵۱۲ گیگ,0
+iPhone 13 Pro,آیفون 13 پرو,Sierra Blue,آبی سیرا,128GB,۱۲۸ گیگ,0
+iPhone 13 Pro,آیفون 13 پرو,Alpine Green,سبز آلپاین,1TB,۱ ترابایت,0
+iPhone 14,آیفون 14,Midnight,نیمه‌شب,128GB,۱۲۸ گیگ,0
+iPhone 14,آیفون 14,Starlight,ستاره‌ای,256GB,۲۵۶ گیگ,0
+iPhone 14,آیفون 14,Blue,آبی,512GB,۵۱۲ گیگ,0
+iPhone 14,آیفون 14,Purple,بنفش,128GB,۱۲۸ گیگ,0
+iPhone 14,آیفون 14,Yellow,زرد,256GB,۲۵۶ گیگ,0
+iPhone 14,آیفون 14,(PRODUCT)RED,قرمز,512GB,۵۱۲ گیگ,0
+iPhone 14 Pro,آیفون 14 پرو,Space Black,مشکی فضایی,128GB,۱۲۸ گیگ,0
+iPhone 14 Pro,آیفون 14 پرو,Silver,نقره‌ای,256GB,۲۵۶ گیگ,0
+iPhone 14 Pro,آیفون 14 پرو,Gold,طلایی,512GB,۵۱۲ گیگ,0
+iPhone 14 Pro,آیفون 14 پرو,Deep Purple,بنفش عمیق,1TB,۱ ترابایت,0
+iPhone 15,آیفون 15,Black,مشکی,128GB,۱۲۸ گیگ,0
+iPhone 15,آیفون 15,White,سفید,256GB,۲۵۶ گیگ,0
+iPhone 15,آیفون 15,Blue,آبی,512GB,۵۱۲ گیگ,0
+iPhone 15 Pro,آیفون 15 پرو,Graphite,گرافیت,128GB,۱۲۸ گیگ,0
+iPhone 15 Pro,آیفون 15 پرو,Silver,نقره‌ای,256GB,۲۵۶ گیگ,0
+iPhone 15 Pro,آیفون 15 پرو,Gold,طلایی,512GB,۵۱۲ گیگ,0
+iPhone 15 Pro,آیفون 15 پرو,Green,سبز,1TB,۱ ترابایت,0
+iPhone 16,آیفون 16,Black,مشکی,128GB,۱۲۸ گیگ,0
+iPhone 16,آیفون 16,White,سفید,256GB,۲۵۶ گیگ,0
+iPhone 16,آیفون 16,Blue,آبی,512GB,۵۱۲ گیگ,0
+iPhone 16 Pro,آیفون 16 پرو,Graphite,گرافیت,128GB,۱۲۸ گیگ,0
+iPhone 16 Pro,آیفون 16 پرو,Silver,نقره‌ای,256GB,۲۵۶ گیگ,0
+iPhone 16 Pro,آیفون 16 پرو,Gold,طلایی,512GB,۵۱۲ گیگ,0
+iPhone 16 Pro,آیفون 16 پرو,Deep Purple,بنفش عمیق,1TB,۱ ترابایت,0
+iPhone 17,آیفون 17,Black,مشکی,128GB,۱۲۸ گیگ,0
+iPhone 17,آیفون 17,White,سفید,256GB,۲۵۶ گیگ,0
+iPhone 17,آیفون 17,Blue,آبی,512GB,۵۱۲ گیگ,0
+iPhone 17 Pro,آیفون 17 پرو,Graphite,گرافیت,128GB,۱۲۸ گیگ,0
+iPhone 17 Pro,آیفون 17 پرو,Silver,نقره‌ای,256GB,۲۵۶ گیگ,0
+iPhone 17 Pro,آیفون 17 پرو,Gold,طلایی,512GB,۵۱۲ گیگ,0
+iPhone 17 Pro,آیفون 17 پرو,Deep Purple,بنفش عمیق,1TB,۱ ترابایت,0
+
+iPad,iPad Pro 11 2023,آیپد پرو ۱۱ ۲۰۲۳,Silver,نقره‌ای,128GB,۱۲۸ گیگ,0
+iPad,iPad Pro 11 2023,آیپد پرو ۱۱ ۲۰۲۳,Space Gray,خاکستری فضایی,256GB,۲۵۶ گیگ,0
+iPad,iPad Pro 12.9 2023,آیپد پرو ۱۲.۹ ۲۰۲۳,Silver,نقره‌ای,128GB,۱۲۸ گیگ,0
+iPad,iPad Pro 12.9 2023,آیپد پرو ۱۲.۹ ۲۰۲۳,Space Gray,خاکستری فضایی,512GB,۵۱۲ گیگ,0
+iPad,iPad Air 2023,آیپد ایر ۲۰۲۳,Pink,صورتی,64GB,۶۴ گیگ,0
+iPad,iPad Air 2023,آیپد ایر ۲۰۲۳,Blue,آبی,256GB,۲۵۶ گیگ,0
+AirPods,AirPods 2,ایرپاد ۲,White,سفید,N/A,N/A,0
+AirPods,AirPods 3,ایرپاد ۳,White,سفید,N/A,N/A,0
+AirPods,AirPods Pro,ایرپاد پرو,White,سفید,N/A,N/A,0
+AirPods,AirPods Pro 2,ایرپاد پرو ۲,White,سفید,N/A,N/A,0

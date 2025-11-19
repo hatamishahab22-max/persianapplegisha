@@ -1,0 +1,162 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Orange theme */
+    --background: 30 100% 50%;
+    --foreground: 0 0% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+    --primary: 30 100% 40%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 30 80% 60%;
+    --secondary-foreground: 0 0% 10%;
+    --muted: 30 50% 70%;
+    --muted-foreground: 0 0% 30%;
+    --accent: 30 90% 55%;
+    --accent-foreground: 0 0% 10%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 30 30% 80%;
+    --input: 0 0% 100%;
+    --ring: 30 100% 50%;
+    --radius: 0.5rem;
+  }
+
+  .light {
+    --background: 0 0% 98%;
+    --foreground: 0 0% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+    --primary: 212 100% 48%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 94%;
+    --secondary-foreground: 0 0% 10%;
+    --muted: 0 0% 94%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 0 0% 88%;
+    --accent-foreground: 0 0% 10%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 88%;
+    --input: 0 0% 88%;
+    --ring: 212 100% 48%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Vazirmatn', 'Inter', -apple-system, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer utilities {
+  /* Hover elevation utility - compatible with any background */
+  .hover-elevate {
+    position: relative;
+    transition: all 150ms ease;
+  }
+  
+  .hover-elevate::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: hsl(var(--foreground) / 0);
+    border-radius: inherit;
+    transition: all 150ms ease;
+    pointer-events: none;
+  }
+  
+  .hover-elevate:hover::before {
+    background: hsl(var(--foreground) / 0.05);
+  }
+  
+  /* Active elevation utility - more dramatic */
+  .active-elevate-2 {
+    transition: all 100ms ease;
+  }
+  
+  .active-elevate-2::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: hsl(var(--foreground) / 0);
+    border-radius: inherit;
+    transition: all 100ms ease;
+    pointer-events: none;
+  }
+  
+  .active-elevate-2:active::after {
+    background: hsl(var(--foreground) / 0.1);
+  }
+  
+  /* Toggle utilities */
+  .toggle-elevate {
+    position: relative;
+    transition: all 150ms ease;
+  }
+  
+  .toggle-elevated {
+    background: hsl(var(--muted));
+  }
+  
+  /* Disable default hover/active if needed */
+  .no-default-hover-elevate:hover::before {
+    display: none;
+  }
+  
+  .no-default-active-elevate:active::after {
+    display: none;
+  }
+}
+
+/* Persian/RTL number formatting */
+@font-face {
+  font-family: 'Vazirmatn';
+  font-display: swap;
+}
+
+/* Ensure proper RTL layout */
+[dir="rtl"] {
+  direction: rtl;
+}
+
+/* Smooth transitions for theme switching */
+* {
+  transition-property: color, background-color, border-color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-in-out;
+}
+
+/* Loading shimmer effect */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton {
+  animation: shimmer 2s infinite;
+  background: linear-gradient(
+    to right,
+    hsl(var(--muted)) 0%,
+    hsl(var(--muted-foreground) / 0.1) 50%,
+    hsl(var(--muted)) 100%
+  );
+  background-size: 1000px 100%;
+}
