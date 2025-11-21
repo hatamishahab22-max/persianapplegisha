@@ -3,7 +3,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { lazy, Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { setupGlobalErrorHandlers } from "@/lib/errorLogger";
 import { useSwipeBack } from "@/hooks/useSwipeBack";
@@ -22,9 +22,6 @@ import UsedPhoneOrder from "@/pages/UsedPhoneOrder";
 import UsedPhones from "@/pages/UsedPhones";
 import UsedPhonesAvailable from "@/pages/UsedPhonesAvailable";
 import NotFound from "@/pages/not-found";
-
-// Lazy load components
-const AIChatbot = lazy(() => import("@/components/ai-chatbot"));
 
 // Loading component
 function PageLoader() {
@@ -137,11 +134,6 @@ function App() {
             <Router />
             <Toaster />
           </div>
-          
-          {/* AI Chatbot - outside RTL to fix positioning */}
-          <Suspense fallback={null}>
-            <AIChatbot />
-          </Suspense>
         </TooltipProvider>
       </QueryClientProvider>
     </ErrorBoundary>
@@ -181,7 +173,7 @@ function CheckoutPage() {
 function LoginPage() {
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-6">ورود به حساب کاربری</h1>
+      <h1 className="text-3xl font-bold mb-6">ورود</h1>
       <p className="text-muted-foreground">صفحه ورود در حال توسعه است...</p>
     </div>
   );
@@ -199,7 +191,7 @@ function RegisterPage() {
 function ProfilePage() {
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-6">پروفایل کاربری</h1>
+      <h1 className="text-3xl font-bold mb-6">پروفایل</h1>
       <p className="text-muted-foreground">صفحه پروفایل در حال توسعه است...</p>
     </div>
   );
@@ -213,4 +205,3 @@ function AboutPage() {
     </div>
   );
 }
-

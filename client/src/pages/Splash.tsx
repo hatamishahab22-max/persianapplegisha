@@ -7,9 +7,13 @@ interface SplashProps {
 
 export default function Splash({ onComplete }: SplashProps) {
   const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
 
   const handleClick = () => {
+    if (firstName.trim()) {
+      localStorage.setItem("userName", firstName);
+    } else {
+      localStorage.removeItem("userName");
+    }
     if (onComplete) {
       onComplete();
     }
@@ -20,7 +24,7 @@ export default function Splash({ onComplete }: SplashProps) {
       className="h-screen w-full flex items-center justify-center bg-[#2C2C2C] cursor-pointer flex-col gap-8 p-4"
       data-testid="splash-screen"
     >
-      {/* Name Inputs */}
+      {/* Name Input */}
       <div className="w-full max-w-sm space-y-4 mb-4" dir="rtl">
         <div>
           <input
@@ -30,16 +34,6 @@ export default function Splash({ onComplete }: SplashProps) {
             onChange={(e) => setFirstName(e.target.value)}
             className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/30 text-white placeholder-white/50 focus:outline-none focus:border-white/50 transition-colors text-center font-['Vazirmatn']"
             data-testid="input-first-name"
-          />
-        </div>
-        <div>
-          <input
-            type="text"
-            placeholder="نام خانوادگی (اختیاری)"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/30 text-white placeholder-white/50 focus:outline-none focus:border-white/50 transition-colors text-center font-['Vazirmatn']"
-            data-testid="input-last-name"
           />
         </div>
       </div>

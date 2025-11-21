@@ -2,28 +2,16 @@ import { useState, useEffect } from "react";
 import logoImage from "@assets/IMG_4148_1763105490467.png";
 import videoFile from "@assets/video-output-597A6071-A019-439B-9B22-BF4D6A546A02-1_1763702148716.mov";
 import { Link } from "wouter";
-import { MessageCircle, Clock } from "lucide-react";
+import { Phone } from "lucide-react";
 import { FaWhatsapp, FaInstagram } from "react-icons/fa";
 
 export default function Home() {
-  const [time, setTime] = useState<string>("");
+  const [userName, setUserName] = useState<string>("");
 
   useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setTime(now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }));
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
+    const name = localStorage.getItem("userName") || "";
+    setUserName(name);
   }, []);
-
-  const handleWhatsAppShare = () => {
-    const text = "پرشین اپل استور - بهترین محصولات اپل در تهران";
-    const url = window.location.href;
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text + " " + url)}`;
-    window.open(whatsappUrl, '_blank');
-  };
 
   return (
     <div className="h-screen w-full overflow-hidden relative font-['Vazirmatn']">
@@ -42,11 +30,12 @@ export default function Home() {
       {/* Dark Overlay */}
       <div className="absolute inset-0 bg-black/40" />
       
-      {/* Clock in Top Right */}
-      <div className="absolute top-6 right-6 z-20 flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-lg border border-white/20" data-testid="display-clock">
-        <Clock className="w-5 h-5 text-white" />
-        <span className="text-white font-bold text-lg" dir="ltr">{time}</span>
-      </div>
+      {/* Welcome Message in Top Right */}
+      {userName && (
+        <div className="absolute top-6 right-6 z-20 bg-white/10 backdrop-blur-md px-6 py-3 rounded-lg border border-white/20" data-testid="display-welcome">
+          <span className="text-white font-bold text-lg">{userName} عزیز به پرشین اپل خوش آمدید</span>
+        </div>
+      )}
         
       {/* Content - Logo at top, Menu below it */}
       <div className="relative z-10 h-full flex flex-col items-center pt-12 px-4">
@@ -82,7 +71,7 @@ export default function Home() {
         </nav>
       </div>
 
-      {/* Social Media & Chat Buttons - Bottom Right Corner */}
+      {/* Social Media & Contact Buttons - Bottom Right Corner */}
       <div className="absolute bottom-6 right-6 flex gap-3 z-30">
         {/* WhatsApp */}
         <a 
@@ -109,15 +98,15 @@ export default function Home() {
           <FaInstagram className="w-7 h-7 text-white" />
         </a>
         
-        {/* AI Chat / Message */}
-        <button 
-          className="w-14 h-14 rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform border-0 cursor-pointer"
-          style={{ backgroundColor: '#D64218' }}
-          data-testid="button-ai-chat"
-          title="پیام"
+        {/* Phone / Contact */}
+        <a 
+          href="tel:+989121149079"
+          className="w-14 h-14 rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform border-0 cursor-pointer bg-blue-500"
+          data-testid="button-phone"
+          title="تماس"
         >
-          <MessageCircle className="w-7 h-7 text-white" />
-        </button>
+          <Phone className="w-7 h-7 text-white" />
+        </a>
       </div>
 
       {/* Admin Link - Bottom Left Corner */}
