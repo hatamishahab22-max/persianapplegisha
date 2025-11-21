@@ -6,6 +6,8 @@ import locationIcon from "@assets/photo-output_1763702984960.png";
 import { Link } from "wouter";
 import { Phone } from "lucide-react";
 
+const logoImage = "/attached_assets/IMG_4148_1763710499063.PNG";
+
 export default function Home() {
   const [userName, setUserName] = useState<string>("");
 
@@ -33,31 +35,34 @@ export default function Home() {
       <div className="absolute inset-0 bg-black/10" />
       
       {/* Top Section */}
-      <div className="relative z-10 flex flex-col items-center pt-8 px-4 gap-8">
-        {/* Title with decorative lines */}
-        <div className="flex items-center gap-6 w-full max-w-2xl">
-          <div className="flex-1 h-1 bg-gradient-to-r from-white/0 to-white/40"></div>
-          <h1 className="text-2xl font-bold text-white drop-shadow-lg whitespace-nowrap">Persian Apple Store</h1>
-          <div className="flex-1 h-1 bg-gradient-to-l from-white/0 to-white/40"></div>
-        </div>
+      <div className="relative z-10 flex flex-col items-center pt-8 px-4 gap-6">
+        {/* Logo Image */}
+        <img 
+          src={logoImage} 
+          alt="Persian Apple Store" 
+          className="w-auto h-12 object-contain"
+          loading="eager"
+          decoding="async"
+          data-testid="img-logo"
+        />
         
         {/* Buttons */}
         <nav className="flex gap-4">
-          <Link href="/products">
-            <button 
-              className="px-8 py-3 rounded-2xl backdrop-blur-lg bg-white/20 border border-white/40 hover:bg-white/30 hover:scale-105 transition-all duration-300 shadow-lg text-white font-semibold"
-              data-testid="link-products"
-            >
-              محصولات
-            </button>
-          </Link>
-          
           <Link href="/contact">
             <button 
               className="px-8 py-3 rounded-2xl backdrop-blur-lg bg-white/20 border border-white/40 hover:bg-white/30 hover:scale-105 transition-all duration-300 shadow-lg text-white font-semibold"
               data-testid="link-contact"
             >
               تماس با ما
+            </button>
+          </Link>
+          
+          <Link href="/products">
+            <button 
+              className="px-8 py-3 rounded-2xl backdrop-blur-lg bg-white/20 border border-white/40 hover:bg-white/30 hover:scale-105 transition-all duration-300 shadow-lg text-white font-semibold"
+              data-testid="link-products"
+            >
+              محصولات
             </button>
           </Link>
         </nav>
