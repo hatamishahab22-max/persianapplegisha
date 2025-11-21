@@ -1089,8 +1089,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // ============ IPHONE PRICE MANAGEMENT ROUTES ============
-  app.get("/api/iphone-prices", async (req: Request, res: Response) => {
+  // ============ PRODUCT PRICE MANAGEMENT ROUTES ============
+  app.get("/api/product-prices", async (req: Request, res: Response) => {
     try {
       const prices = await storage.getAllProductPrices();
       const models = await storage.getAllModels();
@@ -1114,12 +1114,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json(enrichedPrices);
     } catch (error) {
-      console.error("Error fetching iPhone prices:", error);
-      res.status(500).json({ error: "Failed to fetch iPhone prices" });
+      console.error("Error fetching product prices:", error);
+      res.status(500).json({ error: "Failed to fetch product prices" });
     }
   });
 
-  app.post("/api/iphone-prices/bulk-update", requireAdmin, async (req: Request, res: Response) => {
+  app.post("/api/product-prices/bulk-update", requireAdmin, async (req: Request, res: Response) => {
     try {
       const { items } = req.body;
 
@@ -1137,7 +1137,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({ success: true, updated });
     } catch (error) {
-      console.error("Error updating iPhone prices:", error);
+      console.error("Error updating product prices:", error);
       res.status(500).json({ error: "Failed to update prices" });
     }
   });

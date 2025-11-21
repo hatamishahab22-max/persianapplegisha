@@ -26,9 +26,21 @@ export default function PriceManager() {
   const loadPrices = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/iphone-prices");
+      const res = await fetch("/api/product-prices");
       if (!res.ok) throw new Error("Failed to load prices");
       const data = await res.json();
+      
+      // Sort by model name
+      data.sort((a: PriceItem, b: PriceItem) => {
+        if (a.modelName !== b.modelName) {
+          return a.modelName.localeCompare(b.modelName, 'fa');
+        }
+        if (a.storage !== b.storage) {
+          return a.storage.localeCompare(b.storage, 'fa');
+        }
+        return a.colorFa.localeCompare(b.colorFa, 'fa');
+      });
+      
       setItems(data);
     } catch (error) {
       console.error("Error loading prices:", error);
@@ -51,7 +63,7 @@ export default function PriceManager() {
   const saveChanges = async () => {
     try {
       setSaving(true);
-      const res = await fetch("/api/iphone-prices/bulk-update", {
+      const res = await fetch("/api/product-prices/bulk-update", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ items })
@@ -88,56 +100,66 @@ export default function PriceManager() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white font-['Vazirmatn'] p-6" dir="rtl">
+    <div className="min-h-screen bg-black text-white font-['Vazirmatn'] p-4 md:p-6" dir="rtl">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">مدیریت قیمت آیفون</h1>
+        <h1 className="text-2xl md:text-3xl font-bold">مدیریت قیمت محصولات</h1>
         <button
           onClick={() => setLocation("/admin")}
           className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+          data-testid="button-back"
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
       </div>
 
       {/* Price Table */}
-      <div className="bg-white/5 rounded-lg border border-white/10 overflow-hidden">
-        <table className="w-full">
+      <div className="bg-white/5 rounded-lg border border-white/10 overflow-x-auto">
+        <table className="w-full text-sm md:text-base">
           <thead>
             <tr className="border-b border-white/10 bg-white/10">
-              <th className="px-6 py-4 text-right">مدل</th>
-              <th className="px-6 py-4 text-right">رنگ</th>
-              <th className="px-6 py-4 text-right">ظرفیت</th>
-              <th className="px-6 py-4 text-right">قیمت (تومان)</th>
+              <th className="px-3 md:px-6 py-3 md:py-4 text-right">مدل</th>
+              <th className="px-3 md:px-6 py-3 md:py-4 text-right">رنگ</th>
+              <th className="px-3 md:px-6 py-3 md:py-4 text-right">ظرفیت</th>
+              <th className="px-3 md:px-6 py-3 md:py-4 text-right">قیمت (تومان)</th>
             </tr>
           </thead>
           <tbody>
-            {items.map((item) => (
-              <tr key={item.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                <td className="px-6 py-4">{item.modelName}</td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-2">
-                    {item.colorHex && (
-                      <div
-                        className="w-6 h-6 rounded-full border border-white/20"
-                        style={{ backgroundColor: item.colorHex }}
-                      />
-                    )}
-                    <span>{item.colorFa}</span>
-                  </div>
-                </td>
-                <td className="px-6 py-4">{item.storage}</td>
-                <td className="px-6 py-4">
-                  <input
-                    type="number"
-                    value={item.price}
-                    onChange={(e) => updatePrice(item.id, e.target.value)}
-                    className="w-full max-w-48 bg-white/10 border border-white/20 rounded px-3 py-2 text-white focus:outline-none focus:border-green-500 transition-colors"
-                    data-testid={`price-input-${item.id}`}
-                  />
+            {items.length === 0 ? (
+              <tr>
+                <td colSpan={4} className="px-6 py-8 text-center text-white/50">
+                  هیچ محصولی یافت نشد
                 </td>
               </tr>
-            ))}
+            ) : (
+              items.map((item) => (
+                <tr key={item.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                  <td className="px-3 md:px-6 py-3 md:py-4 font-medium">{item.modelName}</td>
+                  <td className="px-3 md:px-6 py-3 md:py-4">
+                    <div className="flex items-center gap-2">
+                      {item.colorHex && (
+                        <div
+                          className="w-5 h-5 md:w-6 md:h-6 rounded-full border border-white/20 flex-shrink-0"
+                          style={{ backgroundColor: item.colorHex }}
+                          title={item.colorFa}
+                        />
+                      )}
+                      <span className="truncate">{item.colorFa}</span>
+                    </div>
+                  </td>
+                  <td className="px-3 md:px-6 py-3 md:py-4">{item.storage}</td>
+                  <td className="px-3 md:px-6 py-3 md:py-4">
+                    <input
+                      type="number"
+                      value={item.price}
+                      onChange={(e) => updatePrice(item.id, e.target.value)}
+                      className="w-full max-w-40 md:max-w-48 bg-white/10 border border-white/20 rounded px-2 md:px-3 py-2 text-white focus:outline-none focus:border-green-500 transition-colors text-sm md:text-base"
+                      data-testid={`price-input-${item.id}`}
+                    />
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
@@ -146,13 +168,19 @@ export default function PriceManager() {
       <div className="mt-8 flex justify-end">
         <button
           onClick={saveChanges}
-          disabled={saving}
-          className="flex items-center gap-2 px-6 py-3 bg-green-500 text-black font-bold rounded-lg hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={saving || items.length === 0}
+          className="flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 bg-green-500 text-black font-bold rounded-lg hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
           data-testid="button-save-prices"
         >
-          <Save className="w-5 h-5" />
+          <Save className="w-4 h-4 md:w-5 md:h-5" />
           {saving ? "در حال ذخیره..." : "ذخیره تغییرات"}
         </button>
+      </div>
+
+      {/* Info Text */}
+      <div className="mt-6 p-4 bg-white/5 rounded-lg border border-white/10 text-sm md:text-base text-white/70">
+        <p>تعداد محصولات: <span className="font-bold text-white">{items.length}</span></p>
+        <p className="text-xs md:text-sm mt-2">هر ردیف نمایندگی یک ترکیب منحصر از مدل + رنگ + ظرفیت است</p>
       </div>
     </div>
   );
