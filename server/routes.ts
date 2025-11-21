@@ -1203,11 +1203,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const createdStorages: any[] = [];
       for (const storData of storageData) {
-        const storage = await storage.createStorageOption({
+        const storageOption = await storage.createStorageOption({
           categoryId: iphoneCategory.id,
           ...storData
         });
-        createdStorages.push(storage);
+        createdStorages.push(storageOption);
       }
 
       // Create price combinations (model + storage + color)
