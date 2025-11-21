@@ -1,6 +1,6 @@
 import { Link, useParams } from "wouter";
 import { ArrowRight } from "lucide-react";
-import categoryImage from "@assets/IMG_6574_1763107623273.jpeg";
+import categoryVideo from "@assets/video-output-48494C47-4131-44E2-8B08-AEBB876A23ED-1_1763767507137.mov";
 
 export default function Category() {
   const params = useParams();
@@ -54,12 +54,19 @@ export default function Category() {
 
   return (
     <div className="h-screen overflow-hidden relative" dir="rtl">
-      {/* Background Image - Full Screen */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${categoryImage})` }}
+      {/* Video Background - Full Screen */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
       >
-      </div>
+        <source src={categoryVideo} type="video/mp4" />
+      </video>
+      
+      {/* Dark Overlay for better text visibility */}
+      <div className="absolute inset-0 bg-black/20"></div>
 
       {/* Back Button - Top Left */}
       <div className="absolute top-6 right-6 z-20">
@@ -87,7 +94,7 @@ export default function Category() {
           {currentCategory.products.map((product, index) => (
             <Link key={index} href={`/product/${encodeURIComponent(product)}`}>
               <button
-                className="w-full text-center text-white hover:bg-white/30 transition-all p-6 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 cursor-pointer transform hover:scale-105 duration-300"
+                className="w-full text-center text-white hover:opacity-80 transition-all p-6 cursor-pointer transform hover:scale-105 duration-300"
                 data-testid={`product-item-${index}`}
               >
                 <span className="text-3xl font-bold drop-shadow-lg">{product}</span>
