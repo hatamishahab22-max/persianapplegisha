@@ -35,18 +35,18 @@ export default function Home() {
       
         
       {/* Content - Logo and Menu at Top */}
-      <div className="relative z-10 flex flex-col items-center pt-6 px-4 gap-4">
-        {/* Logo */}
-        <div className="flex flex-col items-center gap-3">
+      <div className="relative z-10 flex flex-col items-center justify-center pt-12 px-4 gap-6">
+        {/* Logo and Title */}
+        <div className="flex flex-col items-center gap-4">
           <img 
             src={logoImage} 
             alt="Persian Apple Store" 
-            className="h-24 w-24 rounded-full shadow-2xl"
+            className="h-28 w-28 rounded-full shadow-2xl object-cover"
             loading="eager"
             decoding="async"
             data-testid="img-logo"
           />
-          <h1 className="text-3xl font-bold text-white drop-shadow-lg">پرشین اپل</h1>
+          <h1 className="text-4xl font-bold text-white drop-shadow-lg text-center">پرشین اپل</h1>
           {userName && (
             <div className="bg-white/10 backdrop-blur-md px-4 py-2 rounded-lg border border-white/20 text-sm" data-testid="display-welcome">
               <span className="text-white font-semibold">{userName} عزیز خوش آمدید</span>
