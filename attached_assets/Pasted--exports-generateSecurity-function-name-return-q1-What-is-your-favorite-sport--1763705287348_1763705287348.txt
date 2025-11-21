@@ -1,0 +1,214 @@
+
+exports.generateSecurity = function(name) {
+  return {
+    q1: "What is your favorite sport?",
+    a1: name + "Sport",
+
+    q2: "What is your dream job?",
+    a2: name + "Job",
+
+    q3: "What is your favorite food?",
+    a3: name + "Food",
+  };
+};
+
+
+
+const fs = require("fs");
+const dbFile = "./db.json";
+
+function loadDB() {
+  return JSON.parse(fs.readFileSync(dbFile));
+}
+function saveDB(db) {
+  fs.writeFileSync(dbFile, JSON.stringify(db, null, 2));
+}
+------------فایل security.js
+exports.pickGiftCard = function() {
+  const db = loadDB();
+  const card = db.gifts.shift();
+  saveDB(db);
+  return card || null;
+};
+
+
+
+
+فایلmanager.js
+
+const fs = require("fs");
+const dbFile = "./db.json";
+
+function loadDB() {
+  return JSON.parse(fs.readFileSync(dbFile));
+}
+function saveDB(db) {
+  fs.writeFileSync(dbFile, JSON.stringify(db, null, 2));
+}
+
+exports.pickGiftCard = function() {
+  const db = loadDB();
+  const card = db.gifts.shift();
+  saveDB(db);
+  return card || null;
+};
+
+
+
+jalaali.js
+
+
+
+
+// نسخه سبک شده jalaali-js
+exports.toGregorian = function(shamsi) {
+  const [y, m, d] = shamsi.split("/").map(Number);
+  // اینجا فرمول تبدیل دقیق قرار می‌گیرد
+  return "2023-08-12"; // نمونه خروجی
+};
+
+
+فایل.  index.html
+
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apple ID Manager</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.json" />
+</head>
+<body>
+  <div id="app"></div>
+  <script src="app.js"></script>
+  <script>
+    if ("serviceWorker" in navigator)
+      navigator.serviceWorker.register("./service-worker.js");
+  </script>
+</body>
+</html>
+
+
+
+
+فایل.  app.js
+
+
+async function createOrder() {
+  const name = document.querySelector("#name").value;
+  const birth = document.querySelector("#birth").value;
+
+  const res = await fetch("/create-order", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name,
+      shamsiBirth: birth,
+      emailPrefix: name.toLowerCase()
+    })
+  });
+
+  const data = await res.json();
+  document.querySelector("#result").innerText = JSON.stringify(data.order, null, 2);
+}
+
+
+فابل.   style.css
+
+body {
+  font-family: sans-serif;
+  padding: 20px;
+  background: #f5f5f5;
+}
+input, button {
+  padding: 12px;
+  margin: 8px 0;
+  width: 100%;
+  font-size: 16px;
+}
+
+
+
+گیفت کارت‌ها در فایل db.json ذخیره می‌
+
+{
+  "gifts": [
+    "XXXX-YYYY-ZZZZ-1",
+    "XXXX-YYYY-ZZZZ-2",
+    "XXXX-YYYY-ZZZZ-3"
+  ],
+  "orders": []
+}
+
+
+🔵 PWA Files
+
+manifest.json
+
+{
+  "name": "Apple ID Manager",
+  "short_name": "AppleID",
+  "start_url": "./",
+  "display": "standalone",
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "icons": []
+}
+
+
+
+service-worker.js  فایل
+
+self.addEventListener("install", e => {
+  self.skipWaiting();
+});
+
+self.addEventListener("fetch", () => {});
+
+
+
+ساختار نهایی پروژ
+
+
+
+/
+├── index.html
+├── style.css
+├── script.js
+├── server.js
+├── db.json
+├── gift-pool.json
+├── package.json
+└── manifest.json
+
+
+
+
+� 1) فایل package.json
+
+
+
+{
+  "name": "appleid-manager",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "body-parser": "^1.20.2",
+    "moment": "^2.30.1",
+    "moment-jalaali": "^0.9.6"
+  }
+}
+
+
+
+📌 2) server.js — بک‌اند کا
+
+
+
+

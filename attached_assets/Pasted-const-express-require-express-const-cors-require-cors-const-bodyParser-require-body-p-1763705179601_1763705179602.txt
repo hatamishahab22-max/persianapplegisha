@@ -1,0 +1,88 @@
+const express = require("express");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const fs = require("fs");
+const moment = require("moment-jalaali");
+
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+
+// دیتابیس ساده
+const DB_FILE = "db.json";
+const GIFT_FILE = "gift-pool.json";
+
+function readDB() {
+  return JSON.parse(fs.readFileSync(DB_FILE));
+}
+function writeDB(data) {
+  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
+}
+
+function readGift() {
+  return JSON.parse(fs.readFileSync(GIFT_FILE));
+}
+function writeGift(data) {
+  fs.writeFileSync(GIFT_FILE, JSON.stringify(data, null, 2));
+}
+
+// تبدیل تاریخ شمسی به میلادی
+app.post("/convert-date", (req, res) => {
+  const { shamsi } = req.body;
+  const miladi = moment(shamsi, "jYYYY/jMM/jDD").format("YYYY-MM-DD");
+  res.json({ miladi });
+});
+
+// ایجاد سفارش اپل آیدی
+app.post("/create-order", (req, res) => {
+  const db = readDB();
+
+  const id = Date.now();
+  const data = req.body;
+
+  // امنیت ثابت
+  const security = [
+    { q: "What is your favorite color?", a: data.securityKey },
+    { q: "What city were you born in?", a: data.securityKey },
+    { q: "What is your lucky number?", a: data.securityKey }
+  ];
+
+  const newOrder = {
+    id,
+    name: data.name,
+    email: data.email,
+    birthday: data.birthday,
+    miladi: data.miladi,
+    country: data.country,
+    security,
+    status: "waiting",
+    health: "Checked — Ready",
+    giftUsed: false
+  };
+
+  db.orders.push(newOrder);
+  writeDB(db);
+  res.json({ ok: true, order: newOrder });
+});
+
+// مصرف گیفت‌کارت
+app.post("/charge", (req, res) => {
+  const pool = readGift();
+  if (pool.cards.length === 0) return res.json({ ok: false, msg: "گیفت موجود نیست" });
+
+  const card = pool.cards.shift();
+  writeGift(pool);
+
+  res.json({ ok: true, card });
+});
+
+// وضعیت سفارش
+app.get("/status/:id", (req, res) => {
+  const db = readDB();
+  const order = db.orders.find(o => o.id == req.params.id);
+  if (!order) return res.json({ ok: false });
+  res.json({ ok: true, order });
+});
+
+const PORT = 3000;
+app.listen(PORT, () => console.log("Server Running on", PORT));

@@ -10,7 +10,8 @@ import {
   type ProductModel, type InsertProductModel,
   type ProductColor, type InsertProductColor,
   type ProductStorageOption, type InsertProductStorageOption,
-  type ProductPrice, type InsertProductPrice
+  type ProductPrice, type InsertProductPrice,
+  type AppleIdOrder, type InsertAppleIdOrder
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 
@@ -96,6 +97,13 @@ export interface IStorage {
   createProductPrice(price: InsertProductPrice): Promise<ProductPrice>;
   updateProductPrice(id: string, price: Partial<InsertProductPrice>): Promise<ProductPrice | undefined>;
   deleteProductPrice(id: string): Promise<boolean>;
+
+  // Apple ID Order methods
+  getAllAppleIdOrders(): Promise<AppleIdOrder[]>;
+  getAppleIdOrder(id: string): Promise<AppleIdOrder | undefined>;
+  createAppleIdOrder(order: InsertAppleIdOrder): Promise<AppleIdOrder>;
+  updateAppleIdOrder(id: string, order: Partial<InsertAppleIdOrder>): Promise<AppleIdOrder | undefined>;
+  deleteAppleIdOrder(id: string): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {

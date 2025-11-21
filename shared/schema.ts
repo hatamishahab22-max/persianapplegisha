@@ -389,3 +389,35 @@ export const insertProductPriceSchema = createInsertSchema(productPrices).omit({
 
 export type InsertProductPrice = z.infer<typeof insertProductPriceSchema>;
 export type ProductPrice = typeof productPrices.$inferSelect;
+
+// Apple ID Manager table
+export const appleIdOrders = pgTable("apple_id_orders", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  birthday: text("birthday").notNull(), // Jalali format (YYYY/MM/DD)
+  country: text("country").notNull(),
+  securityQuestion1: text("security_question_1").notNull(),
+  securityAnswer1: text("security_answer_1").notNull(),
+  securityQuestion2: text("security_question_2").notNull(),
+  securityAnswer2: text("security_answer_2").notNull(),
+  securityQuestion3: text("security_question_3").notNull(),
+  securityAnswer3: text("security_answer_3").notNull(),
+  status: text("status").notNull().default("pending"), // pending, completed, failed
+  accountEmail: text("account_email"), // Generated Apple ID email
+  password: text("password"), // Encrypted password
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertAppleIdOrderSchema = createInsertSchema(appleIdOrders).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  accountEmail: true,
+  password: true,
+});
+
+export type InsertAppleIdOrder = z.infer<typeof insertAppleIdOrderSchema>;
+export type AppleIdOrder = typeof appleIdOrders.$inferSelect;
