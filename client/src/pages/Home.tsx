@@ -3,8 +3,9 @@ import logoImage from "@assets/IMG_4148_1763105490467.png";
 import videoFile from "@assets/video-output-597A6071-A019-439B-9B22-BF4D6A546A02-1_1763702148716.mov";
 import instagramIcon from "@assets/photo-output_1763702787471.png";
 import whatsappIcon from "@assets/photo-output_1763702810818.png";
+import locationIcon from "@assets/photo-output_1763702984960.png";
 import { Link } from "wouter";
-import { Phone } from "lucide-react";
+import { Phone, MapPin } from "lucide-react";
 
 export default function Home() {
   const [userName, setUserName] = useState<string>("");
@@ -38,7 +39,7 @@ export default function Home() {
         </div>
       )}
         
-      {/* Content - Logo at top, Menu below it */}
+      {/* Content - Logo at top center only */}
       <div className="relative z-10 h-full flex flex-col items-center pt-12 px-4">
         {/* Logo at Top */}
         <div className="mb-12">
@@ -49,27 +50,27 @@ export default function Home() {
             data-testid="img-logo"
           />
         </div>
+      </div>
 
-        {/* Horizontal Glass Menu Below Logo */}
-        <nav className="flex gap-4 flex-wrap justify-center">
-          <Link href="/products">
-            <button 
-              className="px-12 py-5 rounded-2xl backdrop-blur-lg bg-white/10 border border-white/30 hover:bg-white/20 hover:scale-105 transition-all duration-300 shadow-2xl text-white text-2xl font-bold w-52"
-              data-testid="link-products"
-            >
-              محصولات
-            </button>
-          </Link>
-          
-          <Link href="/contact">
-            <button 
-              className="px-12 py-5 rounded-2xl backdrop-blur-lg bg-white/10 border border-white/30 hover:bg-white/20 hover:scale-105 transition-all duration-300 shadow-2xl text-white text-2xl font-bold w-52"
-              data-testid="link-contact"
-            >
-              تماس با ما
-            </button>
-          </Link>
-        </nav>
+      {/* Menu Buttons - Bottom Left Area */}
+      <div className="absolute bottom-6 left-6 z-30 flex gap-3">
+        <Link href="/products">
+          <button 
+            className="px-8 py-3 rounded-xl backdrop-blur-lg bg-white/10 border border-white/30 hover:bg-white/20 hover:scale-105 transition-all duration-300 shadow-lg text-white font-bold text-lg"
+            data-testid="link-products"
+          >
+            محصولات
+          </button>
+        </Link>
+        
+        <Link href="/contact">
+          <button 
+            className="px-8 py-3 rounded-xl backdrop-blur-lg bg-white/10 border border-white/30 hover:bg-white/20 hover:scale-105 transition-all duration-300 shadow-lg text-white font-bold text-lg"
+            data-testid="link-contact"
+          >
+            تماس با ما
+          </button>
+        </Link>
       </div>
 
       {/* Social Media & Contact Buttons - Bottom Right Corner */}
@@ -107,12 +108,24 @@ export default function Home() {
         >
           <Phone className="w-8 h-8 text-white" />
         </a>
+
+        {/* Location */}
+        <a 
+          href="https://maps.google.com/?q=تهران+گیشا+بازار+بزرگ+نصر+پلاک+261"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-16 h-16 rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform border-0 cursor-pointer overflow-hidden"
+          data-testid="button-location"
+          title="نشانی"
+        >
+          <img src={locationIcon} alt="Location" className="w-full h-full object-cover" />
+        </a>
       </div>
 
-      {/* Admin Link - Bottom Left Corner */}
+      {/* Admin Link - Top Left Corner */}
       <Link href="/admin/login">
         <button 
-          className="absolute bottom-6 left-6 text-white/30 text-sm hover:text-white/50 transition-colors bg-transparent border-0 p-2 z-30"
+          className="absolute top-6 left-6 text-white/30 text-sm hover:text-white/50 transition-colors bg-transparent border-0 p-2 z-30"
           data-testid="link-admin-hidden"
         >
           مدیریت
