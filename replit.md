@@ -12,7 +12,25 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
-### Latest Updates (November 15, 2025)
+### Latest Updates (November 21, 2025)
+- **CRITICAL DATA PERSISTENCE FIX**:
+  - Fixed major issue where data was not persisting across deployments
+  - Migrated from in-memory storage (MemStorage) to PostgreSQL database (DbStorage)
+  - All APIs now use DbStorage implementation with Drizzle ORM
+  - Server configured to use PostgreSQL for all data operations
+  - Data now survives server restarts and deployments
+- **Database Population**:
+  - Successfully populated database with initial product data
+  - 4 categories: iPhone, iPad, AirPods, Used Phones
+  - 28 iPhone models (iPhone 11 through iPhone 16 series)
+  - 23 colors including all Titanium variants for Pro models
+  - 9 storage options (64GB, 128GB, 256GB, 512GB, 1TB)
+- **Database Schema Fixes**:
+  - Added missing "order" column to product_models table
+  - Fixed foreign key constraints and relationships
+  - All product management APIs now working correctly
+
+### Previous Updates (November 15, 2025)
 - **OpenAI AI Chatbot Integration**:
   - Integrated OpenAI GPT-5 for intelligent customer support
   - AI assistant with Persian language support and store context
