@@ -147,6 +147,12 @@ export default function PriceManager() {
           <div className="bg-white/5 border border-yellow-500 rounded-lg p-8 text-center">
             <h2 className="text-xl font-bold mb-4 text-yellow-400">هیچ محصولی ثبت نشده</h2>
             <p className="text-white/70 mb-6">برای شروع باید ابتدا محصولات اولیه ایجاد شوند</p>
+            <div className="text-sm text-white/60 mb-4 space-y-1">
+              <p>• iPhone: 4 مدل × 8 رنگ × 4 حجم = 128 محصول</p>
+              <p>• iPad: 2 مدل × 8 رنگ × 4 حجم = 64 محصول</p>
+              <p>• AirPods: 1 مدل × 3 رنگ = 3 محصول</p>
+              <p className="font-bold text-green-400 mt-2">جمع کل: 195 محصول</p>
+            </div>
             <button
               onClick={initializeProducts}
               disabled={initializing}
@@ -155,11 +161,11 @@ export default function PriceManager() {
               {initializing ? (
                 <>
                   <Loader className="w-5 h-5 animate-spin" />
-                  در حال ایجاد...
+                  در حال ایجاد محصولات...
                 </>
               ) : (
                 <>
-                  ایجاد محصولات اولیه (4 مدل × 8 رنگ × 3 حجم = 96 محصول)
+                  ایجاد تمام محصولات
                 </>
               )}
             </button>

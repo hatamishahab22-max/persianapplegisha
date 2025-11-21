@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import bcrypt from "bcrypt";
 import { v2 as cloudinary } from 'cloudinary';
 import OpenAI from 'openai';
+import { shamsiToGregorian, generatePassword, generateSecurityQuestions, isValidShamsiDate } from "./appleIdHelpers";
 
 // Extend Express Request to include session
 declare module 'express-session' {
@@ -1142,7 +1143,147 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Initialize iPhone models (one-time setup)
+  // ============ APPLE ID ORDERS ROUTES ============
+  
+  // Public endpoint for uploading payment receipts
+  app.post("/api/apple-id-orders/upload-receipt", async (req: Request, res: Response) => {
+    try {
+      const { image } = req.body;
+      
+      if (!image) {
+        return res.status(400).json({ error: "No image provided" });
+      }
+
+      // Upload to Cloudinary
+      const result = await cloudinary.uploader.upload(image, {
+        resource_type: 'auto',
+        folder: 'apple-id-receipts'
+      });
+
+      res.json({ 
+        success: true, 
+        url: result.secure_url 
+      });
+    } catch (error) {
+      console.error("Upload error:", error);
+      res.status(500).json({ error: "Upload failed" });
+    }
+  });
+  
+  app.get("/api/apple-id-orders", requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const orders = await storage.getAllAppleIdOrders();
+      orders.sort((a, b) => {
+        const timeA = a.createdAt ? a.createdAt.getTime() : 0;
+        const timeB = b.createdAt ? b.createdAt.getTime() : 0;
+        return timeB - timeA;
+      });
+      res.json(orders);
+    } catch (error) {
+      console.error('Error fetching Apple ID orders:', error);
+      res.status(500).json({ error: "Failed to fetch Apple ID orders" });
+    }
+  });
+
+  app.get("/api/apple-id-orders/:id", requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const order = await storage.getAppleIdOrder(id);
+      
+      if (!order) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+      
+      res.json(order);
+    } catch (error) {
+      console.error('Error fetching Apple ID order:', error);
+      res.status(500).json({ error: "Failed to fetch Apple ID order" });
+    }
+  });
+
+  app.post("/api/apple-id-orders", async (req: Request, res: Response) => {
+    try {
+      const { name, phoneNumber, email, birthday, paymentReceipt, paymentAmount } = req.body;
+
+      // Validate required fields
+      if (!name || !phoneNumber || !birthday) {
+        return res.status(400).json({ error: "نام، شماره موبایل و تاریخ تولد الزامی است" });
+      }
+
+      // Validate Shamsi date format
+      if (!isValidShamsiDate(birthday)) {
+        return res.status(400).json({ error: "فرمت تاریخ تولد نامعتبر است. لطفاً به صورت YYYY/MM/DD وارد کنید (مثال: 1380/05/15)" });
+      }
+
+      // Convert Shamsi to Gregorian
+      const birthdayGregorian = shamsiToGregorian(birthday);
+
+      // Generate password
+      const generatedPassword = generatePassword();
+
+      // Generate security questions
+      const securityQA = generateSecurityQuestions(name);
+
+      // Create order
+      const order = await storage.createAppleIdOrder({
+        name,
+        phoneNumber,
+        email: email || null,
+        birthday,
+        birthdayGregorian,
+        country: "Iran",
+        securityQuestion1: securityQA.question1,
+        securityAnswer1: securityQA.answer1,
+        securityQuestion2: securityQA.question2,
+        securityAnswer2: securityQA.answer2,
+        securityQuestion3: securityQA.question3,
+        securityAnswer3: securityQA.answer3,
+        generatedPassword,
+        paymentReceipt: paymentReceipt || null,
+        paymentAmount: paymentAmount || null,
+        status: paymentReceipt ? "payment_received" : "pending_payment"
+      });
+
+      res.json(order);
+    } catch (error) {
+      console.error('Error creating Apple ID order:', error);
+      res.status(500).json({ error: "خطا در ایجاد سفارش" });
+    }
+  });
+
+  app.patch("/api/apple-id-orders/:id", requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const order = await storage.updateAppleIdOrder(id, req.body);
+      
+      if (!order) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+      
+      res.json(order);
+    } catch (error) {
+      console.error('Error updating Apple ID order:', error);
+      res.status(500).json({ error: "Failed to update Apple ID order" });
+    }
+  });
+
+  app.delete("/api/apple-id-orders/:id", requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const success = await storage.deleteAppleIdOrder(id);
+      
+      if (!success) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+      
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error deleting Apple ID order:', error);
+      res.status(500).json({ error: "Failed to delete Apple ID order" });
+    }
+  });
+
+  // Initialize all product models (one-time setup)
   app.post("/api/admin/init-iphone-models", requireAdmin, async (req: Request, res: Response) => {
     try {
       let models = await storage.getAllModels();
@@ -1150,33 +1291,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.json({ message: "Models already initialized" });
       }
 
-      // Get iPhone category
+      // Get categories
       const categories = await storage.getAllCategories();
       const iphoneCategory = categories.find(c => c.slug === "iphone");
+      const ipadCategory = categories.find(c => c.slug === "ipad");
+      const airpodsCategory = categories.find(c => c.slug === "airpods");
       
       if (!iphoneCategory) {
         return res.status(400).json({ error: "iPhone category not found" });
       }
 
-      // Create models
-      const iPhoneModels = [
-        { name: "iPhone 17", nameFa: "آیفون ۱۷" },
-        { name: "iPhone 17 Air", nameFa: "آیفون ۱۷ ایر" },
-        { name: "iPhone 17 Pro", nameFa: "آیفون ۱۷ پرو" },
-        { name: "iPhone 17 Pro Max", nameFa: "آیفون ۱۷ پرو مکس" }
-      ];
-
-      const createdModels: any[] = [];
-      for (const modelData of iPhoneModels) {
-        const model = await storage.createModel({
-          categoryId: iphoneCategory.id,
-          ...modelData,
-          generation: "iPhone 17"
-        });
-        createdModels.push(model);
-      }
-
-      // Create colors
+      // ========== CREATE COLORS (shared across all products) ==========
       const colorData = [
         { name: "Black", nameFa: "مشکی", hexCode: "#000000" },
         { name: "White", nameFa: "سفید", hexCode: "#FFFFFF" },
@@ -1194,8 +1319,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         createdColors.push(color);
       }
 
-      // Create storage options
+      // ========== CREATE STORAGE OPTIONS (shared across all products) ==========
       const storageData = [
+        { name: "128GB", nameFa: "۱۲۸ گیگابایت" },
         { name: "256GB", nameFa: "۲۵۶ گیگابایت" },
         { name: "512GB", nameFa: "۵۱۲ گیگابایت" },
         { name: "1TB", nameFa: "۱ ترابایت" }
@@ -1204,29 +1330,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const createdStorages: any[] = [];
       for (const storData of storageData) {
         const storageOption = await storage.createStorageOption({
-          categoryId: iphoneCategory.id,
+          categoryId: null,
           ...storData
         });
         createdStorages.push(storageOption);
       }
 
-      // Create price combinations (model + storage + color)
-      // Sample prices for demonstration
-      const basePrices: { [key: string]: number } = {
-        "iPhone 17": 30000000,        // 30M
-        "iPhone 17 Air": 45000000,    // 45M
-        "iPhone 17 Pro": 55000000,    // 55M
-        "iPhone 17 Pro Max": 65000000 // 65M
-      };
+      const allCreatedModels: any[] = [];
+      let totalPricesCreated = 0;
 
-      let pricesCreated = 0;
-      for (const model of createdModels) {
+      // ========== IPHONE MODELS ==========
+      const iPhoneModels = [
+        { name: "iPhone 17", nameFa: "آیفون ۱۷", basePrice: 30000000 },
+        { name: "iPhone 17 Air", nameFa: "آیفون ۱۷ ایر", basePrice: 45000000 },
+        { name: "iPhone 17 Pro", nameFa: "آیفون ۱۷ پرو", basePrice: 55000000 },
+        { name: "iPhone 17 Pro Max", nameFa: "آیفون ۱۷ پرو مکس", basePrice: 65000000 }
+      ];
+
+      for (const modelData of iPhoneModels) {
+        const model = await storage.createModel({
+          categoryId: iphoneCategory.id,
+          name: modelData.name,
+          nameFa: modelData.nameFa,
+          generation: "iPhone 17"
+        });
+        allCreatedModels.push(model);
+
+        // Create price combinations for iPhone
         for (const storageOpt of createdStorages) {
           for (const color of createdColors) {
-            // Add some price variation based on storage
-            let price = basePrices[model.name] || 30000000;
-            if (storageOpt.name === "512GB") price += 2000000;
-            if (storageOpt.name === "1TB") price += 5000000;
+            let price = modelData.basePrice;
+            if (storageOpt.name === "256GB") price += 2000000;
+            if (storageOpt.name === "512GB") price += 5000000;
+            if (storageOpt.name === "1TB") price += 8000000;
 
             await storage.createProductPrice({
               modelId: model.id,
@@ -1234,19 +1370,89 @@ export async function registerRoutes(app: Express): Promise<Server> {
               colorId: color.id,
               price: price.toString()
             });
-            pricesCreated++;
+            totalPricesCreated++;
+          }
+        }
+      }
+
+      // ========== IPAD MODELS ==========
+      if (ipadCategory) {
+        const iPadModels = [
+          { name: "iPad", nameFa: "آیپد", basePrice: 15000000 },
+          { name: "iPad Air", nameFa: "آیپد ایر", basePrice: 25000000 }
+        ];
+
+        for (const modelData of iPadModels) {
+          const model = await storage.createModel({
+            categoryId: ipadCategory.id,
+            name: modelData.name,
+            nameFa: modelData.nameFa,
+            generation: "iPad 2024"
+          });
+          allCreatedModels.push(model);
+
+          // Create price combinations for iPad
+          for (const storageOpt of createdStorages) {
+            for (const color of createdColors) {
+              let price = modelData.basePrice;
+              if (storageOpt.name === "256GB") price += 1500000;
+              if (storageOpt.name === "512GB") price += 3000000;
+              if (storageOpt.name === "1TB") price += 5000000;
+
+              await storage.createProductPrice({
+                modelId: model.id,
+                storageId: storageOpt.id,
+                colorId: color.id,
+                price: price.toString()
+              });
+              totalPricesCreated++;
+            }
+          }
+        }
+      }
+
+      // ========== AIRPODS MODELS ==========
+      if (airpodsCategory) {
+        const airPodsModels = [
+          { name: "AirPods", nameFa: "ایرپاد", basePrice: 5000000 }
+        ];
+
+        // AirPods only use first 3 colors and first storage option
+        const airpodsColors = createdColors.slice(0, 3);
+        const airpodsStorage = createdStorages.slice(0, 1);
+
+        for (const modelData of airPodsModels) {
+          const model = await storage.createModel({
+            categoryId: airpodsCategory.id,
+            name: modelData.name,
+            nameFa: modelData.nameFa,
+            generation: "AirPods 2024"
+          });
+          allCreatedModels.push(model);
+
+          // Create price combinations for AirPods (simplified)
+          for (const storageOpt of airpodsStorage) {
+            for (const color of airpodsColors) {
+              await storage.createProductPrice({
+                modelId: model.id,
+                storageId: storageOpt.id,
+                colorId: color.id,
+                price: modelData.basePrice.toString()
+              });
+              totalPricesCreated++;
+            }
           }
         }
       }
 
       res.json({
         success: true,
-        message: "iPhone models initialized",
+        message: "All product models initialized",
         stats: {
-          models: createdModels.length,
+          models: allCreatedModels.length,
           colors: createdColors.length,
           storages: createdStorages.length,
-          prices: pricesCreated
+          prices: totalPricesCreated
         }
       });
     } catch (error: any) {

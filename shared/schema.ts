@@ -394,19 +394,24 @@ export type ProductPrice = typeof productPrices.$inferSelect;
 export const appleIdOrders = pgTable("apple_id_orders", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   name: text("name").notNull(),
-  email: text("email").notNull(),
-  birthday: text("birthday").notNull(), // Jalali format (YYYY/MM/DD)
-  country: text("country").notNull(),
-  securityQuestion1: text("security_question_1").notNull(),
-  securityAnswer1: text("security_answer_1").notNull(),
-  securityQuestion2: text("security_question_2").notNull(),
-  securityAnswer2: text("security_answer_2").notNull(),
-  securityQuestion3: text("security_question_3").notNull(),
-  securityAnswer3: text("security_answer_3").notNull(),
-  status: text("status").notNull().default("pending"), // pending, completed, failed
-  accountEmail: text("account_email"), // Generated Apple ID email
-  password: text("password"), // Encrypted password
-  notes: text("notes"),
+  phoneNumber: text("phone_number").notNull(), // Customer phone number
+  email: text("email"), // Optional customer email
+  birthday: text("birthday").notNull(), // Shamsi/Jalali format from user (YYYY/MM/DD)
+  birthdayGregorian: text("birthday_gregorian"), // Auto-converted Gregorian format
+  country: text("country").notNull().default("Iran"),
+  securityQuestion1: text("security_question_1"), // Auto-generated
+  securityAnswer1: text("security_answer_1"), // Auto-generated
+  securityQuestion2: text("security_question_2"), // Auto-generated
+  securityAnswer2: text("security_answer_2"), // Auto-generated
+  securityQuestion3: text("security_question_3"), // Auto-generated
+  securityAnswer3: text("security_answer_3"), // Auto-generated
+  generatedPassword: text("generated_password"), // Auto-generated password (medium strength)
+  paymentReceipt: text("payment_receipt"), // URL to uploaded payment receipt
+  paymentAmount: decimal("payment_amount", { precision: 10, scale: 0 }), // Payment amount in Toman
+  status: text("status").notNull().default("pending_payment"), // pending_payment, payment_received, processing, completed, rejected
+  accountEmail: text("account_email"), // Final Apple ID email (filled by admin)
+  accountPassword: text("account_password"), // Final Apple ID password (filled by admin)
+  adminNotes: text("admin_notes"), // Admin notes
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -415,8 +420,6 @@ export const insertAppleIdOrderSchema = createInsertSchema(appleIdOrders).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
-  accountEmail: true,
-  password: true,
 });
 
 export type InsertAppleIdOrder = z.infer<typeof insertAppleIdOrderSchema>;

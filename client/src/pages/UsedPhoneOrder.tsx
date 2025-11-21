@@ -98,7 +98,7 @@ export default function UsedPhoneOrder() {
                 <SelectTrigger className="bg-white/10 border-white/20 text-white" data-testid="select-model">
                   <SelectValue placeholder="انتخاب کنید" />
                 </SelectTrigger>
-                <SelectContent className="max-h-[300px]">
+                <SelectContent className="max-h-[300px] bg-zinc-900 border-white/20 z-[100]" dir="rtl">
                   <SelectItem value="iPhone 17 Pro Max">iPhone 17 Pro Max</SelectItem>
                   <SelectItem value="iPhone 17 Pro">iPhone 17 Pro</SelectItem>
                   <SelectItem value="iPhone 17">iPhone 17</SelectItem>
@@ -143,7 +143,7 @@ export default function UsedPhoneOrder() {
                 <SelectTrigger className="bg-white/10 border-white/20 text-white" data-testid="select-storage">
                   <SelectValue placeholder="انتخاب کنید" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-zinc-900 border-white/20 z-[100]" dir="rtl">
                   <SelectItem value="128GB">128GB</SelectItem>
                   <SelectItem value="256GB">256GB</SelectItem>
                   <SelectItem value="512GB">512GB</SelectItem>

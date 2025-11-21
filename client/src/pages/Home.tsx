@@ -34,10 +34,10 @@ export default function Home() {
       {/* Dark Overlay */}
       <div className="absolute inset-0 bg-black/10" />
       
-      {/* Top Section - Logo and Buttons */}
+      {/* Top Section - Logo Only */}
       <div className="absolute top-0 left-0 right-0 z-10 pt-6 px-4">
         {/* Logo Image */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center">
           <img 
             src={logoImage} 
             alt="Persian Apple Store" 
@@ -47,12 +47,14 @@ export default function Home() {
             data-testid="img-logo"
           />
         </div>
-        
-        {/* Buttons */}
-        <nav className="flex justify-center gap-4">
+      </div>
+
+      {/* Buttons - Moved below logo, made bigger and orange */}
+      <div className="absolute top-24 left-0 right-0 z-10 px-4">
+        <nav className="flex justify-center gap-5">
           <Link href="/contact">
             <button 
-              className="px-8 py-3 rounded-2xl backdrop-blur-lg bg-white/20 border border-white/40 hover:bg-white/30 transition-all duration-300 shadow-lg text-white font-semibold"
+              className="px-10 py-4 rounded-2xl backdrop-blur-lg bg-orange-500/80 border border-orange-400 hover:bg-orange-600/90 transition-all duration-300 shadow-xl text-white font-bold text-lg"
               data-testid="link-contact"
             >
               تماس با ما
@@ -61,7 +63,7 @@ export default function Home() {
           
           <Link href="/products">
             <button 
-              className="px-8 py-3 rounded-2xl backdrop-blur-lg bg-white/20 border border-white/40 hover:bg-white/30 transition-all duration-300 shadow-lg text-white font-semibold"
+              className="px-10 py-4 rounded-2xl backdrop-blur-lg bg-orange-500/80 border border-orange-400 hover:bg-orange-600/90 transition-all duration-300 shadow-xl text-white font-bold text-lg"
               data-testid="link-products"
             >
               محصولات
@@ -70,8 +72,8 @@ export default function Home() {
         </nav>
       </div>
 
-      {/* Center - Large Apple Logo Circle with Gradient */}
-      <div className="absolute inset-0 flex items-center justify-center z-5">
+      {/* Center - Large Apple Logo Circle with Gradient + Welcome Text */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center z-5">
         <svg className="w-80 h-80" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="circleFill" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -95,6 +97,13 @@ export default function Home() {
                   fill="url(#appleGradient)" />
           </g>
         </svg>
+        
+        {/* Welcome Text - Below Apple Logo */}
+        {userName && (
+          <h2 className="text-2xl md:text-3xl font-bold text-orange-500 mt-4 drop-shadow-lg font-['Vazirmatn']" data-testid="text-welcome">
+            {userName} عزیز به پرشین اپل خوش آمدید
+          </h2>
+        )}
       </div>
 
       {/* Bottom Section - Social Media Icons */}
