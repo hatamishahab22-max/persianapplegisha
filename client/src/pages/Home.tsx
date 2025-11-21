@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import logoImage from "@assets/photo-output_1763708892455.jpeg";
+import logoImage from "@assets/IMG_4148_1763710499063.PNG";
 import videoFile from "@assets/video-output-597A6071-A019-439B-9B22-BF4D6A546A02-1_1763702148716.mov";
 import instagramIcon from "@assets/photo-output_1763702787471.png";
 import whatsappIcon from "@assets/photo-output_1763702810818.png";
