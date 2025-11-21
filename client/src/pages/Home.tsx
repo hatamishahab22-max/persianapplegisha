@@ -33,17 +33,11 @@ export default function Home() {
       {/* Dark Overlay - Light to preserve colors */}
       <div className="absolute inset-0 bg-black/10" />
       
-      {/* Welcome Message in Top Right */}
-      {userName && (
-        <div className="absolute top-6 right-6 z-20 bg-white/10 backdrop-blur-md px-6 py-3 rounded-lg border border-white/20" data-testid="display-welcome">
-          <span className="text-white font-bold text-lg">{userName} عزیز به پرشین اپل خوش آمدید</span>
-        </div>
-      )}
         
       {/* Content - Logo and Menu at Top */}
       <div className="relative z-10 flex flex-col items-center pt-6 px-4 gap-4">
         {/* Logo - Small and at top */}
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex flex-col items-center gap-3">
           <img 
             src={logoImage} 
             alt="Persian Apple Store" 
@@ -53,6 +47,11 @@ export default function Home() {
             data-testid="img-logo"
           />
           <h1 className="text-2xl font-bold text-white drop-shadow-lg">پرشی اپل</h1>
+          {userName && (
+            <div className="bg-white/10 backdrop-blur-md px-4 py-2 rounded-lg border border-white/20 text-sm" data-testid="display-welcome">
+              <span className="text-white font-semibold">{userName} عزیز خوش آمدید</span>
+            </div>
+          )}
         </div>
 
         {/* Menu Buttons - Under Logo, Side by Side */}
