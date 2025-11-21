@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { ChevronLeft, Save } from "lucide-react";
+import { ChevronLeft, Save, Loader } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface PriceItem {
@@ -15,6 +15,7 @@ interface PriceItem {
 export default function PriceManager() {
   const [items, setItems] = useState<PriceItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [initializing, setInitializing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [_, setLocation] = useLocation();
   const { toast } = useToast();
@@ -30,7 +31,6 @@ export default function PriceManager() {
       if (!res.ok) throw new Error("Failed to load prices");
       const data = await res.json();
       
-      // Sort by model name
       data.sort((a: PriceItem, b: PriceItem) => {
         if (a.modelName !== b.modelName) {
           return a.modelName.localeCompare(b.modelName, 'fa');
@@ -51,6 +51,37 @@ export default function PriceManager() {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const initializeProducts = async () => {
+    try {
+      setInitializing(true);
+      const res = await fetch("/api/admin/init-iphone-models", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+      });
+
+      if (!res.ok) throw new Error("Failed to initialize products");
+
+      const data = await res.json();
+      
+      toast({
+        title: "موفق!",
+        description: `${data.stats.prices} محصول با موفقیت ایجاد شد`,
+        className: "bg-green-500 text-white border-none"
+      });
+
+      await loadPrices();
+    } catch (error) {
+      console.error("Error initializing products:", error);
+      toast({
+        title: "خطا",
+        description: "خطا در ایجاد محصولات",
+        variant: "destructive"
+      });
+    } finally {
+      setInitializing(false);
     }
   };
 
@@ -99,21 +130,57 @@ export default function PriceManager() {
     );
   }
 
+  if (items.length === 0) {
+    return (
+      <div className="min-h-screen bg-black text-white font-['Vazirmatn'] p-4 md:p-6" dir="rtl">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-2xl md:text-3xl font-bold">مدیریت قیمت محصولات</h1>
+          <button
+            onClick={() => setLocation("/admin")}
+            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+        </div>
+
+        <div className="max-w-2xl mx-auto">
+          <div className="bg-white/5 border border-yellow-500 rounded-lg p-8 text-center">
+            <h2 className="text-xl font-bold mb-4 text-yellow-400">هیچ محصولی ثبت نشده</h2>
+            <p className="text-white/70 mb-6">برای شروع باید ابتدا محصولات اولیه ایجاد شوند</p>
+            <button
+              onClick={initializeProducts}
+              disabled={initializing}
+              className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed mx-auto"
+            >
+              {initializing ? (
+                <>
+                  <Loader className="w-5 h-5 animate-spin" />
+                  در حال ایجاد...
+                </>
+              ) : (
+                <>
+                  ایجاد محصولات اولیه (4 مدل × 8 رنگ × 3 حجم = 96 محصول)
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-black text-white font-['Vazirmatn'] p-4 md:p-6" dir="rtl">
-      {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl md:text-3xl font-bold">مدیریت قیمت محصولات</h1>
         <button
           onClick={() => setLocation("/admin")}
           className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-          data-testid="button-back"
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
       </div>
 
-      {/* Price Table */}
       <div className="bg-white/5 rounded-lg border border-white/10 overflow-x-auto">
         <table className="w-full text-sm md:text-base">
           <thead>
@@ -125,62 +192,48 @@ export default function PriceManager() {
             </tr>
           </thead>
           <tbody>
-            {items.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="px-6 py-8 text-center text-white/50">
-                  هیچ محصولی یافت نشد
+            {items.map((item) => (
+              <tr key={item.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                <td className="px-3 md:px-6 py-3 md:py-4 font-medium">{item.modelName}</td>
+                <td className="px-3 md:px-6 py-3 md:py-4">
+                  <div className="flex items-center gap-2">
+                    {item.colorHex && (
+                      <div
+                        className="w-5 h-5 md:w-6 md:h-6 rounded-full border border-white/20 flex-shrink-0"
+                        style={{ backgroundColor: item.colorHex }}
+                        title={item.colorFa}
+                      />
+                    )}
+                    <span className="truncate">{item.colorFa}</span>
+                  </div>
+                </td>
+                <td className="px-3 md:px-6 py-3 md:py-4">{item.storage}</td>
+                <td className="px-3 md:px-6 py-3 md:py-4">
+                  <input
+                    type="number"
+                    value={item.price}
+                    onChange={(e) => updatePrice(item.id, e.target.value)}
+                    className="w-full max-w-40 md:max-w-48 bg-white/10 border border-white/20 rounded px-2 md:px-3 py-2 text-white focus:outline-none focus:border-green-500 transition-colors text-sm md:text-base"
+                  />
                 </td>
               </tr>
-            ) : (
-              items.map((item) => (
-                <tr key={item.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                  <td className="px-3 md:px-6 py-3 md:py-4 font-medium">{item.modelName}</td>
-                  <td className="px-3 md:px-6 py-3 md:py-4">
-                    <div className="flex items-center gap-2">
-                      {item.colorHex && (
-                        <div
-                          className="w-5 h-5 md:w-6 md:h-6 rounded-full border border-white/20 flex-shrink-0"
-                          style={{ backgroundColor: item.colorHex }}
-                          title={item.colorFa}
-                        />
-                      )}
-                      <span className="truncate">{item.colorFa}</span>
-                    </div>
-                  </td>
-                  <td className="px-3 md:px-6 py-3 md:py-4">{item.storage}</td>
-                  <td className="px-3 md:px-6 py-3 md:py-4">
-                    <input
-                      type="number"
-                      value={item.price}
-                      onChange={(e) => updatePrice(item.id, e.target.value)}
-                      className="w-full max-w-40 md:max-w-48 bg-white/10 border border-white/20 rounded px-2 md:px-3 py-2 text-white focus:outline-none focus:border-green-500 transition-colors text-sm md:text-base"
-                      data-testid={`price-input-${item.id}`}
-                    />
-                  </td>
-                </tr>
-              ))
-            )}
+            ))}
           </tbody>
         </table>
       </div>
 
-      {/* Save Button */}
-      <div className="mt-8 flex justify-end">
+      <div className="mt-8 flex justify-between items-center gap-4">
+        <div className="text-white/70 text-sm md:text-base">
+          تعداد محصولات: <span className="font-bold text-white">{items.length}</span>
+        </div>
         <button
           onClick={saveChanges}
-          disabled={saving || items.length === 0}
+          disabled={saving}
           className="flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 bg-green-500 text-black font-bold rounded-lg hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
-          data-testid="button-save-prices"
         >
           <Save className="w-4 h-4 md:w-5 md:h-5" />
           {saving ? "در حال ذخیره..." : "ذخیره تغییرات"}
         </button>
-      </div>
-
-      {/* Info Text */}
-      <div className="mt-6 p-4 bg-white/5 rounded-lg border border-white/10 text-sm md:text-base text-white/70">
-        <p>تعداد محصولات: <span className="font-bold text-white">{items.length}</span></p>
-        <p className="text-xs md:text-sm mt-2">هر ردیف نمایندگی یک ترکیب منحصر از مدل + رنگ + ظرفیت است</p>
       </div>
     </div>
   );
