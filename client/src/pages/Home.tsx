@@ -70,33 +70,6 @@ export default function Home() {
         </nav>
       </div>
 
-      {/* Center - Large Apple Logo Circle with Gradient */}
-      <div className="absolute inset-0 flex items-center justify-center z-5">
-        <svg className="w-80 h-80" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="circleFill" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.9)" />
-              <stop offset="100%" stopColor="rgba(255,255,255,0.75)" />
-            </linearGradient>
-            <linearGradient id="appleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#E91E63" />
-              <stop offset="33%" stopColor="#D81B60" />
-              <stop offset="66%" stopColor="#FFD700" />
-              <stop offset="100%" stopColor="#CDDC39" />
-            </linearGradient>
-          </defs>
-          
-          {/* Circle background */}
-          <circle cx="100" cy="100" r="95" fill="url(#circleFill)" filter="drop-shadow(0 10px 30px rgba(0,0,0,0.3))" />
-          
-          {/* Apple logo with gradient */}
-          <g transform="translate(100, 100)">
-            <path d="M 0,-30 C -10,-30 -15,-20 -15,-10 C -15,0 -10,15 0,15 C 10,15 15,0 15,-10 C 15,-20 10,-30 0,-30 Z M -5,20 C -8,20 -10,22 -10,25 C -10,28 -8,30 -5,30 C -2,30 0,28 0,25 C 0,22 -2,20 -5,20 Z" 
-                  fill="url(#appleGradient)" />
-          </g>
-        </svg>
-      </div>
-
       {/* Bottom Section - Social Media Icons */}
       <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 flex gap-5 z-30">
         {/* Location */}
