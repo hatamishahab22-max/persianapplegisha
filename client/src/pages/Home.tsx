@@ -5,7 +5,7 @@ import instagramIcon from "@assets/photo-output_1763702787471.png";
 import whatsappIcon from "@assets/photo-output_1763702810818.png";
 import locationIcon from "@assets/photo-output_1763702984960.png";
 import { Link } from "wouter";
-import { Phone, MapPin } from "lucide-react";
+import { Phone } from "lucide-react";
 
 export default function Home() {
   const [userName, setUserName] = useState<string>("");
@@ -39,38 +39,38 @@ export default function Home() {
         </div>
       )}
         
-      {/* Content - Logo at top center only */}
-      <div className="relative z-10 h-full flex flex-col items-center pt-12 px-4">
-        {/* Logo at Top */}
-        <div className="mb-12">
+      {/* Content - Logo and Menu at Top */}
+      <div className="relative z-10 flex flex-col items-center pt-6 px-4 gap-4">
+        {/* Logo - Small and at top */}
+        <div>
           <img 
             src={logoImage} 
             alt="Persian Apple Store" 
-            className="h-16 md:h-20 w-auto"
+            className="h-12 w-auto"
             data-testid="img-logo"
           />
         </div>
-      </div>
 
-      {/* Menu Buttons - Bottom Left Area */}
-      <div className="absolute bottom-6 left-6 z-30 flex gap-3">
-        <Link href="/products">
-          <button 
-            className="px-8 py-3 rounded-xl backdrop-blur-lg bg-white/10 border border-white/30 hover:bg-white/20 hover:scale-105 transition-all duration-300 shadow-lg text-white font-bold text-lg"
-            data-testid="link-products"
-          >
-            محصولات
-          </button>
-        </Link>
-        
-        <Link href="/contact">
-          <button 
-            className="px-8 py-3 rounded-xl backdrop-blur-lg bg-white/10 border border-white/30 hover:bg-white/20 hover:scale-105 transition-all duration-300 shadow-lg text-white font-bold text-lg"
-            data-testid="link-contact"
-          >
-            تماس با ما
-          </button>
-        </Link>
+        {/* Menu Buttons - Under Logo, Side by Side */}
+        <nav className="flex gap-3">
+          <Link href="/products">
+            <button 
+              className="px-6 py-2 rounded-lg backdrop-blur-lg bg-white/10 border border-white/30 hover:bg-white/20 hover:scale-105 transition-all duration-300 shadow-lg text-white font-bold"
+              data-testid="link-products"
+            >
+              محصولات
+            </button>
+          </Link>
+          
+          <Link href="/contact">
+            <button 
+              className="px-6 py-2 rounded-lg backdrop-blur-lg bg-white/10 border border-white/30 hover:bg-white/20 hover:scale-105 transition-all duration-300 shadow-lg text-white font-bold"
+              data-testid="link-contact"
+            >
+              تماس با ما
+            </button>
+          </Link>
+        </nav>
       </div>
 
       {/* Social Media & Contact Buttons - Bottom Right Corner */}
