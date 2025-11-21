@@ -97,6 +97,23 @@ export interface IStorage {
   createProductPrice(price: InsertProductPrice): Promise<ProductPrice>;
   updateProductPrice(id: string, price: Partial<InsertProductPrice>): Promise<ProductPrice | undefined>;
   deleteProductPrice(id: string): Promise<boolean>;
+  
+  // Product Details methods (for frontend product page)
+  getProductDetails(modelName: string): Promise<{
+    model: ProductModel | null;
+    category: Category | null;
+    storageOptions: ProductStorageOption[];
+    colors: ProductColor[];
+    prices: Array<{
+      storageId: string;
+      storageName: string;
+      colorId: string;
+      colorName: string;
+      colorHex: string;
+      price: string;
+      stock: number;
+    }>;
+  }>;
 
   // Apple ID Order methods
   getAllAppleIdOrders(): Promise<AppleIdOrder[]>;
@@ -636,6 +653,82 @@ export class MemStorage implements IStorage {
 
   async deleteProductPrice(id: string): Promise<boolean> {
     return this.productPrices.delete(id);
+  }
+
+  async getProductDetails(modelName: string): Promise<{
+    model: ProductModel | null;
+    category: Category | null;
+    storageOptions: ProductStorageOption[];
+    colors: ProductColor[];
+    prices: Array<{
+      storageId: string;
+      storageName: string;
+      colorId: string;
+      colorName: string;
+      colorHex: string;
+      price: string;
+      stock: number;
+    }>;
+  }> {
+    // Find model by name
+    const model = Array.from(this.productModels.values()).find(
+      m => m.nameFa === modelName || m.name === modelName
+    );
+
+    if (!model) {
+      return {
+        model: null,
+        category: null,
+        storageOptions: [],
+        colors: [],
+        prices: []
+      };
+    }
+
+    // Get category
+    const category = model.categoryId 
+      ? this.categories.get(model.categoryId) || null 
+      : null;
+
+    // Get all prices for this model
+    const modelPrices = Array.from(this.productPrices.values())
+      .filter(p => p.modelId === model.id);
+
+    // Get unique storage and color IDs
+    const storageIds = new Set(modelPrices.map(p => p.storageId));
+    const colorIds = new Set(modelPrices.map(p => p.colorId));
+
+    // Get storage options
+    const storageOptions = Array.from(this.productStorageOptions.values())
+      .filter(s => storageIds.has(s.id));
+
+    // Get colors
+    const colors = Array.from(this.productColors.values())
+      .filter(c => colorIds.has(c.id));
+
+    // Format prices
+    const prices = modelPrices.map(p => {
+      const storage = this.productStorageOptions.get(p.storageId);
+      const color = this.productColors.get(p.colorId);
+      
+      return {
+        storageId: p.storageId,
+        storageName: storage?.nameFa || '',
+        colorId: p.colorId,
+        colorName: color?.nameFa || '',
+        colorHex: color?.hexCode || '#000000',
+        price: p.price.toString(),
+        stock: p.stock || 0,
+      };
+    });
+
+    return {
+      model,
+      category,
+      storageOptions,
+      colors,
+      prices
+    };
   }
 
   // Apple ID Order methods

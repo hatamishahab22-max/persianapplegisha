@@ -379,6 +379,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get product details by model name (for product detail page)
+  app.get("/api/product-details/:modelName", async (req: Request, res: Response) => {
+    try {
+      const modelName = decodeURIComponent(req.params.modelName);
+      const details = await storage.getProductDetails(modelName);
+      res.json(details);
+    } catch (error) {
+      console.error('Error fetching product details:', error);
+      res.status(500).json({ error: "Failed to fetch product details" });
+    }
+  });
+
   app.post("/api/models", requireAdmin, async (req: Request, res: Response) => {
     try {
       const model = await storage.createModel(req.body);

@@ -436,6 +436,104 @@ export class DbStorage implements IStorage {
     return result.rowCount ? result.rowCount > 0 : false;
   }
 
+  async getProductDetails(modelName: string): Promise<{
+    model: ProductModel | null;
+    category: Category | null;
+    storageOptions: ProductStorageOption[];
+    colors: ProductColor[];
+    prices: Array<{
+      storageId: string;
+      storageName: string;
+      colorId: string;
+      colorName: string;
+      colorHex: string;
+      price: string;
+      stock: number;
+    }>;
+  }> {
+    // First, find the model by name (nameFa or name)
+    const models = await db.select().from(productModels).where(
+      or(
+        eq(productModels.nameFa, modelName),
+        eq(productModels.name, modelName)
+      )
+    );
+    
+    const model = models[0];
+    
+    if (!model) {
+      return {
+        model: null,
+        category: null,
+        storageOptions: [],
+        colors: [],
+        prices: []
+      };
+    }
+
+    // Get the category
+    const category = model.categoryId ? await this.getCategory(model.categoryId) : null;
+
+    // Get all prices for this model with joins
+    const pricesData = await db
+      .select({
+        storageId: productStorageOptions.id,
+        storageName: productStorageOptions.nameFa,
+        colorId: productColors.id,
+        colorName: productColors.nameFa,
+        colorHex: productColors.hexCode,
+        price: productPrices.price,
+        stock: productPrices.stock,
+      })
+      .from(productPrices)
+      .leftJoin(productStorageOptions, eq(productPrices.storageId, productStorageOptions.id))
+      .leftJoin(productColors, eq(productPrices.colorId, productColors.id))
+      .where(eq(productPrices.modelId, model.id));
+
+    // Get unique storage options and colors
+    const storageIds = new Set<string>();
+    const colorIds = new Set<string>();
+    const prices = pricesData
+      .filter(p => p.storageId && p.colorId)
+      .map(p => {
+        storageIds.add(p.storageId!);
+        colorIds.add(p.colorId!);
+        return {
+          storageId: p.storageId!,
+          storageName: p.storageName || '',
+          colorId: p.colorId!,
+          colorName: p.colorName || '',
+          colorHex: p.colorHex || '#000000',
+          price: p.price || '0',
+          stock: p.stock || 0,
+        };
+      });
+
+    // Fetch unique storage options
+    const storageOptions = await db
+      .select()
+      .from(productStorageOptions)
+      .where(
+        sql`${productStorageOptions.id} = ANY(${Array.from(storageIds)})`
+      );
+
+    // Fetch unique colors
+    const colors = await db
+      .select()
+      .from(productColors)
+      .where(
+        sql`${productColors.id} = ANY(${Array.from(colorIds)})`
+      );
+
+    return {
+      model,
+      category: category || null,
+      storageOptions,
+      colors,
+      prices
+    };
+  }
+
   // Apple ID Order methods
   async getAllAppleIdOrders(): Promise<AppleIdOrder[]> {
     return await db.select().from(appleIdOrders).orderBy(desc(appleIdOrders.createdAt));
