@@ -21,11 +21,11 @@ export default function Splash({ onComplete }: SplashProps) {
 
   return (
     <div 
-      className="h-screen w-full flex items-center justify-center bg-[#2C2C2C] cursor-pointer flex-col gap-4 p-4"
+      className="h-screen w-full flex items-center justify-center bg-[#2C2C2C] cursor-pointer flex-col gap-8 p-4"
       data-testid="splash-screen"
     >
-      {/* Name Input - moved down slightly */}
-      <div className="w-full max-w-sm space-y-4" dir="rtl">
+      {/* Name Input */}
+      <div className="w-full max-w-sm space-y-4 mb-4" dir="rtl">
         <div>
           <input
             type="text"
@@ -39,7 +39,7 @@ export default function Splash({ onComplete }: SplashProps) {
       </div>
 
       {/* Power Button */}
-      <div onClick={handleClick} className="cursor-pointer mt-8">
+      <div onClick={handleClick} className="cursor-pointer">
         <img 
           src={powerImage} 
           alt="Power ON - کلیک کنید برای ورود" 
