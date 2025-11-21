@@ -1,42 +1,51 @@
+import { useState } from "react";
 import { Link } from "wouter";
-import { ArrowRight, ChevronLeft } from "lucide-react";
+import { ArrowRight, ChevronLeft, X } from "lucide-react";
+import specsImage from "@assets/photo-output_6_1763703831528.png";
 
 export default function Products() {
+  const [showSpecs, setShowSpecs] = useState(false);
+
   const categories = [
     {
       title: "آیفون",
       description: "جدیدترین مدل‌های آیفون با گارانتی معتبر",
       path: "/category/iphone",
       gradient: "bg-gradient-to-br from-purple-600 via-purple-400 to-blue-400",
-      testId: "card-iphone"
+      testId: "card-iphone",
+      hasSpecs: true
     },
     {
       title: "رجیستری شرکتی",
       description: "آیفون‌های رجیستر شده شرکتی با قیمت ویژه",
       path: "/category/corporate",
       gradient: "bg-gradient-to-br from-orange-600 via-red-500 to-pink-500",
-      testId: "card-corporate"
+      testId: "card-corporate",
+      hasSpecs: false
     },
     {
       title: "آیفون کارکرده",
       description: "گوشی‌های موجود و سفارش مشتری",
       path: "/used-phones",
       gradient: "bg-gradient-to-br from-yellow-600 via-orange-500 to-red-400",
-      testId: "card-used-phone"
+      testId: "card-used-phone",
+      hasSpecs: false
     },
     {
       title: "آیپد",
       description: "تبلت‌های قدرتمند اپل برای کار و سرگرمی",
       path: "/category/ipad",
       gradient: "bg-gradient-to-br from-green-500 via-emerald-400 to-yellow-300",
-      testId: "card-ipad"
+      testId: "card-ipad",
+      hasSpecs: false
     },
     {
       title: "ایرپاد",
       description: "تجربه صدای بی‌نظیر با هدفون‌های اپل",
       path: "/category/airpods",
       gradient: "bg-gradient-to-br from-blue-600 via-cyan-400 to-teal-300",
-      testId: "card-airpods"
+      testId: "card-airpods",
+      hasSpecs: false
     }
   ];
 
@@ -64,33 +73,75 @@ export default function Products() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {categories.map((category) => (
-              <Link key={category.path} href={category.path}>
-                <div 
-                  className={`${category.gradient} rounded-3xl p-8 h-64 flex flex-col justify-between cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl`}
-                  data-testid={category.testId}
-                >
-                  <div>
-                    <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mb-4 backdrop-blur-sm">
-                      <div className="w-6 h-6 bg-white/40 rounded-full"></div>
+              <div key={category.path}>
+                <Link href={category.path}>
+                  <div 
+                    className={`${category.gradient} rounded-3xl p-8 flex flex-col justify-between cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl ${
+                      category.hasSpecs ? 'h-72' : 'h-64'
+                    }`}
+                    data-testid={category.testId}
+                  >
+                    <div>
+                      <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mb-4 backdrop-blur-sm">
+                        <div className="w-6 h-6 bg-white/40 rounded-full"></div>
+                      </div>
+                      <h2 className="text-2xl md:text-3xl font-bold mb-3">
+                        {category.title}
+                      </h2>
+                      <p className="text-white/90 text-sm md:text-base">
+                        {category.description}
+                      </p>
                     </div>
-                    <h2 className="text-2xl md:text-3xl font-bold mb-3">
-                      {category.title}
-                    </h2>
-                    <p className="text-white/90 text-sm md:text-base">
-                      {category.description}
-                    </p>
+                    
+                    <div className="flex items-center gap-2 text-sm font-medium">
+                      <span>مشاهده محصولات</span>
+                      <ChevronLeft className="w-4 h-4" />
+                    </div>
                   </div>
-                  
-                  <div className="flex items-center gap-2 text-sm font-medium">
-                    <span>مشاهده محصولات</span>
-                    <ChevronLeft className="w-4 h-4" />
-                  </div>
-                </div>
-              </Link>
+                </Link>
+                
+                {/* Technical Specs Button for iPhone */}
+                {category.hasSpecs && (
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setShowSpecs(true);
+                    }}
+                    className="w-full mt-3 px-4 py-2 bg-white/10 border border-white/30 rounded-xl hover:bg-white/20 transition-colors text-white text-sm font-bold"
+                    data-testid="button-specs"
+                  >
+                    مشخصات فنی
+                  </button>
+                )}
+              </div>
             ))}
           </div>
         </div>
       </div>
+
+      {/* Specs Modal */}
+      {showSpecs && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" data-testid="modal-specs">
+          <div className="bg-black border border-white/20 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-auto relative">
+            {/* Close Button */}
+            <button
+              onClick={() => setShowSpecs(false)}
+              className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors z-10"
+              data-testid="button-close-specs"
+            >
+              <X className="w-5 h-5 text-white" />
+            </button>
+
+            {/* Specs Image */}
+            <img
+              src={specsImage}
+              alt="مشخصات فنی"
+              className="w-full h-auto object-contain"
+              data-testid="img-specs"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
