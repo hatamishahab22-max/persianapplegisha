@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import logoImage from "@assets/IMG_4148_1763105490467.png";
 import videoFile from "@assets/video-output-597A6071-A019-439B-9B22-BF4D6A546A02-1_1763702148716.mov";
+import instagramIcon from "@assets/photo-output_1763702787471.png";
+import whatsappIcon from "@assets/photo-output_1763702810818.png";
 import { Link } from "wouter";
 import { Phone } from "lucide-react";
-import { FaWhatsapp, FaInstagram } from "react-icons/fa";
 
 export default function Home() {
   const [userName, setUserName] = useState<string>("");
@@ -78,11 +79,11 @@ export default function Home() {
           href="https://wa.me/989121149079"
           target="_blank"
           rel="noopener noreferrer"
-          className="w-14 h-14 rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform border-0 cursor-pointer bg-green-500"
+          className="w-16 h-16 rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform border-0 cursor-pointer overflow-hidden"
           data-testid="button-whatsapp"
           title="واتس‌اپ"
         >
-          <FaWhatsapp className="w-7 h-7 text-white" />
+          <img src={whatsappIcon} alt="WhatsApp" className="w-full h-full object-cover" />
         </a>
 
         {/* Instagram */}
@@ -90,22 +91,21 @@ export default function Home() {
           href="https://instagram.com/persianapple.gisha"
           target="_blank"
           rel="noopener noreferrer"
-          className="w-14 h-14 rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform border-0 cursor-pointer"
-          style={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}
+          className="w-16 h-16 rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform border-0 cursor-pointer overflow-hidden"
           data-testid="button-instagram"
           title="اینستاگرام"
         >
-          <FaInstagram className="w-7 h-7 text-white" />
+          <img src={instagramIcon} alt="Instagram" className="w-full h-full object-cover" />
         </a>
         
         {/* Phone / Contact */}
         <a 
           href="tel:+989121149079"
-          className="w-14 h-14 rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform border-0 cursor-pointer bg-blue-500"
+          className="w-16 h-16 rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform border-0 cursor-pointer bg-blue-500"
           data-testid="button-phone"
           title="تماس"
         >
-          <Phone className="w-7 h-7 text-white" />
+          <Phone className="w-8 h-8 text-white" />
         </a>
       </div>
 
