@@ -29,8 +29,8 @@ export default function Home() {
         <source src={videoFile} type="video/mp4" />
       </video>
 
-      {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-black/40" />
+      {/* Dark Overlay - Light to preserve colors */}
+      <div className="absolute inset-0 bg-black/10" />
       
       {/* Welcome Message in Top Right */}
       {userName && (
