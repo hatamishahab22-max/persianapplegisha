@@ -22,6 +22,7 @@ import UsedPhoneOrder from "@/pages/UsedPhoneOrder";
 import UsedPhones from "@/pages/UsedPhones";
 import UsedPhonesAvailable from "@/pages/UsedPhonesAvailable";
 import PriceManager from "@/pages/PriceManager";
+import AppleIdManager from "@/pages/AppleIdManager";
 import NotFound from "@/pages/not-found";
 
 // Loading component
@@ -80,6 +81,7 @@ function Router() {
         <Route path="/admin" component={() => <ProtectedRoute component={Admin} />} />
         <Route path="/admin/:section" component={() => <ProtectedRoute component={Admin} />} />
         <Route path="/admin/prices" component={() => <ProtectedRoute component={PriceManager} />} />
+        <Route path="/apple-id-manager" component={AppleIdManager} />
         <Route path="/products" component={Products} />
         <Route path="/product/:id" component={ProductDetail} />
         <Route path="/category/:slug" component={Category} />

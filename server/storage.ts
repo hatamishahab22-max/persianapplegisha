@@ -119,6 +119,7 @@ export class MemStorage implements IStorage {
   private productColors: Map<string, ProductColor>;
   private productStorageOptions: Map<string, ProductStorageOption>;
   private productPrices: Map<string, ProductPrice>;
+  private appleIdOrders: Map<string, AppleIdOrder>;
 
   constructor() {
     this.users = new Map();
@@ -133,6 +134,7 @@ export class MemStorage implements IStorage {
     this.productColors = new Map();
     this.productStorageOptions = new Map();
     this.productPrices = new Map();
+    this.appleIdOrders = new Map();
   }
 
   async getUser(id: string): Promise<User | undefined> {
@@ -634,6 +636,44 @@ export class MemStorage implements IStorage {
 
   async deleteProductPrice(id: string): Promise<boolean> {
     return this.productPrices.delete(id);
+  }
+
+  // Apple ID Order methods
+  async getAllAppleIdOrders(): Promise<AppleIdOrder[]> {
+    return Array.from(this.appleIdOrders.values());
+  }
+
+  async getAppleIdOrder(id: string): Promise<AppleIdOrder | undefined> {
+    return this.appleIdOrders.get(id);
+  }
+
+  async createAppleIdOrder(insertOrder: InsertAppleIdOrder): Promise<AppleIdOrder> {
+    const id = randomUUID();
+    const order: AppleIdOrder = {
+      ...insertOrder,
+      id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as AppleIdOrder;
+    this.appleIdOrders.set(id, order);
+    return order;
+  }
+
+  async updateAppleIdOrder(id: string, updates: Partial<InsertAppleIdOrder>): Promise<AppleIdOrder | undefined> {
+    const existing = this.appleIdOrders.get(id);
+    if (!existing) return undefined;
+
+    const updated: AppleIdOrder = {
+      ...existing,
+      ...updates,
+      updatedAt: new Date(),
+    } as AppleIdOrder;
+    this.appleIdOrders.set(id, updated);
+    return updated;
+  }
+
+  async deleteAppleIdOrder(id: string): Promise<boolean> {
+    return this.appleIdOrders.delete(id);
   }
 }
 
