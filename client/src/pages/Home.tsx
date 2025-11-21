@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import videoFile from "@assets/video-output-597A6071-A019-439B-9B22-BF4D6A546A02-1_1763756743631.mov";
+import videoFile from "@assets/video-output-A9EC3BA2-BB71-43FA-A81B-150F56847A70-1_1763763902684.mov";
 import instagramIcon from "@assets/photo-output_1763756743631.png";
 import whatsappIcon from "@assets/photo-output_1763702810818.png";
 import locationIcon from "@assets/photo-output_1763702984960.png";
@@ -34,10 +34,9 @@ export default function Home() {
       {/* Dark Overlay */}
       <div className="absolute inset-0 bg-black/10" />
       
-      {/* Top Section - Logo and Buttons */}
+      {/* Top Section - Logo Only */}
       <div className="absolute top-0 left-0 right-0 z-10 pt-6 px-4">
-        {/* Logo Image */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center">
           <img 
             src={logoImage} 
             alt="Persian Apple Store" 
@@ -47,32 +46,12 @@ export default function Home() {
             data-testid="img-logo"
           />
         </div>
-        
-        {/* Buttons */}
-        <nav className="flex justify-center gap-4">
-          <Link href="/contact">
-            <button 
-              className="px-8 py-3 rounded-2xl backdrop-blur-lg bg-white/20 border border-white/40 hover:bg-white/30 transition-all duration-300 shadow-lg text-white font-semibold"
-              data-testid="link-contact"
-            >
-              تماس با ما
-            </button>
-          </Link>
-          
-          <Link href="/products">
-            <button 
-              className="px-8 py-3 rounded-2xl backdrop-blur-lg bg-white/20 border border-white/40 hover:bg-white/30 transition-all duration-300 shadow-lg text-white font-semibold"
-              data-testid="link-products"
-            >
-              محصولات
-            </button>
-          </Link>
-        </nav>
       </div>
 
       {/* Center - Large Apple Logo Circle with Gradient */}
-      <div className="absolute inset-0 flex items-center justify-center z-5">
-        <svg className="w-80 h-80" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <div className="absolute inset-0 flex flex-col items-center justify-center z-5 gap-8">
+        {/* Apple Logo SVG */}
+        <svg className="w-64 h-64" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="circleFill" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="rgba(255,255,255,0.9)" />
@@ -95,6 +74,27 @@ export default function Home() {
                   fill="url(#appleGradient)" />
           </g>
         </svg>
+        
+        {/* Menu Buttons Below Apple Logo - Glass Rectangle Style */}
+        <nav className="flex gap-3">
+          <Link href="/contact">
+            <button 
+              className="px-12 py-4 rounded-xl backdrop-blur-lg bg-white/20 border border-white/40 hover:bg-white/30 transition-all duration-300 shadow-lg text-white font-bold text-lg"
+              data-testid="link-contact"
+            >
+              تماس با ما
+            </button>
+          </Link>
+          
+          <Link href="/products">
+            <button 
+              className="px-12 py-4 rounded-xl backdrop-blur-lg bg-white/20 border border-white/40 hover:bg-white/30 transition-all duration-300 shadow-lg text-white font-bold text-lg"
+              data-testid="link-products"
+            >
+              محصولات
+            </button>
+          </Link>
+        </nav>
       </div>
 
       {/* Bottom Section - Social Media Icons */}
