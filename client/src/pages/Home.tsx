@@ -28,7 +28,7 @@ export default function Home() {
         preload="auto"
         data-testid="video-background"
       >
-        <source src={videoFile} type="video/mp4" />
+        <source src={videoFile} type="video/quicktime" />
       </video>
 
       {/* Dark Overlay */}
