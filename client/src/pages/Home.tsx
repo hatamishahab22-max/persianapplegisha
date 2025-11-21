@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import logoImage from "@assets/IMG_4148_1763105490467.png";
+import logoImage from "@assets/photo-output_1763708892455.jpeg";
 import videoFile from "@assets/video-output-597A6071-A019-439B-9B22-BF4D6A546A02-1_1763702148716.mov";
 import instagramIcon from "@assets/photo-output_1763702787471.png";
 import whatsappIcon from "@assets/photo-output_1763702810818.png";
@@ -43,15 +43,16 @@ export default function Home() {
       {/* Content - Logo and Menu at Top */}
       <div className="relative z-10 flex flex-col items-center pt-6 px-4 gap-4">
         {/* Logo - Small and at top */}
-        <div>
+        <div className="flex flex-col items-center gap-2">
           <img 
             src={logoImage} 
             alt="Persian Apple Store" 
-            className="h-12 w-auto"
+            className="h-20 w-20 rounded-full shadow-2xl"
             loading="eager"
             decoding="async"
             data-testid="img-logo"
           />
+          <h1 className="text-2xl font-bold text-white drop-shadow-lg">پرشی اپل</h1>
         </div>
 
         {/* Menu Buttons - Under Logo, Side by Side */}
