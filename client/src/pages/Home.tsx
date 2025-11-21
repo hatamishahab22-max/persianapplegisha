@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import videoFile from "@assets/video-output-597A6071-A019-439B-9B22-BF4D6A546A02-1_1763702148716.mov";
-import instagramIcon from "@assets/photo-output_1763702787471.png";
+import videoFile from "@assets/video-output-597A6071-A019-439B-9B22-BF4D6A546A02-1_1763756743631.mov";
+import instagramIcon from "@assets/photo-output_1763756743631.png";
 import whatsappIcon from "@assets/photo-output_1763702810818.png";
 import locationIcon from "@assets/photo-output_1763702984960.png";
 import { Link } from "wouter";
 import { Phone } from "lucide-react";
 
-const logoImage = "/attached_assets/IMG_4148_1763710499063.PNG";
+const logoImage = "/attached_assets/IMG_4148_1763756757943.PNG";
 
 export default function Home() {
   const [userName, setUserName] = useState<string>("");
