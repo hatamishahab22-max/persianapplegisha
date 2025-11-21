@@ -25,16 +25,19 @@ export function GlobalBackground() {
   const [currentBg, setCurrentBg] = useState(backgroundUrl);
   const preloadedRef = useRef(new Set<string>());
 
-  // Preload all backgrounds on mount
+  // Defer preload to prevent blocking initial render
   useEffect(() => {
-    const allBackgrounds = getAllBackgrounds();
-    Object.values(allBackgrounds).forEach(url => {
-      if (!preloadedRef.current.has(url)) {
-        const img = new Image();
-        img.src = url;
-        preloadedRef.current.add(url);
-      }
-    });
+    const timer = setTimeout(() => {
+      const allBackgrounds = getAllBackgrounds();
+      Object.values(allBackgrounds).forEach(url => {
+        if (!preloadedRef.current.has(url)) {
+          const img = new Image();
+          img.src = url;
+          preloadedRef.current.add(url);
+        }
+      });
+    }, 1000);
+    return () => clearTimeout(timer);
   }, []);
 
   // Instant switch when background changes (already preloaded)

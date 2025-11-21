@@ -24,6 +24,7 @@ export default function Home() {
         muted 
         loop 
         playsInline
+        preload="auto"
         data-testid="video-background"
       >
         <source src={videoFile} type="video/mp4" />
@@ -47,6 +48,8 @@ export default function Home() {
             src={logoImage} 
             alt="Persian Apple Store" 
             className="h-12 w-auto"
+            loading="eager"
+            decoding="async"
             data-testid="img-logo"
           />
         </div>
@@ -84,7 +87,7 @@ export default function Home() {
           data-testid="button-whatsapp"
           title="واتس‌اپ"
         >
-          <img src={whatsappIcon} alt="WhatsApp" className="w-full h-full object-cover" />
+          <img src={whatsappIcon} alt="WhatsApp" className="w-full h-full object-cover" loading="lazy" decoding="async" />
         </a>
 
         {/* Instagram */}
@@ -96,7 +99,7 @@ export default function Home() {
           data-testid="button-instagram"
           title="اینستاگرام"
         >
-          <img src={instagramIcon} alt="Instagram" className="w-full h-full object-cover" />
+          <img src={instagramIcon} alt="Instagram" className="w-full h-full object-cover" loading="lazy" decoding="async" />
         </a>
         
         {/* Phone / Contact */}

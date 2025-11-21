@@ -139,6 +139,7 @@ export default function Products() {
               src={specsImage}
               alt="مشخصات فنی"
               className="w-full h-auto object-contain"
+              loading="eager"
               data-testid="img-specs"
             />
           </div>
