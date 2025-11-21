@@ -53,7 +53,7 @@ export default function Category() {
   const currentCategory = categoryData[slug] || { title: "محصولات", products: [] };
 
   return (
-    <div className="h-screen overflow-hidden relative" dir="rtl">
+    <div className="h-screen overflow-hidden relative bg-black" dir="rtl">
       {/* Video Background - Full Screen */}
       <video
         autoPlay
@@ -61,6 +61,7 @@ export default function Category() {
         muted
         playsInline
         className="absolute inset-0 w-full h-full object-cover"
+        poster="/attached_assets/IMG_6574_1763107623273.jpeg"
       >
         <source src={categoryVideo} type="video/mp4" />
       </video>

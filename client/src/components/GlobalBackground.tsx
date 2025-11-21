@@ -23,46 +23,51 @@ export function GlobalBackground() {
   const category = getCategoryFromPath(location);
   const backgroundUrl = useBackgroundImage(category);
   const [currentBg, setCurrentBg] = useState(backgroundUrl);
+  const [isLoaded, setIsLoaded] = useState(false);
   const preloadedRef = useRef(new Set<string>());
 
-  // Defer preload to prevent blocking initial render
+  // Immediate preload (no delay) - start as soon as component mounts
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const allBackgrounds = getAllBackgrounds();
-      Object.values(allBackgrounds).forEach(url => {
-        if (!preloadedRef.current.has(url)) {
-          const img = new Image();
-          img.src = url;
-          preloadedRef.current.add(url);
-        }
-      });
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Instant switch when background changes (already preloaded)
-  useEffect(() => {
-    if (backgroundUrl !== currentBg) {
-      // Check if already preloaded
-      if (preloadedRef.current.has(backgroundUrl)) {
-        setCurrentBg(backgroundUrl);
-      } else {
-        // Fallback: load if not preloaded yet
+    const allBackgrounds = getAllBackgrounds();
+    Object.values(allBackgrounds).forEach(url => {
+      if (!preloadedRef.current.has(url)) {
         const img = new Image();
-        img.src = backgroundUrl;
+        img.src = url;
         img.onload = () => {
-          setCurrentBg(backgroundUrl);
-          preloadedRef.current.add(backgroundUrl);
+          preloadedRef.current.add(url);
         };
       }
+    });
+  }, []);
+
+  // Load current background immediately
+  useEffect(() => {
+    setIsLoaded(false);
+    
+    if (preloadedRef.current.has(backgroundUrl)) {
+      // Already loaded, show immediately
+      setCurrentBg(backgroundUrl);
+      setIsLoaded(true);
+    } else {
+      // Load it now
+      const img = new Image();
+      img.src = backgroundUrl;
+      img.onload = () => {
+        setCurrentBg(backgroundUrl);
+        preloadedRef.current.add(backgroundUrl);
+        setIsLoaded(true);
+      };
+      // Show immediately even if not loaded (browser will load it)
+      setCurrentBg(backgroundUrl);
     }
-  }, [backgroundUrl, currentBg]);
+  }, [backgroundUrl]);
 
   return (
     <div 
-      className="fixed inset-0 bg-cover bg-center transition-opacity duration-500 -z-10"
+      className={`fixed inset-0 bg-cover bg-center -z-10 transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
       style={{ 
         backgroundImage: `url(${currentBg})`,
+        backgroundColor: '#000',
       }}
     >
       <div className="absolute inset-0 bg-black/50" />

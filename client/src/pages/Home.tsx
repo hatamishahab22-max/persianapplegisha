@@ -16,7 +16,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="h-screen w-full overflow-hidden relative font-['Vazirmatn']">
+    <div className="h-screen w-full overflow-hidden relative bg-black font-['Vazirmatn']">
       {/* Background Video */}
       <video 
         className="h-full w-full object-cover absolute inset-0"
@@ -25,6 +25,7 @@ export default function Home() {
         loop 
         playsInline
         preload="auto"
+        poster="/attached_assets/a87b21c6-86b6-44fc-a01c-c6759e712c0b_1763764875125.jpeg"
         data-testid="video-background"
       >
         <source src={videoFile} type="video/mp4" />
