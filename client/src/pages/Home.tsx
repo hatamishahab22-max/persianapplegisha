@@ -3,10 +3,9 @@ import videoFile from "@assets/video-output-597A6071-A019-439B-9B22-BF4D6A546A02
 import instagramIcon from "@assets/photo-output_1763702787471.png";
 import whatsappIcon from "@assets/photo-output_1763702810818.png";
 import locationIcon from "@assets/photo-output_1763702984960.png";
+import logoImage from "@assets/a87b21c6-86b6-44fc-a01c-c6759e712c0b_1763764875125.jpeg";
 import { Link } from "wouter";
 import { Phone } from "lucide-react";
-
-const logoImage = "/attached_assets/IMG_4148_1763710499063.PNG";
 
 export default function Home() {
   const [userName, setUserName] = useState<string>("");
