@@ -10,18 +10,18 @@ import { queryClient, apiRequest } from "@/lib/queryClient";
 interface ProductPrice {
   id: string;
   price: string;
-  model: {
+  model?: {
     name: string;
     nameFa: string;
-    category: {
+    category?: {
       nameFa: string;
-    };
-  };
-  color: {
+    } | null;
+  } | null;
+  color?: {
     name: string;
     nameFa: string;
-  };
-  storageOption: {
+  } | null;
+  storage?: {
     name: string;
     nameFa: string;
   };
@@ -119,13 +119,15 @@ export default function PriceManagerSimple() {
                   {/* Product Info */}
                   <div className="flex-1 min-w-0">
                     <div className="font-semibold text-lg mb-1">
-                      {price.model.nameFa}
-                      <span className="text-sm text-muted-foreground mr-2">
-                        ({price.model.category.nameFa})
-                      </span>
+                      {price.model?.nameFa || 'نامشخص'}
+                      {price.model?.category?.nameFa && (
+                        <span className="text-sm text-muted-foreground mr-2">
+                          ({price.model.category.nameFa})
+                        </span>
+                      )}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      رنگ: {price.color.nameFa} • حافظه: {price.storageOption.nameFa}
+                      رنگ: {price.color?.nameFa || 'نامشخص'} • حافظه: {price.storage?.nameFa || 'نامشخص'}
                     </div>
                   </div>
 

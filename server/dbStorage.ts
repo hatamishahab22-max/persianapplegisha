@@ -351,8 +351,66 @@ export class DbStorage implements IStorage {
   }
 
   // Product Prices methods
-  async getAllProductPrices(): Promise<ProductPrice[]> {
-    return await db.select().from(productPrices);
+  async getAllProductPrices(): Promise<any[]> {
+    const prices = await db
+      .select({
+        id: productPrices.id,
+        modelId: productPrices.modelId,
+        colorId: productPrices.colorId,
+        storageId: productPrices.storageId,
+        price: productPrices.price,
+        stock: productPrices.stock,
+        isActive: productPrices.isActive,
+        createdAt: productPrices.createdAt,
+        updatedAt: productPrices.updatedAt,
+        model: {
+          id: productModels.id,
+          name: productModels.name,
+          nameFa: productModels.nameFa,
+          generation: productModels.generation,
+          categoryId: productModels.categoryId,
+        },
+        color: {
+          id: productColors.id,
+          name: productColors.name,
+          nameFa: productColors.nameFa,
+          hexCode: productColors.hexCode,
+        },
+        storage: {
+          id: productStorageOptions.id,
+          name: productStorageOptions.name,
+          nameFa: productStorageOptions.nameFa,
+        },
+      })
+      .from(productPrices)
+      .leftJoin(productModels, eq(productPrices.modelId, productModels.id))
+      .leftJoin(productColors, eq(productPrices.colorId, productColors.id))
+      .leftJoin(productStorageOptions, eq(productPrices.storageId, productStorageOptions.id));
+    
+    // Now fetch categories for each model
+    const enrichedPrices = await Promise.all(
+      prices.map(async (price) => {
+        if (price.model?.categoryId) {
+          const category = await this.getCategory(price.model.categoryId);
+          return {
+            ...price,
+            model: {
+              ...price.model,
+              category: category || null,
+            },
+          };
+        }
+        return {
+          ...price,
+          model: {
+            ...price.model,
+            category: null,
+          },
+        };
+      })
+    );
+    
+    return enrichedPrices;
   }
 
   async getProductPrice(id: string): Promise<ProductPrice | undefined> {
