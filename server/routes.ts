@@ -1089,6 +1089,172 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ============ IPHONE PRICE MANAGEMENT ROUTES ============
+  app.get("/api/iphone-prices", async (req: Request, res: Response) => {
+    try {
+      const prices = await storage.getAllProductPrices();
+      const models = await storage.getAllModels();
+      const colors = await storage.getAllColors();
+      const storages = await storage.getAllStorageOptions();
+
+      const enrichedPrices = prices.map(price => {
+        const model = models.find(m => m.id === price.modelId);
+        const color = colors.find(c => c.id === price.colorId);
+        const storage = storages.find(s => s.id === price.storageId);
+
+        return {
+          id: price.id,
+          modelName: model?.nameFa || model?.name || "نامشخص",
+          colorFa: color?.nameFa || color?.name || "نامشخص",
+          colorHex: color?.hexCode,
+          storage: storage?.nameFa || storage?.name || "نامشخص",
+          price: parseInt(price.price.toString())
+        };
+      });
+
+      res.json(enrichedPrices);
+    } catch (error) {
+      console.error("Error fetching iPhone prices:", error);
+      res.status(500).json({ error: "Failed to fetch iPhone prices" });
+    }
+  });
+
+  app.post("/api/iphone-prices/bulk-update", requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const { items } = req.body;
+
+      if (!items || !Array.isArray(items)) {
+        return res.status(400).json({ error: "Invalid items format" });
+      }
+
+      let updated = 0;
+      for (const item of items) {
+        await storage.updateProductPrice(item.id, {
+          price: item.price.toString()
+        });
+        updated++;
+      }
+
+      res.json({ success: true, updated });
+    } catch (error) {
+      console.error("Error updating iPhone prices:", error);
+      res.status(500).json({ error: "Failed to update prices" });
+    }
+  });
+
+  // Initialize iPhone models (one-time setup)
+  app.post("/api/admin/init-iphone-models", requireAdmin, async (req: Request, res: Response) => {
+    try {
+      let models = await storage.getAllModels();
+      if (models.length > 0) {
+        return res.json({ message: "Models already initialized" });
+      }
+
+      // Get iPhone category
+      const categories = await storage.getAllCategories();
+      const iphoneCategory = categories.find(c => c.slug === "iphone");
+      
+      if (!iphoneCategory) {
+        return res.status(400).json({ error: "iPhone category not found" });
+      }
+
+      // Create models
+      const iPhoneModels = [
+        { name: "iPhone 17", nameFa: "آیفون ۱۷" },
+        { name: "iPhone 17 Air", nameFa: "آیفون ۱۷ ایر" },
+        { name: "iPhone 17 Pro", nameFa: "آیفون ۱۷ پرو" },
+        { name: "iPhone 17 Pro Max", nameFa: "آیفون ۱۷ پرو مکس" }
+      ];
+
+      const createdModels: any[] = [];
+      for (const modelData of iPhoneModels) {
+        const model = await storage.createModel({
+          categoryId: iphoneCategory.id,
+          ...modelData,
+          generation: "iPhone 17"
+        });
+        createdModels.push(model);
+      }
+
+      // Create colors
+      const colorData = [
+        { name: "Black", nameFa: "مشکی", hexCode: "#000000" },
+        { name: "White", nameFa: "سفید", hexCode: "#FFFFFF" },
+        { name: "Blue", nameFa: "آبی", hexCode: "#0071E3" },
+        { name: "Green", nameFa: "سبز", hexCode: "#34C759" },
+        { name: "Purple", nameFa: "بنفش", hexCode: "#A855F7" },
+        { name: "Orange", nameFa: "نارنجی", hexCode: "#FF9500" },
+        { name: "Red", nameFa: "قرمز", hexCode: "#FF3B30" },
+        { name: "Pink", nameFa: "صورتی", hexCode: "#FF1493" }
+      ];
+
+      const createdColors: any[] = [];
+      for (const colData of colorData) {
+        const color = await storage.createColor(colData);
+        createdColors.push(color);
+      }
+
+      // Create storage options
+      const storageData = [
+        { name: "256GB", nameFa: "۲۵۶ گیگابایت" },
+        { name: "512GB", nameFa: "۵۱۲ گیگابایت" },
+        { name: "1TB", nameFa: "۱ ترابایت" }
+      ];
+
+      const createdStorages: any[] = [];
+      for (const storData of storageData) {
+        const storage = await storage.createStorageOption({
+          categoryId: iphoneCategory.id,
+          ...storData
+        });
+        createdStorages.push(storage);
+      }
+
+      // Create price combinations (model + storage + color)
+      // Sample prices for demonstration
+      const basePrices: { [key: string]: number } = {
+        "iPhone 17": 30000000,        // 30M
+        "iPhone 17 Air": 45000000,    // 45M
+        "iPhone 17 Pro": 55000000,    // 55M
+        "iPhone 17 Pro Max": 65000000 // 65M
+      };
+
+      let pricesCreated = 0;
+      for (const model of createdModels) {
+        for (const storage of createdStorages) {
+          for (const color of createdColors) {
+            // Add some price variation based on storage
+            let price = basePrices[model.name] || 30000000;
+            if (storage.name === "512GB") price += 2000000;
+            if (storage.name === "1TB") price += 5000000;
+
+            await storage.createProductPrice({
+              modelId: model.id,
+              storageId: storage.id,
+              colorId: color.id,
+              price: price.toString()
+            });
+            pricesCreated++;
+          }
+        }
+      }
+
+      res.json({
+        success: true,
+        message: "iPhone models initialized",
+        stats: {
+          models: createdModels.length,
+          colors: createdColors.length,
+          storages: createdStorages.length,
+          prices: pricesCreated
+        }
+      });
+    } catch (error: any) {
+      console.error("Error initializing models:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;
