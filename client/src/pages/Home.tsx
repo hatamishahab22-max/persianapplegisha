@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import logoImage from "@assets/IMG_4148_1763105490467.png";
+import videoFile from "@assets/video-output-597A6071-A019-439B-9B22-BF4D6A546A02-1_1763702148716.mov";
 import { Link } from "wouter";
 import { MessageCircle, Clock } from "lucide-react";
 import { FaWhatsapp, FaInstagram } from "react-icons/fa";
 
 export default function Home() {
   const [time, setTime] = useState<string>("");
-  const videoUrl = "video-output-597A6071-A019-439B-9B22-BF4D6A546A02-1_1763702148716.mov";
 
   useEffect(() => {
     const updateTime = () => {
@@ -36,7 +36,7 @@ export default function Home() {
         playsInline
         data-testid="video-background"
       >
-        <source src={videoUrl} type="video/mp4" />
+        <source src={videoFile} type="video/mp4" />
       </video>
 
       {/* Dark Overlay */}
