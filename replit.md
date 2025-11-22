@@ -12,7 +12,24 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
-### Latest Updates (November 21, 2025)
+### Latest Updates (November 22, 2025)
+- **Apple ID Service Updates**:
+  - Updated service price from 500,000 to 5,000,000 Toman (Verify service)
+  - Changed card number to: 6104-3378-2797-7933 (Bank Mellat, Shahab Hatami)
+  - Added bank name display (بانک ملت) to payment card section
+- **PWA (Progressive Web App) Enhancement**:
+  - Registered Service Worker in main.tsx for offline functionality
+  - PWA fully functional with manifest.json and caching strategy
+  - Users can now install the app on their mobile devices
+  - Service Worker caches static resources for offline access
+  - Network-first strategy for dynamic content, cache fallback for offline mode
+- **Product Details Issue Identified**:
+  - Only products with prices in database show storage/color options
+  - Currently working models: iPhone 17 series (all variants), iPad, iPad Air, AirPods
+  - Models without prices (iPhone 16, 15, 14, etc.) show empty selection screens
+  - Database contains 105 prices total (96 for iPhone 17, 8 for iPad, 1 for AirPods)
+
+### Previous Updates (November 21, 2025)
 - **CRITICAL DATA PERSISTENCE FIX**:
   - Fixed major issue where data was not persisting across deployments
   - Migrated from in-memory storage (MemStorage) to PostgreSQL database (DbStorage)
