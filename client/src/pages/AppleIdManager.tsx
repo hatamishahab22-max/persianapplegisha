@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { ChevronLeft, Upload, Loader, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const SERVICE_PRICE = 500000; // 500,000 Toman
+const SERVICE_PRICE = 5000000; // 5,000,000 Toman (Verify)
 
 export default function AppleIdManager() {
   const [_, setLocation] = useLocation();
@@ -339,8 +339,9 @@ export default function AppleIdManager() {
                 </p>
                 <div className="bg-green-500/10 border border-green-500/30 rounded p-3 text-center">
                   <p className="text-sm text-white/60">شماره کارت:</p>
-                  <p className="font-mono text-lg text-green-400">6037-9971-8764-5321</p>
+                  <p className="font-mono text-lg text-green-400">6104-3378-2797-7933</p>
                   <p className="text-sm text-white/60 mt-1">به نام: شهاب حاتمی</p>
+                  <p className="text-xs text-white/50 mt-1">بانک ملت</p>
                 </div>
 
                 <div className="flex items-center gap-3">
