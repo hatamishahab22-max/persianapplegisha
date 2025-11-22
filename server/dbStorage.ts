@@ -176,23 +176,32 @@ export class DbStorage implements IStorage {
   async getVisitsStats(): Promise<any> {
     const totalVisits = await db.select({ count: sql<number>`count(*)` }).from(visits);
     const uniqueVisitors = await db.select({ count: sql<number>`count(distinct ${visits.sessionId})` }).from(visits);
+    const todayVisits = await db.select({ count: sql<number>`count(*)` })
+      .from(visits)
+      .where(sql`DATE(${visits.createdAt}) = CURRENT_DATE`);
+    
     return {
-      total: totalVisits[0]?.count || 0,
-      unique: uniqueVisitors[0]?.count || 0
+      total: Number(totalVisits[0]?.count) || 0,
+      today: Number(todayVisits[0]?.count) || 0,
+      uniqueVisitors: Number(uniqueVisitors[0]?.count) || 0
     };
   }
 
   async getPopularPages(): Promise<any[]> {
     const popularPages = await db
       .select({
-        page: visits.page,
+        path: visits.page,
         count: sql<number>`count(*)`.as('count')
       })
       .from(visits)
       .groupBy(visits.page)
       .orderBy(desc(sql`count(*)`))
       .limit(10);
-    return popularPages;
+    
+    return popularPages.map(p => ({
+      path: p.path,
+      count: Number(p.count) || 0
+    }));
   }
 
   // Error Logging methods
@@ -222,12 +231,45 @@ export class DbStorage implements IStorage {
 
   async getErrorStats(): Promise<any> {
     const totalErrors = await db.select({ count: sql<number>`count(*)` }).from(errorLogs);
+    const todayErrors = await db.select({ count: sql<number>`count(*)` })
+      .from(errorLogs)
+      .where(sql`DATE(${errorLogs.createdAt}) = CURRENT_DATE`);
     const unresolvedErrors = await db.select({ count: sql<number>`count(*)` })
       .from(errorLogs)
       .where(eq(errorLogs.resolved, false));
+    const criticalErrors = await db.select({ count: sql<number>`count(*)` })
+      .from(errorLogs)
+      .where(eq(errorLogs.severity, 'critical'));
+    const errorSeverity = await db.select({ count: sql<number>`count(*)` })
+      .from(errorLogs)
+      .where(eq(errorLogs.severity, 'error'));
+    const warningSeverity = await db.select({ count: sql<number>`count(*)` })
+      .from(errorLogs)
+      .where(eq(errorLogs.severity, 'warning'));
+    const frontendErrors = await db.select({ count: sql<number>`count(*)` })
+      .from(errorLogs)
+      .where(eq(errorLogs.source, 'frontend'));
+    const backendErrors = await db.select({ count: sql<number>`count(*)` })
+      .from(errorLogs)
+      .where(eq(errorLogs.source, 'backend'));
+    const apiErrors = await db.select({ count: sql<number>`count(*)` })
+      .from(errorLogs)
+      .where(eq(errorLogs.source, 'api'));
+    
     return {
-      total: totalErrors[0]?.count || 0,
-      unresolved: unresolvedErrors[0]?.count || 0
+      total: Number(totalErrors[0]?.count) || 0,
+      today: Number(todayErrors[0]?.count) || 0,
+      unresolved: Number(unresolvedErrors[0]?.count) || 0,
+      bySeverity: {
+        critical: Number(criticalErrors[0]?.count) || 0,
+        error: Number(errorSeverity[0]?.count) || 0,
+        warning: Number(warningSeverity[0]?.count) || 0
+      },
+      bySource: {
+        frontend: Number(frontendErrors[0]?.count) || 0,
+        backend: Number(backendErrors[0]?.count) || 0,
+        api: Number(apiErrors[0]?.count) || 0
+      }
     };
   }
 
