@@ -72,6 +72,14 @@ export default function Category() {
     modelIdsWithPrices.has(model.id)
   ) || [];
 
+  // Get minimum price for each model
+  const getMinPrice = (modelId: string) => {
+    const modelPrices = allPrices?.filter(p => p.modelId === modelId) || [];
+    if (modelPrices.length === 0) return null;
+    const prices = modelPrices.map(p => parseInt(p.price));
+    return Math.min(...prices);
+  };
+
   const categoryTitle = currentCategory?.nameFa || "محصولات";
 
   return (
@@ -129,16 +137,24 @@ export default function Category() {
           </div>
         ) : (
           <div className="space-y-4 w-full max-w-2xl px-8">
-            {categoryModels.map((model, index) => (
-              <Link key={model.id} href={`/product/${encodeURIComponent(model.nameFa)}`}>
-                <button
-                  className="w-full text-center text-white hover:opacity-80 transition-all p-6 cursor-pointer transform hover:scale-105 duration-300"
-                  data-testid={`product-item-${index}`}
-                >
-                  <span className="text-3xl font-bold drop-shadow-lg">{model.nameFa}</span>
-                </button>
-              </Link>
-            ))}
+            {categoryModels.map((model, index) => {
+              const minPrice = getMinPrice(model.id);
+              return (
+                <Link key={model.id} href={`/product/${encodeURIComponent(model.nameFa)}`}>
+                  <button
+                    className="w-full text-center text-white hover:opacity-80 transition-all p-6 cursor-pointer transform hover:scale-105 duration-300"
+                    data-testid={`product-item-${index}`}
+                  >
+                    <div className="text-3xl font-bold drop-shadow-lg mb-2">{model.nameFa}</div>
+                    {minPrice && (
+                      <div className="text-lg text-orange-400 drop-shadow-lg">
+                        از {minPrice.toLocaleString('fa-IR')} تومان
+                      </div>
+                    )}
+                  </button>
+                </Link>
+              );
+            })}
           </div>
         )}
       </div>
