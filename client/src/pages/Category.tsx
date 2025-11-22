@@ -31,31 +31,40 @@ export default function Category() {
 
   // Fetch categories
   const { data: categories, isLoading: categoriesLoading, error: categoriesError } = useQuery<Category[]>({
-    queryKey: ['categories'],
+    queryKey: ['category-page-categories'],
     queryFn: async () => {
+      console.log('[Category] Fetching categories...');
       const response = await fetch('/api/categories');
       if (!response.ok) throw new Error('Failed to fetch categories');
-      return response.json();
+      const data = await response.json();
+      console.log('[Category] Categories loaded:', data?.length);
+      return data;
     },
   });
 
   // Fetch all models
   const { data: allModels, isLoading: modelsLoading, error: modelsError } = useQuery<ProductModel[]>({
-    queryKey: ['models'],
+    queryKey: ['category-page-models'],
     queryFn: async () => {
+      console.log('[Category] Fetching models...');
       const response = await fetch('/api/models');
       if (!response.ok) throw new Error('Failed to fetch models');
-      return response.json();
+      const data = await response.json();
+      console.log('[Category] Models loaded:', data?.length);
+      return data;
     },
   });
 
   // Fetch all prices to filter models with prices
   const { data: allPrices, isLoading: pricesLoading, error: pricesError } = useQuery<ProductPrice[]>({
-    queryKey: ['prices'],
+    queryKey: ['category-page-prices'],
     queryFn: async () => {
+      console.log('[Category] Fetching prices...');
       const response = await fetch('/api/product-prices');
       if (!response.ok) throw new Error('Failed to fetch prices');
-      return response.json();
+      const data = await response.json();
+      console.log('[Category] Prices loaded:', data?.length);
+      return data;
     },
   });
 
@@ -71,6 +80,15 @@ export default function Category() {
     model.categoryId === currentCategory.id &&
     modelIdsWithPrices.has(model.id)
   ) || [];
+
+  console.log('[Category] Loading states:', { categoriesLoading, modelsLoading, pricesLoading });
+  console.log('[Category] Errors:', { categoriesError, modelsError, pricesError });
+  console.log('[Category] Data counts:', {
+    categories: categories?.length,
+    models: allModels?.length,
+    prices: allPrices?.length,
+    categoryModels: categoryModels.length
+  });
 
   const categoryTitle = currentCategory?.nameFa || "محصولات";
 
