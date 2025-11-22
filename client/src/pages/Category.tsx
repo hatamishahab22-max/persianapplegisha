@@ -17,12 +17,20 @@ interface ProductModel {
   categoryId: string;
 }
 
+interface ProductPrice {
+  id: string;
+  modelId: string;
+  colorId: string;
+  storageId: string;
+  price: string;
+}
+
 export default function Category() {
   const params = useParams();
   const slug = params.slug || "";
 
   // Fetch categories
-  const { data: categories } = useQuery<Category[]>({
+  const { data: categories, isLoading: categoriesLoading, error: categoriesError } = useQuery<Category[]>({
     queryKey: ['categories'],
     queryFn: async () => {
       const response = await fetch('/api/categories');
@@ -32,7 +40,7 @@ export default function Category() {
   });
 
   // Fetch all models
-  const { data: allModels, isLoading: modelsLoading } = useQuery<ProductModel[]>({
+  const { data: allModels, isLoading: modelsLoading, error: modelsError } = useQuery<ProductModel[]>({
     queryKey: ['models'],
     queryFn: async () => {
       const response = await fetch('/api/models');
@@ -41,12 +49,27 @@ export default function Category() {
     },
   });
 
+  // Fetch all prices to filter models with prices
+  const { data: allPrices, isLoading: pricesLoading, error: pricesError } = useQuery<ProductPrice[]>({
+    queryKey: ['prices'],
+    queryFn: async () => {
+      const response = await fetch('/api/product-prices');
+      if (!response.ok) throw new Error('Failed to fetch prices');
+      return response.json();
+    },
+  });
+
   // Find current category
   const currentCategory = categories?.find(cat => cat.slug === slug);
   
-  // Filter models for this category
+  // Get unique model IDs that have prices
+  const modelIdsWithPrices = new Set(allPrices?.map(price => price.modelId) || []);
+  
+  // Filter models for this category AND only those with prices
   const categoryModels = allModels?.filter(model => 
-    currentCategory && model.categoryId === currentCategory.id
+    currentCategory && 
+    model.categoryId === currentCategory.id &&
+    modelIdsWithPrices.has(model.id)
   ) || [];
 
   const categoryTitle = currentCategory?.nameFa || "محصولات";
@@ -90,10 +113,15 @@ export default function Category() {
 
       {/* Product List - Center */}
       <div className="absolute inset-0 flex items-center justify-center z-10">
-        {modelsLoading ? (
+        {categoriesLoading || modelsLoading || pricesLoading ? (
           <div className="text-center">
             <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 text-orange-500" />
             <p className="text-lg text-white">در حال بارگذاری...</p>
+          </div>
+        ) : categoriesError || modelsError || pricesError ? (
+          <div className="text-center">
+            <p className="text-2xl text-white font-bold mb-4">خطا در بارگذاری اطلاعات</p>
+            <p className="text-white/70">لطفاً دوباره تلاش کنید</p>
           </div>
         ) : categoryModels.length === 0 ? (
           <div className="text-center">
