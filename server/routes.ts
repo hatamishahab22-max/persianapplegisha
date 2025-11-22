@@ -1155,6 +1155,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin: Update single price
+  app.put("/api/product-prices/:id", requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const { price } = req.body;
+
+      if (!price) {
+        return res.status(400).json({ error: "Price is required" });
+      }
+
+      const updated = await storage.updateProductPrice(id, { price: price.toString() });
+      if (!updated) {
+        return res.status(404).json({ error: "Price not found" });
+      }
+
+      res.json({ success: true, updated });
+    } catch (error) {
+      console.error("Error updating price:", error);
+      res.status(500).json({ error: "Failed to update price" });
+    }
+  });
+
+  // Admin: Delete single price
+  app.delete("/api/product-prices/:id", requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const success = await storage.deleteProductPrice(id);
+      if (!success) {
+        return res.status(404).json({ error: "Price not found" });
+      }
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting price:", error);
+      res.status(500).json({ error: "Failed to delete price" });
+    }
+  });
+
   // ============ APPLE ID ORDERS ROUTES ============
   
   // Public endpoint for uploading payment receipts
