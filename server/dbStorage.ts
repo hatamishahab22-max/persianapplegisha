@@ -1,4 +1,4 @@
-import { eq, desc, sql } from "drizzle-orm";
+import { eq, desc, sql, or, inArray } from "drizzle-orm";
 import { db } from "./db";
 import { 
   users, categories, products, productVariations, usedPhones, visits, errorLogs, whatsappOrders,
@@ -510,20 +510,20 @@ export class DbStorage implements IStorage {
       });
 
     // Fetch unique storage options
-    const storageOptions = await db
-      .select()
-      .from(productStorageOptions)
-      .where(
-        sql`${productStorageOptions.id} = ANY(${Array.from(storageIds)})`
-      );
+    const storageOptions = storageIds.size > 0 
+      ? await db
+          .select()
+          .from(productStorageOptions)
+          .where(inArray(productStorageOptions.id, Array.from(storageIds)))
+      : [];
 
     // Fetch unique colors
-    const colors = await db
-      .select()
-      .from(productColors)
-      .where(
-        sql`${productColors.id} = ANY(${Array.from(colorIds)})`
-      );
+    const colors = colorIds.size > 0
+      ? await db
+          .select()
+          .from(productColors)
+          .where(inArray(productColors.id, Array.from(colorIds)))
+      : [];
 
     return {
       model,

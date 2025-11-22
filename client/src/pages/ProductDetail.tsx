@@ -1,106 +1,83 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useParams } from "wouter";
-import { ArrowRight, Phone } from "lucide-react";
+import { ArrowRight, Phone, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useQuery } from "@tanstack/react-query";
+
+interface ProductDetails {
+  model: {
+    id: string;
+    name: string;
+    nameFa: string;
+    generation: string | null;
+    categoryId: string;
+  } | null;
+  category: {
+    id: string;
+    name: string;
+    nameFa: string;
+  } | null;
+  storageOptions: Array<{
+    id: string;
+    name: string;
+    nameFa: string;
+  }>;
+  colors: Array<{
+    id: string;
+    name: string;
+    nameFa: string;
+    hexCode: string;
+  }>;
+  prices: Array<{
+    storageId: string;
+    storageName: string;
+    colorId: string;
+    colorName: string;
+    colorHex: string;
+    price: string;
+    stock: number;
+  }>;
+}
 
 export default function ProductDetail() {
   const params = useParams();
-  const productName = params.id || "iPhone 16 Pro Max";
+  const productName = decodeURIComponent(params.id || "");
   
-  // Check if this is AirPods
-  const isAirPods = productName.includes("AirPods") || productName.includes("ایرپاد");
-  
-  const [selectedStorage, setSelectedStorage] = useState<string>(isAirPods ? "N/A" : "");
-  const [selectedColor, setSelectedColor] = useState<string>(isAirPods ? "white" : "");
-  const [step, setStep] = useState<number>(isAirPods ? 3 : 1);
+  const [selectedStorage, setSelectedStorage] = useState<string>("");
+  const [selectedColor, setSelectedColor] = useState<string>("");
+  const [step, setStep] = useState<number>(1);
   
   // Refs for auto-scroll
   const colorSectionRef = useRef<HTMLDivElement>(null);
   const priceSectionRef = useRef<HTMLDivElement>(null);
 
-  // Storage options (not used for AirPods)
-  const storageOptions = ["256GB", "512GB", "1TB"];
-  
-  // Color options based on model
-  const getColorOptions = () => {
-    if (productName.includes("17 Pro")) {
-      return [
-        { name: "نارنجی", nameEn: "Orange", value: "orange", color: "#D64218" },
-        { name: "سرمه‌ای", nameEn: "Navy", value: "navy", color: "#1E3A5F" },
-        { name: "سفید", nameEn: "White", value: "white", color: "#F5F5F5" },
-      ];
-    } else if (productName.includes("Air")) {
-      return [
-        { name: "آبی آسمانی", nameEn: "Sky Blue", value: "skyblue", color: "#87CEEB" },
-        { name: "سفید", nameEn: "White", value: "white", color: "#F5F5F5" },
-        { name: "مشکی", nameEn: "Black", value: "black", color: "#1A1A1A" },
-        { name: "طلایی", nameEn: "Gold", value: "gold", color: "#FFD700" },
-      ];
-    } else if (productName.includes("iPhone 17")) {
-      return [
-        { name: "اسطوخودوسی", nameEn: "Lavender", value: "lavender", color: "#C8A2D0" },
-        { name: "سبز مریمی", nameEn: "Sage", value: "sage", color: "#9CAF88" },
-        { name: "آبی", nameEn: "Blue", value: "blue", color: "#4A90E2" },
-        { name: "سفید", nameEn: "White", value: "white", color: "#F5F5F5" },
-        { name: "مشکی", nameEn: "Black", value: "black", color: "#1A1A1A" },
-      ];
-    } else {
-      return [
-        { name: "اسطوخودوسی", nameEn: "Lavender", value: "lavender", color: "#C8A2D0" },
-        { name: "سبز مریمی", nameEn: "Sage", value: "sage", color: "#9CAF88" },
-        { name: "آبی", nameEn: "Blue", value: "blue", color: "#4A90E2" },
-        { name: "سفید", nameEn: "White", value: "white", color: "#F5F5F5" },
-        { name: "مشکی", nameEn: "Black", value: "black", color: "#1A1A1A" },
-      ];
-    }
-  };
+  // Fetch product details from API
+  const { data: productDetails, isLoading, error } = useQuery<ProductDetails>({
+    queryKey: ['product-details', productName],
+    queryFn: async () => {
+      const response = await fetch(`/api/product-details/${encodeURIComponent(productName)}`);
+      if (!response.ok) throw new Error('Failed to fetch product details');
+      return response.json();
+    },
+    enabled: !!productName,
+  });
 
-  const colorOptions = getColorOptions();
-
-  // Price calculation
-  const getPriceRange = () => {
-    // AirPods fixed prices
-    if (isAirPods) {
-      const airPodsPrices: Record<string, number> = {
-        "AirPods Pro (2nd generation)": 12000000,
-        "AirPods Max": 25000000,
-        "AirPods (3rd generation)": 8000000,
-        "AirPods (2nd generation)": 5000000,
-      };
-      
-      const price = airPodsPrices[productName] || 10000000;
-      return price.toLocaleString('fa-IR') + " تومان";
+  // Auto-select first storage and color when data loads
+  useEffect(() => {
+    if (productDetails && productDetails.storageOptions.length > 0 && !selectedStorage) {
+      setSelectedStorage(productDetails.storageOptions[0].id);
+      setStep(2);
     }
-    
-    if (!selectedStorage) return "لطفاً حجم را انتخاب کنید";
-    
-    // Check if this is a corporate registered product
-    const isCorporate = productName.includes("رجیستری شرکتی");
-    
-    const basePrices: Record<string, number> = {
-      "256GB": 72000000,
-      "512GB": 85000000,
-      "1TB": 98000000,
-    };
-    
-    let price = basePrices[selectedStorage] || 0;
-    
-    // Corporate registered products are 15% cheaper
-    if (isCorporate) {
-      price = Math.round(price * 0.85);
-    }
-    
-    return price.toLocaleString('fa-IR') + " تومان";
-  };
+  }, [productDetails, selectedStorage]);
 
-  const handleStorageSelect = (storage: string) => {
-    setSelectedStorage(storage);
+  const handleStorageSelect = (storageId: string) => {
+    setSelectedStorage(storageId);
     setStep(2);
   };
 
-  const handleColorSelect = (color: string) => {
-    setSelectedColor(color);
+  const handleColorSelect = (colorId: string) => {
+    setSelectedColor(colorId);
     setStep(3);
   };
   
@@ -117,23 +94,74 @@ export default function ProductDetail() {
     }
   }, [step]);
 
+  // Get price for selected storage and color
+  const getPrice = () => {
+    if (!productDetails || !selectedStorage || !selectedColor) {
+      return null;
+    }
+    
+    const priceItem = productDetails.prices.find(
+      p => p.storageId === selectedStorage && p.colorId === selectedColor
+    );
+    
+    return priceItem ? parseInt(priceItem.price).toLocaleString('fa-IR') + ' تومان' : 'ناموجود';
+  };
+
+  // Get selected storage name
+  const getStorageName = () => {
+    if (!productDetails || !selectedStorage) return '';
+    const storage = productDetails.storageOptions.find(s => s.id === selectedStorage);
+    return storage?.nameFa || '';
+  };
+
+  // Get selected color name
+  const getColorName = () => {
+    if (!productDetails || !selectedColor) return '';
+    const color = productDetails.colors.find(c => c.id === selectedColor);
+    return color?.nameFa || '';
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen text-white relative z-0 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 text-orange-500" />
+          <p className="text-lg">در حال بارگذاری...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !productDetails || !productDetails.model) {
+    return (
+      <div className="min-h-screen text-white relative z-0 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">محصول یافت نشد</h2>
+          <Link href="/products">
+            <Button className="bg-orange-500 hover:bg-orange-600">
+              بازگشت به صفحه محصولات
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const { model, category, storageOptions, colors } = productDetails;
+
   return (
     <div className="min-h-screen text-white relative z-0">
       {/* Header */}
       <div className="border-b border-white/20 p-4 bg-black/30 backdrop-blur-sm">
-          <Link href={
-            isAirPods ? "/category/airpods" :
-            productName.includes("رجیستری شرکتی") ? "/category/corporate" : 
-            "/category/iphone"
-          }>
-            <button 
-              className="text-white hover:opacity-80 transition-opacity bg-transparent border-0 flex items-center gap-2 p-2"
-              data-testid="button-back-category"
-            >
-              <ArrowRight className="w-5 h-5" />
-              <span className="text-lg">بازگشت</span>
-            </button>
-          </Link>
+        <Link href={category ? `/category/${category.nameFa}` : "/products"}>
+          <button 
+            className="text-white hover:opacity-80 transition-opacity bg-transparent border-0 flex items-center gap-2 p-2"
+            data-testid="button-back-category"
+          >
+            <ArrowRight className="w-5 h-5" />
+            <span className="text-lg">بازگشت</span>
+          </button>
+        </Link>
       </div>
 
       {/* Content */}
@@ -141,16 +169,9 @@ export default function ProductDetail() {
         {/* Product Title */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-2" data-testid="text-product-name">
-            {productName}
+            {model.nameFa}
           </h1>
-          {productName.includes("رجیستری شرکتی") ? (
-            <div className="space-y-1">
-              <p className="text-orange-500 font-bold">✓ رجیستر شده شرکتی</p>
-              <p className="text-white/60">قیمت ویژه - محصول اصل</p>
-            </div>
-          ) : (
-            <p className="text-white/60">محصول اصل با گارانتی معتبر</p>
-          )}
+          <p className="text-white/60">محصول اصل با گارانتی معتبر</p>
         </div>
 
         {/* Progress Steps */}
@@ -160,53 +181,53 @@ export default function ProductDetail() {
           <div className={`w-3 h-3 rounded-full ${step >= 3 ? 'bg-orange-500' : 'bg-white/20'}`}></div>
         </div>
 
-        {/* Step 1: Storage Selection (Skip for AirPods) */}
-        {!isAirPods && step >= 1 && (
+        {/* Step 1: Storage Selection */}
+        {storageOptions.length > 0 && step >= 1 && (
           <Card className="bg-white/5 border-white/10 p-6 mb-8">
             <h2 className="text-2xl font-bold mb-6 text-white">۱. انتخاب حجم</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {storageOptions.map((storage) => (
                 <button
-                  key={storage}
-                  onClick={() => handleStorageSelect(storage)}
+                  key={storage.id}
+                  onClick={() => handleStorageSelect(storage.id)}
                   className={`p-4 rounded-lg border-2 transition-all ${
-                    selectedStorage === storage
+                    selectedStorage === storage.id
                       ? 'border-orange-500 bg-orange-500/20'
                       : 'border-white/20 bg-transparent hover:border-white/40'
                   }`}
-                  data-testid={`button-storage-${storage}`}
+                  data-testid={`button-storage-${storage.id}`}
                 >
-                  <span className="text-lg font-medium text-white">{storage}</span>
+                  <span className="text-lg font-medium text-white">{storage.nameFa}</span>
                 </button>
               ))}
             </div>
           </Card>
         )}
 
-        {/* Step 2: Color Selection (Skip for AirPods) */}
-        {!isAirPods && step >= 2 && (
+        {/* Step 2: Color Selection */}
+        {colors.length > 0 && step >= 2 && selectedStorage && (
           <Card ref={colorSectionRef} className="bg-white/5 border-white/10 p-6 mb-8">
             <h2 className="text-2xl font-bold mb-6 text-white">۲. انتخاب رنگ</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {colorOptions.map((color) => (
+              {colors.map((color) => (
                 <button
-                  key={color.value}
-                  onClick={() => handleColorSelect(color.value)}
+                  key={color.id}
+                  onClick={() => handleColorSelect(color.id)}
                   className={`p-4 rounded-lg border-2 transition-all ${
-                    selectedColor === color.value
+                    selectedColor === color.id
                       ? 'border-orange-500 bg-orange-500/20'
                       : 'border-white/20 bg-transparent hover:border-white/40'
                   }`}
-                  data-testid={`button-color-${color.value}`}
+                  data-testid={`button-color-${color.id}`}
                 >
                   <div className="flex flex-col items-center gap-2">
                     <div
                       className="w-12 h-12 rounded-full border-2 border-white/30"
-                      style={{ backgroundColor: color.color }}
+                      style={{ backgroundColor: color.hexCode }}
                     ></div>
                     <div className="text-center">
-                      <span className="text-base font-bold text-white block">{color.name}</span>
-                      <span className="text-xs text-white/60">{color.nameEn}</span>
+                      <span className="text-base font-bold text-white block">{color.nameFa}</span>
+                      <span className="text-xs text-white/60">{color.name}</span>
                     </div>
                   </div>
                 </button>
@@ -216,19 +237,15 @@ export default function ProductDetail() {
         )}
 
         {/* Step 3: Price and Contact */}
-        {step >= 3 && (isAirPods || (selectedStorage && selectedColor)) && (
+        {step >= 3 && selectedStorage && selectedColor && (
           <Card ref={priceSectionRef} className="bg-gradient-to-br from-orange-600 to-orange-500 border-0 p-8">
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold mb-2 text-white">قیمت نهایی</h2>
               <p className="text-5xl font-bold text-white mb-4" data-testid="text-price">
-                {getPriceRange()}
+                {getPrice()}
               </p>
               <p className="text-white/90 text-sm">
-                {isAirPods ? (
-                  `${productName} - سفید`
-                ) : (
-                  `${productName} - ${selectedStorage} - ${colorOptions.find(c => c.value === selectedColor)?.name} (${colorOptions.find(c => c.value === selectedColor)?.nameEn})`
-                )}
+                {model.nameFa} - {getStorageName()} - {getColorName()}
               </p>
             </div>
 
