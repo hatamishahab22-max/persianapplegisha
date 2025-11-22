@@ -8,20 +8,12 @@ export default function Products() {
 
   const categories = [
     {
-      title: "آیفون",
+      title: "iPhone",
       description: "جدیدترین مدل‌های آیفون با گارانتی معتبر",
       path: "/category/iphone",
       gradient: "bg-gradient-to-br from-purple-600 via-purple-400 to-blue-400",
       testId: "card-iphone",
       hasSpecs: true
-    },
-    {
-      title: "رجیستری شرکتی",
-      description: "آیفون‌های رجیستر شده شرکتی با قیمت ویژه",
-      path: "/category/corporate",
-      gradient: "bg-gradient-to-br from-orange-600 via-red-500 to-pink-500",
-      testId: "card-corporate",
-      hasSpecs: false
     },
     {
       title: "آیفون کارکرده",
@@ -32,11 +24,11 @@ export default function Products() {
       hasSpecs: false
     },
     {
-      title: "Apple ID Verified",
-      description: "Create and manage your verified Apple ID accounts",
-      path: "/apple-id-manager",
-      gradient: "bg-gradient-to-br from-gray-600 via-slate-500 to-zinc-400",
-      testId: "card-appleid",
+      title: "ایرپاد",
+      description: "تجربه صدای بی‌نظیر با هدفون‌های اپل",
+      path: "/category/airpods",
+      gradient: "bg-gradient-to-br from-blue-600 via-cyan-400 to-teal-300",
+      testId: "card-airpods",
       hasSpecs: false
     }
   ];
