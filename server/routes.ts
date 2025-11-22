@@ -1106,26 +1106,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/product-prices", async (req: Request, res: Response) => {
     try {
       const prices = await storage.getAllProductPrices();
-      const models = await storage.getAllModels();
-      const colors = await storage.getAllColors();
-      const storages = await storage.getAllStorageOptions();
+      
+      // Return raw prices with IDs so Category.tsx can filter by modelId
+      const formattedPrices = prices.map(price => ({
+        id: price.id,
+        modelId: price.modelId,
+        colorId: price.colorId,
+        storageId: price.storageId,
+        price: price.price.toString(),
+        stock: price.stock,
+        isActive: price.isActive
+      }));
 
-      const enrichedPrices = prices.map(price => {
-        const model = models.find(m => m.id === price.modelId);
-        const color = colors.find(c => c.id === price.colorId);
-        const storage = storages.find(s => s.id === price.storageId);
-
-        return {
-          id: price.id,
-          modelName: model?.nameFa || model?.name || "نامشخص",
-          colorFa: color?.nameFa || color?.name || "نامشخص",
-          colorHex: color?.hexCode,
-          storage: storage?.nameFa || storage?.name || "نامشخص",
-          price: parseInt(price.price.toString())
-        };
-      });
-
-      res.json(enrichedPrices);
+      res.json(formattedPrices);
     } catch (error) {
       console.error("Error fetching product prices:", error);
       res.status(500).json({ error: "Failed to fetch product prices" });
