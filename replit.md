@@ -13,6 +13,14 @@ Preferred communication style: Simple, everyday language.
 ## Recent Changes
 
 ### Latest Updates (November 22, 2025)
+- **Admin Analytics Dashboard Fix**:
+  - Fixed Analytics API to return correct data structure with `today` and `uniqueVisitors` fields
+  - Fixed Error Monitor API to return complete stats with `today`, `bySeverity`, and `bySource` fields
+  - Updated `getVisitsStats()` to include today's visit count and unique visitors
+  - Updated `getPopularPages()` to return proper field names (`path` instead of `page`)
+  - Updated `getErrorStats()` to include comprehensive error metrics by severity and source
+  - All admin dashboard metrics now display correctly without JavaScript errors
+  - Tested successfully with e2e tests
 - **Apple ID Service Updates**:
   - Updated service price from 500,000 to 5,000,000 Toman (Verify service)
   - Changed card number to: 6104-3378-2797-7933 (Bank Mellat, Shahab Hatami)
