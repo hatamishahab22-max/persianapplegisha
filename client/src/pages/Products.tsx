@@ -32,22 +32,6 @@ export default function Products() {
       hasSpecs: false
     },
     {
-      title: "آیپد",
-      description: "تبلت‌های قدرتمند اپل برای کار و سرگرمی",
-      path: "/category/ipad",
-      gradient: "bg-gradient-to-br from-green-500 via-emerald-400 to-yellow-300",
-      testId: "card-ipad",
-      hasSpecs: false
-    },
-    {
-      title: "ایرپاد",
-      description: "تجربه صدای بی‌نظیر با هدفون‌های اپل",
-      path: "/category/airpods",
-      gradient: "bg-gradient-to-br from-blue-600 via-cyan-400 to-teal-300",
-      testId: "card-airpods",
-      hasSpecs: false
-    },
-    {
       title: "Apple ID Verified",
       description: "Create and manage your verified Apple ID accounts",
       path: "/apple-id-manager",
