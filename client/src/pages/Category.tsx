@@ -18,12 +18,16 @@ export default function Category() {
   const isAirpodsCategory = slug === "airpods";
   const categoryTitle = isIphoneCategory ? "iPhone" : isAirpodsCategory ? "ایرپاد" : "محصولات";
 
-  // iPhone category uses hardcoded 4 models
+  // iPhone category uses hardcoded 8 models
   const iphoneModels = [
+    { nameFa: "iPhone 17 Pro Max", nameEn: "iPhone 17 Pro Max" },
+    { nameFa: "iPhone 17 Pro Max رجیستر", nameEn: "iPhone 17 Pro Max Registry" },
+    { nameFa: "iPhone 17 Pro", nameEn: "iPhone 17 Pro" },
+    { nameFa: "iPhone 17 Pro رجیستر", nameEn: "iPhone 17 Pro Registry" },
     { nameFa: "iPhone 17", nameEn: "iPhone 17" },
-    { nameFa: "iPhone 17 رجیستری", nameEn: "iPhone 17 Registry" },
+    { nameFa: "iPhone 17 رجیستر", nameEn: "iPhone 17 Registry" },
     { nameFa: "iPhone Air", nameEn: "iPhone Air" },
-    { nameFa: "iPhone Air رجیستری", nameEn: "iPhone Air Registry" }
+    { nameFa: "iPhone Air رجیستر", nameEn: "iPhone Air Registry" }
   ];
 
   // For non-iPhone categories, fetch models from API
