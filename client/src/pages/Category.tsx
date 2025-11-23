@@ -13,6 +13,11 @@ export default function Category() {
   const params = useParams();
   const slug = params.slug || "";
 
+  // Handle both /category/iphone and /category/رجیستری شرکتی
+  const isIphoneCategory = slug === "iphone" || slug.includes("رجیستری") || slug.includes("شرکتی");
+  const isAirpodsCategory = slug === "airpods";
+  const categoryTitle = isIphoneCategory ? "iPhone" : isAirpodsCategory ? "ایرپاد" : "محصولات";
+
   // iPhone category uses hardcoded 2 models
   const iphoneModels = [
     { nameFa: "iPhone 17 Pro Max رجیستری", nameEn: "iPhone 17 Pro Max Registry" },
@@ -27,12 +32,8 @@ export default function Category() {
       if (!response.ok) throw new Error('Failed to fetch models');
       return response.json();
     },
-    enabled: slug !== "iphone"
+    enabled: !isIphoneCategory
   });
-
-  const categoryTitle = slug === "iphone" ? "iPhone" : slug === "airpods" ? "ایرپاد" : "محصولات";
-  const isIphoneCategory = slug === "iphone";
-  const isAirpodsCategory = slug === "airpods";
 
   // Filter models for AirPods
   const airpodsModels = allModels?.filter(m => 
