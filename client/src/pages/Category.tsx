@@ -13,12 +13,10 @@ export default function Category() {
   const params = useParams();
   const slug = params.slug || "";
 
-  // iPhone category uses hardcoded 4 models (removed Pro Max and Pro)
+  // iPhone category uses hardcoded 2 models
   const iphoneModels = [
-    { nameFa: "iPhone 17", nameEn: "iPhone 17" },
-    { nameFa: "iPhone 17 رجیستری", nameEn: "iPhone 17 Registry" },
-    { nameFa: "iPhone Air", nameEn: "iPhone Air" },
-    { nameFa: "iPhone Air رجیستری", nameEn: "iPhone Air Registry" }
+    { nameFa: "iPhone 17 Pro Max رجیستری", nameEn: "iPhone 17 Pro Max Registry" },
+    { nameFa: "iPhone 17 Pro رجیستری", nameEn: "iPhone 17 Pro Registry" }
   ];
 
   // For non-iPhone categories, fetch models from API
