@@ -11,11 +11,11 @@ interface ProductModel {
 
 export default function Category() {
   const params = useParams();
-  const slug = params.slug || "";
+  const slug = decodeURIComponent(params.slug || "");
 
-  // Handle both /category/iphone and /category/رجیستری شرکتی (exact match)
-  const isIphoneCategory = slug === "iphone" || slug === "رجیستری شرکتی";
-  const isAirpodsCategory = slug === "airpods";
+  // Handle both /category/iphone, /category/آیفون and /category/رجیستری شرکتی (exact match)
+  const isIphoneCategory = slug === "iphone" || slug === "آیفون" || slug === "رجیستری شرکتی";
+  const isAirpodsCategory = slug === "airpods" || slug === "ایرپاد";
   const categoryTitle = isIphoneCategory ? "iPhone" : isAirpodsCategory ? "ایرپاد" : "محصولات";
 
   // iPhone category uses hardcoded 8 models

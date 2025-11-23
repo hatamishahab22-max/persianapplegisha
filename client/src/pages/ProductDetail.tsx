@@ -63,6 +63,13 @@ export default function ProductDetail() {
     enabled: !!productName,
   });
 
+  // Reset state when product changes
+  useEffect(() => {
+    setSelectedStorage("");
+    setSelectedColor("");
+    setStep(1);
+  }, [productName]);
+
   // Auto-select first storage and color when data loads
   useEffect(() => {
     if (productDetails && productDetails.storageOptions.length > 0 && !selectedStorage) {
