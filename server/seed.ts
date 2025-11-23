@@ -60,8 +60,8 @@ async function seed() {
       { name: '1TB', nameFa: '۱ ترابایت' },
       { name: '2TB', nameFa: '۲ ترابایت' }
     ];
-    for (const storage of storageOptions) {
-      await storage.createStorageOption(storage);
+    for (const storageOpt of storageOptions) {
+      await storage.createStorageOption(storageOpt);
     }
     console.log('✅ Storage options created');
 
