@@ -13,8 +13,8 @@ export default function Category() {
   const params = useParams();
   const slug = params.slug || "";
 
-  // Handle both /category/iphone and /category/رجیستری شرکتی
-  const isIphoneCategory = slug === "iphone" || slug.includes("رجیستری") || slug.includes("شرکتی");
+  // Handle both /category/iphone and /category/رجیستری شرکتی (exact match)
+  const isIphoneCategory = slug === "iphone" || slug === "رجیستری شرکتی";
   const isAirpodsCategory = slug === "airpods";
   const categoryTitle = isIphoneCategory ? "iPhone" : isAirpodsCategory ? "ایرپاد" : "محصولات";
 
