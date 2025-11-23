@@ -72,6 +72,7 @@ export interface IStorage {
   
   // Product Models methods
   getAllModels(): Promise<ProductModel[]>;
+  getActiveModels(): Promise<ProductModel[]>;
   getModel(id: string): Promise<ProductModel | undefined>;
   createModel(model: InsertProductModel): Promise<ProductModel>;
   updateModel(id: string, model: Partial<InsertProductModel>): Promise<ProductModel | undefined>;
@@ -512,6 +513,10 @@ export class MemStorage implements IStorage {
   // Product Models methods
   async getAllModels(): Promise<ProductModel[]> {
     return Array.from(this.productModels.values());
+  }
+
+  async getActiveModels(): Promise<ProductModel[]> {
+    return Array.from(this.productModels.values()).filter(m => m.isActive !== false);
   }
 
   async getModel(id: string): Promise<ProductModel | undefined> {

@@ -321,6 +321,7 @@ export const productModels = pgTable("product_models", {
   nameFa: text("name_fa").notNull(),
   generation: text("generation"), // iPhone 15, iPhone 16, etc.
   order: integer("order").default(0),
+  isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

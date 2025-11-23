@@ -1,6 +1,19 @@
 import { Link, useParams } from "wouter";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import iphoneBackground from "@assets/Xxccvb_1763855043586.png";
+import { useQuery } from "@tanstack/react-query";
+
+interface ProductModel {
+  id: string;
+  name: string;
+  nameFa: string;
+}
+
+interface ProductPrice {
+  id: string;
+  modelId: string;
+  price: string;
+}
 
 export default function Category() {
   const params = useParams();
@@ -18,8 +31,43 @@ export default function Category() {
     { nameFa: "iPhone Air رجیستری", nameEn: "iPhone Air Registry" }
   ];
 
+  // For non-iPhone categories, fetch models from API
+  const { data: allModels, isLoading: modelsLoading } = useQuery<ProductModel[]>({
+    queryKey: ['category-models'],
+    queryFn: async () => {
+      const response = await fetch('/api/models');
+      if (!response.ok) throw new Error('Failed to fetch models');
+      return response.json();
+    },
+    enabled: slug !== "iphone"
+  });
+
+  const { data: allPrices, isLoading: pricesLoading } = useQuery<ProductPrice[]>({
+    queryKey: ['category-prices'],
+    queryFn: async () => {
+      const response = await fetch('/api/product-prices');
+      if (!response.ok) throw new Error('Failed to fetch prices');
+      return response.json();
+    },
+    enabled: slug !== "iphone"
+  });
+
   const categoryTitle = slug === "iphone" ? "iPhone" : slug === "airpods" ? "ایرپاد" : "محصولات";
   const isIphoneCategory = slug === "iphone";
+  const isAirpodsCategory = slug === "airpods";
+
+  // Filter models for AirPods
+  const airpodsModels = allModels?.filter(m => 
+    m.nameFa.includes("ایرپاد") || m.name.toLowerCase().includes("airpod")
+  ) || [];
+
+  // Get minimum price for a model
+  const getMinPrice = (modelId: string) => {
+    const modelPrices = allPrices?.filter(p => p.modelId === modelId) || [];
+    if (modelPrices.length === 0) return null;
+    const prices = modelPrices.map(p => parseInt(p.price));
+    return Math.min(...prices);
+  };
 
   return (
     <div className="h-screen overflow-hidden relative bg-black" dir="rtl">
@@ -72,6 +120,38 @@ export default function Category() {
               </Link>
             ))}
           </div>
+        ) : isAirpodsCategory ? (
+          modelsLoading || pricesLoading ? (
+            <div className="text-center">
+              <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 text-orange-500" />
+              <p className="text-lg text-white">در حال بارگذاری...</p>
+            </div>
+          ) : airpodsModels.length === 0 ? (
+            <div className="text-center">
+              <p className="text-2xl text-white font-bold">محصولی یافت نشد</p>
+            </div>
+          ) : (
+            <div className="space-y-3 w-full max-w-2xl px-8">
+              {airpodsModels.map((model, index) => {
+                const minPrice = getMinPrice(model.id);
+                return (
+                  <Link key={model.id} href={`/product/${encodeURIComponent(model.nameFa)}`}>
+                    <button
+                      className="w-full text-center text-white hover:opacity-80 transition-all p-5 cursor-pointer transform hover:scale-105 duration-300 bg-black/50 rounded-lg"
+                      data-testid={`product-item-${index}`}
+                    >
+                      <div className="text-2xl md:text-3xl font-bold drop-shadow-lg">{model.nameFa}</div>
+                      {minPrice && (
+                        <div className="text-lg text-orange-400 drop-shadow-lg mt-2">
+                          از {minPrice.toLocaleString('fa-IR')} تومان
+                        </div>
+                      )}
+                    </button>
+                  </Link>
+                );
+              })}
+            </div>
+          )
         ) : (
           <div className="text-center">
             <p className="text-2xl text-white font-bold">محصولی یافت نشد</p>

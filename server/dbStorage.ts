@@ -313,6 +313,10 @@ export class DbStorage implements IStorage {
     return await db.select().from(productModels).orderBy(productModels.order);
   }
 
+  async getActiveModels(): Promise<ProductModel[]> {
+    return await db.select().from(productModels).where(eq(productModels.isActive, true)).orderBy(productModels.order);
+  }
+
   async getModel(id: string): Promise<ProductModel | undefined> {
     const result = await db.select().from(productModels).where(eq(productModels.id, id));
     return result[0];

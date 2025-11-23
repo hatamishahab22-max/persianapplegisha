@@ -371,7 +371,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Models endpoints
   app.get("/api/models", async (req: Request, res: Response) => {
     try {
-      const models = await storage.getAllModels();
+      const { active } = req.query;
+      const models = active === 'true' 
+        ? await storage.getActiveModels() 
+        : await storage.getAllModels();
       res.json(models);
     } catch (error) {
       console.error('Error fetching models:', error);
