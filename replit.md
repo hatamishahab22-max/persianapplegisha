@@ -1,315 +1,54 @@
 # Persian Apple Store (پرشین اپل استور گیشا)
 
 ## Overview
-
-Persian Apple Store is a full-stack e-commerce web application for selling Apple products in Tehran, Iran. The application provides a bilingual (Persian/English) interface with right-to-left (RTL) support, featuring product browsing for iPhones, iPads, AirPods, and used devices. It includes an admin dashboard for inventory management, price updates, and analytics tracking.
-
-The application follows a modern web architecture with a React-based frontend and an Express.js backend, utilizing PostgreSQL for data persistence and integrating with Cloudinary for image management.
+Persian Apple Store is a full-stack e-commerce web application for selling Apple products in Tehran, Iran. The platform provides a bilingual (Persian/English) interface with RTL support, enabling product browsing for iPhones, AirPods, and used devices. It features an admin dashboard for inventory management, price updates, and analytics tracking. The application aims to offer a premium, localized e-commerce experience for Apple products, focusing on a streamlined catalog and user-friendly management.
 
 ## User Preferences
-
 Preferred communication style: Simple, everyday language.
-
-## Recent Changes
-
-### Latest Updates (November 23, 2025)
-- **Major Navigation & Product Catalog Restructuring**:
-  - **Apple ID Section Removed**: Completely removed Apple ID service from Products page per user request
-  - **iPhone & Corporate Categories Merged**: Consolidated into single iPhone category showing 8 models
-  - **New iPhone 17 Models Added**:
-    - iPhone 17 Pro Max (regular + رجیستری)
-    - iPhone 17 Pro (regular + رجیستری)
-    - iPhone 17 (regular + رجیستری)
-    - iPhone Air (regular + رجیستری)
-  - **Database Expansion**: Added 8 new models with 72 prices (9 combinations each: 3 colors × 3 storage options)
-  - **Total Database**: Now contains 108 prices across all models
-  - **iPad Removed**: iPad category removed from Products page navigation
-  - **AirPods Preserved**: AirPods category kept active with dynamic model loading
-  - **New Background Image**: iPhone category displays custom background (Xxccvb_1763855043586.png)
-  - **Category Page Logic**: 
-    - iPhone: Hardcoded 8-model list with new background
-    - AirPods: Dynamic model loading from database
-    - Plain black backgrounds for non-iPhone categories
-- **Admin Panel Enhancements**:
-  - **Active Models Filtering**: Added `is_active` field to product_models schema
-  - **New API Endpoint**: `/api/models?active=true` filters only active models
-  - **Analytics Dashboard**: Verified working with correct visitor stats display
-  - **Error Monitor**: Confirmed functional with proper error statistics
-  - **Background Upload**: Settings manager properly configured for Cloudinary uploads
-
-### Previous Updates (November 22, 2025)
-- **Product Catalog Simplification**:
-  - Drastically simplified product catalog to focus exclusively on iPhone 17 Pro and Pro Max models
-  - Limited color options to 3: Orange (نارنجی), Navy (سرمه‌ای), and White (سفید)
-  - Limited storage options to 3: 256GB, 512GB, and 1TB
-  - Pricing structure: Pro models (140M-200M Toman), Pro Max models (175M-235M Toman)
-  - Fixed critical API bug: `/api/product-prices` now returns raw data with modelId, colorId, storageId for proper category filtering
-  - iPhone and Corporate category pages now working correctly
-  - Used Phones section remains available
-- **Admin Analytics Dashboard Fix**:
-  - Fixed Analytics API to return correct data structure with `today` and `uniqueVisitors` fields
-  - Fixed Error Monitor API to return complete stats with `today`, `bySeverity`, and `bySource` fields
-  - Updated `getVisitsStats()` to include today's visit count and unique visitors
-  - Updated `getPopularPages()` to return proper field names (`path` instead of `page`)
-  - Updated `getErrorStats()` to include comprehensive error metrics by severity and source
-  - All admin dashboard metrics now display correctly without JavaScript errors
-  - Tested successfully with e2e tests
-- **Apple ID Service Updates**:
-  - Updated service price from 500,000 to 5,000,000 Toman (Verify service)
-  - Changed card number to: 6104-3378-2797-7933 (Bank Mellat, Shahab Hatami)
-  - Added bank name display (بانک ملت) to payment card section
-- **PWA (Progressive Web App) Enhancement**:
-  - Registered Service Worker in main.tsx for offline functionality
-  - PWA fully functional with manifest.json and caching strategy
-  - Users can now install the app on their mobile devices
-  - Service Worker caches static resources for offline access
-  - Network-first strategy for dynamic content, cache fallback for offline mode
-
-### Previous Updates (November 21, 2025)
-- **CRITICAL DATA PERSISTENCE FIX**:
-  - Fixed major issue where data was not persisting across deployments
-  - Migrated from in-memory storage (MemStorage) to PostgreSQL database (DbStorage)
-  - All APIs now use DbStorage implementation with Drizzle ORM
-  - Server configured to use PostgreSQL for all data operations
-  - Data now survives server restarts and deployments
-- **Database Population**:
-  - Successfully populated database with initial product data
-  - 4 categories: iPhone, iPad, AirPods, Used Phones
-  - 28 iPhone models (iPhone 11 through iPhone 16 series)
-  - 23 colors including all Titanium variants for Pro models
-  - 9 storage options (64GB, 128GB, 256GB, 512GB, 1TB)
-- **Database Schema Fixes**:
-  - Added missing "order" column to product_models table
-  - Fixed foreign key constraints and relationships
-  - All product management APIs now working correctly
-
-### Previous Updates (November 15, 2025)
-- **OpenAI AI Chatbot Integration**:
-  - Integrated OpenAI GPT-5 for intelligent customer support
-  - AI assistant with Persian language support and store context
-  - Provides product information, pricing, and contact details
-  - Uses OPENAI_API_KEY from environment variables
-  - Available on all pages via floating chat button
-- **Multi-Category Background System**: 
-  - Separate background images for each product category (iPhone, iPad, AirPods, Used Phones, Default)
-  - GlobalBackground component with preloading eliminates page transition delays
-  - All backgrounds preloaded on app mount for instant switching
-  - Settings Manager with tabbed interface for managing multiple category backgrounds
-  - Smooth opacity transitions between backgrounds (duration-500)
-- **Admin Dialog Fix**: Fixed RTL layout issue that prevented admin dialogs from opening
-  - Moved `dir="rtl"` from parent container to specific sidebar and main content areas
-  - Dialog Portals now render correctly outside RTL constraints
-- **Deployment Configuration**:
-  - Created DEPLOYMENT.md with comprehensive Persian deployment guide
-  - Created RENDER_CONFIG.md with quick reference configuration
-  - GitHub repository connected: https://github.com/hatamishahab22-max/PswDataRenderr
-  - Ready for Render deployment with proper build/start commands
-
-### Previous Updates (November 14, 2025)
-- **Admin Login Security**: Removed visible credentials from login page for security
-- **Background Image System**: 
-  - New default background image applied (Apple logo with gradient)
-  - Settings page in admin panel for easy background customization
-  - Upload via Cloudinary or enter direct URLs
-  - Created `useBackgroundImage` hook for consistent management
-- **Splash Screen Behavior**: Changed from auto-dismiss to click-to-enter (user must click Power button)
-- **Image Upload Enhancement**:
-  - Added file size validation (max 10MB per image)
-  - Improved error messages with detailed feedback
-  - Better console logging for debugging upload issues
-- **GitHub Integration**: GitHub connection configured and ready for use
-
-### WhatsApp Order Management System
-- Full order management system integrated into admin panel
-- Status tracking: pending, contacted, completed, cancelled
-- Customer information capture with phone numbers and product details
-
-### Image Gallery Optimization
-- Implemented lazy loading for used phone image galleries
-- Added loading="lazy" attribute to all product images
-- Optimized image rendering performance for better UX
 
 ## System Architecture
 
 ### Frontend Architecture
-
-**Framework & Build System**
-- React 18 with TypeScript for type-safe component development
-- Vite as the build tool and development server for fast HMR (Hot Module Replacement)
-- Wouter for lightweight client-side routing instead of React Router
-
-**UI Component System**
-- shadcn/ui component library built on Radix UI primitives
-- Tailwind CSS for utility-first styling with custom theme configuration
-- Custom design system following Apple's minimalist aesthetic with Persian cultural adaptations
-- RTL (right-to-left) layout support for Persian language content
-
-**State Management & Data Fetching**
-- TanStack Query (React Query) for server state management, caching, and data synchronization
-- No global state management library - relies on React Query's cache and local component state
-- Optimistic updates for better UX during admin operations
-
-**Form Handling**
-- React Hook Form with Zod schema validation via @hookform/resolvers
-- Type-safe form validation using Drizzle-Zod schema integration
-
-**Design Approach**
-- Dual typography system: Vazirmatn for Persian text, Inter for English/numbers
-- Premium minimalist design inspired by Apple.com
-- Mobile-first responsive design with touch-optimized interactions
-- PWA (Progressive Web App) capabilities with service worker registration
+The frontend is built with React 18 and TypeScript, using Vite for fast development and optimized builds. UI components are crafted with shadcn/ui (based on Radix UI) and styled with Tailwind CSS, following a minimalist design inspired by Apple.com with Persian cultural adaptations and RTL support. Wouter handles client-side routing. State management and data fetching rely on TanStack Query for server state, caching, and optimistic updates, avoiding a global state library. Form handling utilizes React Hook Form with Zod for type-safe validation. The application features a dual typography system (Vazirmatn for Persian, Inter for English) and PWA capabilities.
 
 ### Backend Architecture
-
-**Server Framework**
-- Express.js as the HTTP server framework
-- TypeScript for type safety across the entire codebase
-- ESM (ES Modules) for modern JavaScript module system
-
-**API Design**
-- RESTful API endpoints organized by resource type
-- Session-based authentication for admin access
-- JSON request/response format with proper error handling
-- CORS and security middleware for production deployment
-
-**Database Layer**
-- Drizzle ORM for type-safe database operations
-- PostgreSQL as the primary database (via Neon serverless)
-- Schema-first approach with migrations managed through Drizzle Kit
-- Connection pooling using @neondatabase/serverless with WebSocket support
-
-**Database Schema Design**
-- Product hierarchy: Categories → Models → Colors/Storage Options → Prices
-- Flexible pricing system supporting multiple configurations per product
-- Used iPhone inventory tracking with condition-based pricing
-- Page visit analytics with session tracking
-- Admin authentication with bcrypt password hashing
-
-**Session Management**
-- PostgreSQL-backed sessions using connect-pg-simple
-- Session data stored in database for scalability and persistence
-- Configurable session expiration and security settings
+The backend is an Express.js server developed with TypeScript and ESM. It exposes RESTful API endpoints, using session-based authentication for admin access. PostgreSQL is the primary database, integrated via Drizzle ORM for type-safe operations and managed with Drizzle Kit for migrations. Session management is handled by connect-pg-simple, storing session data in PostgreSQL. The database schema supports a flexible product hierarchy (Categories → Models → Colors/Storage Options → Prices), used iPhone inventory, and page visit analytics. bcrypt is used for password hashing.
 
 ### Image Management
-
-**Cloudinary Integration**
-- Cloud-based image storage and CDN delivery
-- Server-side upload API with validation (file type, size limits)
-- Support for both file uploads and direct URL imports
-- Automatic image optimization and transformation capabilities
-
-**Upload Flow**
-- Client converts images to base64 for preview
-- Server-side validation before Cloudinary upload
-- Returns optimized Cloudinary URL for database storage
-- Fallback handling for upload failures
+Cloudinary is integrated for cloud-based image storage, CDN delivery, and optimization. The system supports both file uploads and direct URL imports, with server-side validation and fallback handling for upload failures.
 
 ### Deployment Architecture
-
-**Development Environment**
-- Replit-optimized development setup with custom Vite plugins
-- Runtime error overlay and dev banner for debugging
-- Cartographer plugin for code navigation
-
-**Production Build**
-- Separate client and server builds
-- Client: Vite production build to `dist/public`
-- Server: esbuild bundle to `dist/index.js`
-- Static asset serving from build output
-
-**Environment Configuration**
-- Database connection via DATABASE_URL environment variable
-- Cloudinary credentials (CLOUD_NAME, API_KEY, API_SECRET)
-- Node environment detection for conditional features
+The project is optimized for Replit development, with production builds separating client (Vite) and server (esbuild) outputs. Environment variables manage database connections and Cloudinary credentials.
 
 ### Analytics & Tracking
-
-**Page Visit Tracking**
-- Custom hook-based analytics system
-- Automatic page view tracking on route changes
-- Session-based visit deduplication
-- Admin dashboard with visit statistics and popular pages report
+A custom hook-based system tracks page visits, offering session-based deduplication and an admin dashboard for visit statistics and popular pages.
 
 ### AI Chatbot Integration
-
-**Architecture**
-- Modal-based chat interface with message history
-- REST API endpoint for chat completions
-- Streaming or standard response handling
-- Client-side loading states and error handling
+An OpenAI GPT-5 powered AI chatbot provides intelligent customer support with Persian language understanding, offering product information, pricing, and contact details via a modal interface.
 
 ## External Dependencies
 
 ### Core Backend Services
-
-**Neon Database (PostgreSQL)**
-- Serverless PostgreSQL database with WebSocket connections
-- Connection pooling via @neondatabase/serverless
-- Auto-scaling database with branching capabilities
-- Requires DATABASE_URL environment variable
-
-**Cloudinary**
-- Cloud image storage and CDN
-- Image transformation and optimization
-- Upload API with folder organization
-- Requires CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET environment variables
+- **Neon Database (PostgreSQL)**: Serverless PostgreSQL for data persistence, utilizing `@neondatabase/serverless` for connection pooling.
+- **Cloudinary**: Cloud-based image storage, optimization, and CDN.
 
 ### UI Component Libraries
-
-**Radix UI Primitives**
-- Headless, accessible component primitives
-- Multiple components: Dialog, Dropdown, Select, Tabs, Toast, etc.
-- Full keyboard navigation and ARIA support
-
-**shadcn/ui**
-- Pre-styled component library built on Radix UI
-- Customizable design system with Tailwind CSS
-- Component generation via CLI tool
+- **Radix UI Primitives**: Headless, accessible UI components.
+- **shadcn/ui**: Pre-styled component library built on Radix UI, integrated with Tailwind CSS.
 
 ### Development & Build Tools
-
-**TypeScript**
-- Type checking across client and server code
-- Shared type definitions via `/shared` directory
-- Path aliases for clean imports (@/, @shared/)
-
-**Vite**
-- Fast HMR in development
-- Optimized production builds
-- Plugin ecosystem for Replit integration
-
-**Drizzle Kit**
-- Database schema migrations
-- Push-based schema synchronization
-- TypeScript schema definitions with Zod validation
+- **TypeScript**: For type checking across the codebase.
+- **Vite**: Fast development server and optimized production builds.
+- **Drizzle Kit**: Database schema migrations and type-safe schema definitions.
 
 ### Authentication & Security
-
-**bcrypt**
-- Password hashing for admin authentication
-- Configurable salt rounds for security
-
-**express-session**
-- Session middleware for Express
-- PostgreSQL session store integration
+- **bcrypt**: Password hashing for admin authentication.
+- **express-session** & **connect-pg-simple**: Session management with PostgreSQL backing.
 
 ### Date & Time Utilities
-
-**date-fns**
-- Lightweight date manipulation library
-- Persian calendar support via extensions
-- Formatting and parsing utilities
+- **date-fns**: Lightweight date manipulation, including Persian calendar support.
 
 ### Miscellaneous
-
-**Lucide React**
-- Icon library with tree-shaking support
-- Consistent iconography across UI
-
-**class-variance-authority (CVA)**
-- Utility for creating variant-based component APIs
-- Type-safe prop variants
-
-**clsx / tailwind-merge**
-- Conditional className utilities
-- Tailwind class conflict resolution
+- **Lucide React**: Icon library.
+- **class-variance-authority (CVA)**: Utility for creating variant-based component APIs.
+- **clsx / tailwind-merge**: Utilities for conditional CSS classes and Tailwind class conflict resolution.
