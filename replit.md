@@ -12,17 +12,40 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
-### Latest Updates (November 22, 2025)
+### Latest Updates (November 23, 2025)
+- **Major Navigation & Product Catalog Restructuring**:
+  - **Apple ID Section Removed**: Completely removed Apple ID service from Products page per user request
+  - **iPhone & Corporate Categories Merged**: Consolidated into single iPhone category showing 8 models
+  - **New iPhone 17 Models Added**:
+    - iPhone 17 Pro Max (regular + رجیستری)
+    - iPhone 17 Pro (regular + رجیستری)
+    - iPhone 17 (regular + رجیستری)
+    - iPhone Air (regular + رجیستری)
+  - **Database Expansion**: Added 8 new models with 72 prices (9 combinations each: 3 colors × 3 storage options)
+  - **Total Database**: Now contains 108 prices across all models
+  - **iPad Removed**: iPad category removed from Products page navigation
+  - **AirPods Preserved**: AirPods category kept active with dynamic model loading
+  - **New Background Image**: iPhone category displays custom background (Xxccvb_1763855043586.png)
+  - **Category Page Logic**: 
+    - iPhone: Hardcoded 8-model list with new background
+    - AirPods: Dynamic model loading from database
+    - Plain black backgrounds for non-iPhone categories
+- **Admin Panel Enhancements**:
+  - **Active Models Filtering**: Added `is_active` field to product_models schema
+  - **New API Endpoint**: `/api/models?active=true` filters only active models
+  - **Analytics Dashboard**: Verified working with correct visitor stats display
+  - **Error Monitor**: Confirmed functional with proper error statistics
+  - **Background Upload**: Settings manager properly configured for Cloudinary uploads
+
+### Previous Updates (November 22, 2025)
 - **Product Catalog Simplification**:
   - Drastically simplified product catalog to focus exclusively on iPhone 17 Pro and Pro Max models
   - Limited color options to 3: Orange (نارنجی), Navy (سرمه‌ای), and White (سفید)
   - Limited storage options to 3: 256GB, 512GB, and 1TB
   - Pricing structure: Pro models (140M-200M Toman), Pro Max models (175M-235M Toman)
-  - Created 36 total prices: 18 for iPhone category, 18 for Corporate category
-  - Removed iPad and AirPods from main navigation (Products.tsx) as they have no inventory
   - Fixed critical API bug: `/api/product-prices` now returns raw data with modelId, colorId, storageId for proper category filtering
   - iPhone and Corporate category pages now working correctly
-  - Used Phones and Apple ID sections remain available
+  - Used Phones section remains available
 - **Admin Analytics Dashboard Fix**:
   - Fixed Analytics API to return correct data structure with `today` and `uniqueVisitors` fields
   - Fixed Error Monitor API to return complete stats with `today`, `bySeverity`, and `bySource` fields
