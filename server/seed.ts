@@ -68,6 +68,16 @@ async function seed() {
     // 4. Create iPhone Models
     console.log('Creating iPhone models...');
     const iphoneModels = [
+      // iPhone 17 Series
+      { name: 'iPhone 17 Pro Max', nameFa: 'iPhone 17 Pro Max', categoryId: iphoneCategory.id },
+      { name: 'iPhone 17 Pro Max Registry', nameFa: 'iPhone 17 Pro Max رجیستر', categoryId: iphoneCategory.id },
+      { name: 'iPhone 17 Pro', nameFa: 'iPhone 17 Pro', categoryId: iphoneCategory.id },
+      { name: 'iPhone 17 Pro Registry', nameFa: 'iPhone 17 Pro رجیستر', categoryId: iphoneCategory.id },
+      { name: 'iPhone 17', nameFa: 'iPhone 17', categoryId: iphoneCategory.id },
+      { name: 'iPhone 17 Registry', nameFa: 'iPhone 17 رجیستر', categoryId: iphoneCategory.id },
+      { name: 'iPhone Air', nameFa: 'iPhone Air', categoryId: iphoneCategory.id },
+      { name: 'iPhone Air Registry', nameFa: 'iPhone Air رجیستر', categoryId: iphoneCategory.id },
+      
       // iPhone 16 Series
       { name: 'iPhone 16', nameFa: 'آیفون ۱۶', categoryId: iphoneCategory.id },
       { name: 'iPhone 16 Plus', nameFa: 'آیفون ۱۶ پلاس', categoryId: iphoneCategory.id },
