@@ -9,22 +9,12 @@ interface ProductModel {
   nameFa: string;
 }
 
-interface ProductPrice {
-  id: string;
-  modelId: string;
-  price: string;
-}
-
 export default function Category() {
   const params = useParams();
   const slug = params.slug || "";
 
-  // iPhone category uses hardcoded 8 models
+  // iPhone category uses hardcoded 4 models (removed Pro Max and Pro)
   const iphoneModels = [
-    { nameFa: "iPhone 17 Pro Max", nameEn: "iPhone 17 Pro Max" },
-    { nameFa: "iPhone 17 Pro Max رجیستری", nameEn: "iPhone 17 Pro Max Registry" },
-    { nameFa: "iPhone 17 Pro", nameEn: "iPhone 17 Pro" },
-    { nameFa: "iPhone 17 Pro رجیستری", nameEn: "iPhone 17 Pro Registry" },
     { nameFa: "iPhone 17", nameEn: "iPhone 17" },
     { nameFa: "iPhone 17 رجیستری", nameEn: "iPhone 17 Registry" },
     { nameFa: "iPhone Air", nameEn: "iPhone Air" },
@@ -42,16 +32,6 @@ export default function Category() {
     enabled: slug !== "iphone"
   });
 
-  const { data: allPrices, isLoading: pricesLoading } = useQuery<ProductPrice[]>({
-    queryKey: ['category-prices'],
-    queryFn: async () => {
-      const response = await fetch('/api/product-prices');
-      if (!response.ok) throw new Error('Failed to fetch prices');
-      return response.json();
-    },
-    enabled: slug !== "iphone"
-  });
-
   const categoryTitle = slug === "iphone" ? "iPhone" : slug === "airpods" ? "ایرپاد" : "محصولات";
   const isIphoneCategory = slug === "iphone";
   const isAirpodsCategory = slug === "airpods";
@@ -60,14 +40,6 @@ export default function Category() {
   const airpodsModels = allModels?.filter(m => 
     m.nameFa.includes("ایرپاد") || m.name.toLowerCase().includes("airpod")
   ) || [];
-
-  // Get minimum price for a model
-  const getMinPrice = (modelId: string) => {
-    const modelPrices = allPrices?.filter(p => p.modelId === modelId) || [];
-    if (modelPrices.length === 0) return null;
-    const prices = modelPrices.map(p => parseInt(p.price));
-    return Math.min(...prices);
-  };
 
   return (
     <div className="h-screen overflow-hidden relative bg-black" dir="rtl">
@@ -121,7 +93,7 @@ export default function Category() {
             ))}
           </div>
         ) : isAirpodsCategory ? (
-          modelsLoading || pricesLoading ? (
+          modelsLoading ? (
             <div className="text-center">
               <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 text-orange-500" />
               <p className="text-lg text-white">در حال بارگذاری...</p>
@@ -132,24 +104,16 @@ export default function Category() {
             </div>
           ) : (
             <div className="space-y-3 w-full max-w-2xl px-8">
-              {airpodsModels.map((model, index) => {
-                const minPrice = getMinPrice(model.id);
-                return (
-                  <Link key={model.id} href={`/product/${encodeURIComponent(model.nameFa)}`}>
-                    <button
-                      className="w-full text-center text-white hover:opacity-80 transition-all p-5 cursor-pointer transform hover:scale-105 duration-300 bg-black/50 rounded-lg"
-                      data-testid={`product-item-${index}`}
-                    >
-                      <div className="text-2xl md:text-3xl font-bold drop-shadow-lg">{model.nameFa}</div>
-                      {minPrice && (
-                        <div className="text-lg text-orange-400 drop-shadow-lg mt-2">
-                          از {minPrice.toLocaleString('fa-IR')} تومان
-                        </div>
-                      )}
-                    </button>
-                  </Link>
-                );
-              })}
+              {airpodsModels.map((model, index) => (
+                <Link key={model.id} href={`/product/${encodeURIComponent(model.nameFa)}`}>
+                  <button
+                    className="w-full text-center text-white hover:opacity-80 transition-all p-5 cursor-pointer transform hover:scale-105 duration-300 bg-black/50 rounded-lg"
+                    data-testid={`product-item-${index}`}
+                  >
+                    <div className="text-2xl md:text-3xl font-bold drop-shadow-lg">{model.nameFa}</div>
+                  </button>
+                </Link>
+              ))}
             </div>
           )
         ) : (
