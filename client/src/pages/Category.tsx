@@ -87,7 +87,7 @@ export default function Category() {
         {isIphoneCategory ? (
           <div className="space-y-3 w-full max-w-2xl px-8">
             {iphoneModels.map((model, index) => (
-              <Link key={index} href={`/product/${encodeURIComponent(model.nameFa)}`}>
+              <Link key={index} href={`/product/${encodeURIComponent(model.nameEn)}`}>
                 <button
                   className="w-full text-center text-white hover:opacity-80 transition-all p-5 cursor-pointer transform hover:scale-105 duration-300 bg-black/50 rounded-lg"
                   data-testid={`product-item-${index}`}
