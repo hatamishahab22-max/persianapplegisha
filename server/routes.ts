@@ -117,7 +117,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Insert iPhone 17 models
       console.log('Creating iPhone 17 models...');
-      const iPhoneCategory = await storage.getCategoryBySlug('iphone');
+      const allCategories = await storage.getAllCategories();
+      const iPhoneCategory = allCategories.find(c => c.slug === 'iphone');
       if (!iPhoneCategory) {
         throw new Error('iPhone category not found');
       }
