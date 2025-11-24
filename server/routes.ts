@@ -96,10 +96,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Initialize production database (one-time setup)
-  app.post("/api/admin/init-db", async (req: Request, res: Response) => {
+  // Initialize production database (one-time setup) - GET or POST
+  const initDbHandler = async (req: Request, res: Response) => {
     try {
-      const secret = req.body?.secret;
+      const secret = req.body?.secret || req.query?.secret;
       if (secret !== process.env.DB_INIT_SECRET && secret !== "gisha2024@init") {
         return res.status(403).json({ error: "Invalid secret" });
       }
@@ -148,7 +148,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('Init error:', error);
       res.status(500).json({ error: error.message });
     }
-  });
+  };
+
+  app.post("/api/admin/init-db", initDbHandler);
+  app.get("/api/admin/init-db", initDbHandler);
 
   // Protected admin routes (example)
   app.get("/api/admin/stats", requireAdmin, async (req: Request, res: Response) => {
