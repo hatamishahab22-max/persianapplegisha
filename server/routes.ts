@@ -96,6 +96,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Initialize production database (one-time setup)
+  app.post("/api/admin/init-db", async (req: Request, res: Response) => {
+    try {
+      const secret = req.body?.secret;
+      if (secret !== process.env.DB_INIT_SECRET && secret !== "gisha2024@init") {
+        return res.status(403).json({ error: "Invalid secret" });
+      }
+
+      console.log('🚀 Initializing database...');
+      
+      // Check if categories exist
+      const categories = await storage.getAllCategories();
+      
+      if (categories.length === 0) {
+        console.log('Creating categories...');
+        await storage.createCategory({ name: 'iPhone', nameFa: 'آیفون', slug: 'iphone' });
+        await storage.createCategory({ name: 'iPad', nameFa: 'آیپد', slug: 'ipad' });
+        await storage.createCategory({ name: 'AirPods', nameFa: 'ایرپاد', slug: 'airpods' });
+      }
+
+      const iPhoneCategory = categories.find(c => c.slug === 'iphone') || 
+        (await storage.getAllCategories()).find(c => c.slug === 'iphone');
+      
+      if (!iPhoneCategory) {
+        throw new Error('iPhone category not found');
+      }
+
+      // Add iPhone 17 models
+      const models = [
+        { name: 'iPhone 17 Pro Max', nameFa: 'iPhone 17 Pro Max' },
+        { name: 'iPhone 17 Pro Max Registry', nameFa: 'iPhone 17 Pro Max رجیستر' },
+        { name: 'iPhone 17 Pro', nameFa: 'iPhone 17 Pro' },
+        { name: 'iPhone 17 Pro Registry', nameFa: 'iPhone 17 Pro رجیستر' },
+        { name: 'iPhone 17', nameFa: 'iPhone 17' },
+        { name: 'iPhone 17 Registry', nameFa: 'iPhone 17 رجیستر' },
+        { name: 'iPhone Air', nameFa: 'iPhone Air' },
+        { name: 'iPhone Air Registry', nameFa: 'iPhone Air رجیستر' },
+      ];
+
+      for (const model of models) {
+        const existing = (await storage.getAllModels()).find(m => m.name === model.name);
+        if (!existing) {
+          await storage.createModel({ ...model, categoryId: iPhoneCategory.id });
+          console.log(`✅ Created: ${model.name}`);
+        }
+      }
+
+      res.json({ success: true, message: 'Database initialized successfully' });
+    } catch (error: any) {
+      console.error('Init error:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Protected admin routes (example)
   app.get("/api/admin/stats", requireAdmin, async (req: Request, res: Response) => {
     // Return admin statistics
