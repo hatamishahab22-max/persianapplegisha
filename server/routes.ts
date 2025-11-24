@@ -106,47 +106,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log('🚀 Initializing database...');
       
-      // Check if categories exist
-      const categories = await storage.getAllCategories();
-      
-      if (categories.length === 0) {
-        console.log('Creating categories...');
-        await storage.createCategory({ name: 'iPhone', nameFa: 'آیفون', slug: 'iphone' });
-        await storage.createCategory({ name: 'iPad', nameFa: 'آیپد', slug: 'ipad' });
-        await storage.createCategory({ name: 'AirPods', nameFa: 'ایرپاد', slug: 'airpods' });
-      }
+      // Insert categories
+      console.log('Creating categories...');
+      const categories = await storage.createCategory({ name: 'iPhone', nameFa: 'آیفون', slug: 'iphone', order: 1 });
+      await storage.createCategory({ name: 'iPad', nameFa: 'آیپد', slug: 'ipad', order: 2 });
+      await storage.createCategory({ name: 'AirPods', nameFa: 'ایرپاد', slug: 'airpods', order: 3 });
+      await storage.createCategory({ name: 'Used iPhone', nameFa: 'گوشی کارکرده', slug: 'used-iphone', order: 4 });
 
-      const iPhoneCategory = categories.find(c => c.slug === 'iphone') || 
-        (await storage.getAllCategories()).find(c => c.slug === 'iphone');
-      
+      console.log('✅ Created categories');
+
+      // Insert iPhone 17 models
+      console.log('Creating iPhone 17 models...');
+      const iPhoneCategory = await storage.getCategoryBySlug('iphone');
       if (!iPhoneCategory) {
         throw new Error('iPhone category not found');
       }
 
-      // Add iPhone 17 models
       const models = [
-        { name: 'iPhone 17 Pro Max', nameFa: 'iPhone 17 Pro Max' },
-        { name: 'iPhone 17 Pro Max Registry', nameFa: 'iPhone 17 Pro Max رجیستر' },
-        { name: 'iPhone 17 Pro', nameFa: 'iPhone 17 Pro' },
-        { name: 'iPhone 17 Pro Registry', nameFa: 'iPhone 17 Pro رجیستر' },
-        { name: 'iPhone 17', nameFa: 'iPhone 17' },
-        { name: 'iPhone 17 Registry', nameFa: 'iPhone 17 رجیستر' },
-        { name: 'iPhone Air', nameFa: 'iPhone Air' },
-        { name: 'iPhone Air Registry', nameFa: 'iPhone Air رجیستر' },
+        { categoryId: iPhoneCategory.id, name: 'iPhone 17 Pro Max', nameFa: 'iPhone 17 Pro Max', order: 1 },
+        { categoryId: iPhoneCategory.id, name: 'iPhone 17 Pro Max Registry', nameFa: 'iPhone 17 Pro Max رجیستر', order: 2 },
+        { categoryId: iPhoneCategory.id, name: 'iPhone 17 Pro', nameFa: 'iPhone 17 Pro', order: 3 },
+        { categoryId: iPhoneCategory.id, name: 'iPhone 17 Pro Registry', nameFa: 'iPhone 17 Pro رجیستر', order: 4 },
+        { categoryId: iPhoneCategory.id, name: 'iPhone 17', nameFa: 'iPhone 17', order: 5 },
+        { categoryId: iPhoneCategory.id, name: 'iPhone 17 Registry', nameFa: 'iPhone 17 رجیستر', order: 6 },
+        { categoryId: iPhoneCategory.id, name: 'iPhone Air', nameFa: 'iPhone Air', order: 7 },
+        { categoryId: iPhoneCategory.id, name: 'iPhone Air Registry', nameFa: 'iPhone Air رجیستر', order: 8 },
       ];
 
       for (const model of models) {
-        const existing = (await storage.getAllModels()).find(m => m.name === model.name);
-        if (!existing) {
-          await storage.createModel({ ...model, categoryId: iPhoneCategory.id });
-          console.log(`✅ Created: ${model.name}`);
-        }
+        await storage.createModel(model);
+        console.log(`✅ Created: ${model.name}`);
       }
 
-      res.json({ success: true, message: 'Database initialized successfully' });
+      res.json({ 
+        success: true, 
+        message: 'Database initialized successfully',
+        stats: {
+          categories: 4,
+          models: 8
+        }
+      });
     } catch (error: any) {
       console.error('Init error:', error);
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ error: error.message, details: error.stack });
     }
   };
 
