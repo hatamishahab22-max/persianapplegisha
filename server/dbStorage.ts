@@ -2,7 +2,7 @@ import { eq, desc, sql, or, inArray } from "drizzle-orm";
 import { db } from "./db";
 import { 
   users, categories, products, productVariations, usedPhones, visits, errorLogs, whatsappOrders,
-  productModels, productColors, productStorageOptions, productPrices, appleIdOrders,
+  productModels, productColors, productStorageOptions, productPrices, appleIdOrders, referrals,
   type User, type InsertUser, 
   type UsedPhone, type InsertUsedPhone,
   type Category, type InsertCategory,
@@ -15,7 +15,8 @@ import {
   type ProductColor, type InsertProductColor,
   type ProductStorageOption, type InsertProductStorageOption,
   type ProductPrice, type InsertProductPrice,
-  type AppleIdOrder, type InsertAppleIdOrder
+  type AppleIdOrder, type InsertAppleIdOrder,
+  type Referral, type InsertReferral
 } from "@shared/schema";
 import type { IStorage } from "./storage";
 
@@ -606,5 +607,51 @@ export class DbStorage implements IStorage {
   async deleteAppleIdOrder(id: string): Promise<boolean> {
     const result = await db.delete(appleIdOrders).where(eq(appleIdOrders.id, id));
     return result.rowCount ? result.rowCount > 0 : false;
+  }
+
+  // Referral tracking methods
+  async createReferral(insertReferral: InsertReferral): Promise<Referral> {
+    const result = await db.insert(referrals).values(insertReferral).returning();
+    return result[0];
+  }
+
+  async getAllReferrals(): Promise<Referral[]> {
+    return await db.select().from(referrals).orderBy(desc(referrals.createdAt));
+  }
+
+  async getReferralStats(): Promise<{
+    total: number;
+    today: number;
+    bySource: Array<{ source: string; count: number }>;
+    converted: number;
+  }> {
+    const allReferrals = await this.getAllReferrals();
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const todayReferrals = allReferrals.filter(r => 
+      r.createdAt && new Date(r.createdAt) >= today
+    );
+    
+    const converted = allReferrals.filter(r => r.converted === true).length;
+    
+    // Group by source
+    const sourceMap = new Map<string, number>();
+    allReferrals.forEach(r => {
+      const count = sourceMap.get(r.source) || 0;
+      sourceMap.set(r.source, count + 1);
+    });
+    
+    const bySource = Array.from(sourceMap.entries())
+      .map(([source, count]) => ({ source, count }))
+      .sort((a, b) => b.count - a.count);
+    
+    return {
+      total: allReferrals.length,
+      today: todayReferrals.length,
+      bySource,
+      converted
+    };
   }
 }

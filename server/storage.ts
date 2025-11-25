@@ -11,7 +11,8 @@ import {
   type ProductColor, type InsertProductColor,
   type ProductStorageOption, type InsertProductStorageOption,
   type ProductPrice, type InsertProductPrice,
-  type AppleIdOrder, type InsertAppleIdOrder
+  type AppleIdOrder, type InsertAppleIdOrder,
+  type Referral, type InsertReferral
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 
@@ -122,6 +123,16 @@ export interface IStorage {
   createAppleIdOrder(order: InsertAppleIdOrder): Promise<AppleIdOrder>;
   updateAppleIdOrder(id: string, order: Partial<InsertAppleIdOrder>): Promise<AppleIdOrder | undefined>;
   deleteAppleIdOrder(id: string): Promise<boolean>;
+
+  // Referral tracking methods
+  createReferral(referral: InsertReferral): Promise<Referral>;
+  getAllReferrals(): Promise<Referral[]>;
+  getReferralStats(): Promise<{
+    total: number;
+    today: number;
+    bySource: Array<{ source: string; count: number }>;
+    converted: number;
+  }>;
 }
 
 export class MemStorage implements IStorage {
