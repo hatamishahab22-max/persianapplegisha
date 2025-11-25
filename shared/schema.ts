@@ -425,3 +425,23 @@ export const insertAppleIdOrderSchema = createInsertSchema(appleIdOrders).omit({
 
 export type InsertAppleIdOrder = z.infer<typeof insertAppleIdOrderSchema>;
 export type AppleIdOrder = typeof appleIdOrders.$inferSelect;
+
+// Referrals table (for tracking where visitors come from)
+export const referrals = pgTable("referrals", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  source: text("source").notNull(), // instagram, friend, google, direct, etc.
+  sessionId: text("session_id"), // For tracking unique visitors
+  ip: text("ip"), // IP address
+  userAgent: text("user_agent"), // Browser info
+  landingPage: text("landing_page"), // Which page they landed on
+  converted: boolean("converted").default(false), // Did they make a purchase or contact?
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertReferralSchema = createInsertSchema(referrals).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertReferral = z.infer<typeof insertReferralSchema>;
+export type Referral = typeof referrals.$inferSelect;
