@@ -5,7 +5,7 @@ import whatsappIcon from "@assets/photo-output_1763702810818.png";
 import locationIcon from "@assets/photo-output_1763702984960.png";
 import logoImage from "@assets/a87b21c6-86b6-44fc-a01c-c6759e712c0b_1763764875125.jpeg";
 import { Link } from "wouter";
-import { Phone } from "lucide-react";
+import { Phone, Share2 } from "lucide-react";
 import { InstallButton } from "@/components/InstallButton";
 
 export default function Home() {
@@ -60,6 +60,25 @@ export default function Home() {
     trackReferral();
   }, []);
 
+  const handleShareWhatsApp = () => {
+    // Get or create session ID for referral tracking
+    let sessionId = sessionStorage.getItem("sessionId");
+    if (!sessionId) {
+      sessionId = Math.random().toString(36).substring(2) + Date.now().toString(36);
+      sessionStorage.setItem("sessionId", sessionId);
+    }
+
+    // Create referral link with unique session ID
+    const referralLink = `${window.location.origin}/?ref=${sessionId}`;
+    
+    // WhatsApp share message
+    const message = `سلام! 👋\n\nبهترین فروشگاه محصولات اپل در تهران رو پیدا کردم! 🍎\n\n📱 آیفون، آیپد، ایرپاد و...\n💯 محصولات اصل و گارانتی معتبر\n🎯 قیمت‌های عالی\n\nحتما چک کن:\n${referralLink}\n\n📍 آدرس: تهران، گیشا، بازار بزرگ نصر`;
+    
+    // Open WhatsApp with pre-filled message
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
   return (
     <div className="h-screen w-full overflow-hidden relative bg-black font-['Vazirmatn']">
       {/* Install Button */}
@@ -97,24 +116,36 @@ export default function Home() {
         </div>
         
         {/* Buttons */}
-        <nav className="flex justify-center gap-4">
-          <Link href="/contact">
-            <button 
-              className="px-8 py-3 rounded-2xl backdrop-blur-lg bg-white/20 border border-white/40 hover:bg-white/30 transition-all duration-300 shadow-lg text-white font-semibold"
-              data-testid="link-contact"
-            >
-              تماس با ما
-            </button>
-          </Link>
+        <nav className="flex flex-col items-center gap-4">
+          <div className="flex gap-4">
+            <Link href="/contact">
+              <button 
+                className="px-8 py-3 rounded-2xl backdrop-blur-lg bg-white/20 border border-white/40 hover:bg-white/30 transition-all duration-300 shadow-lg text-white font-semibold"
+                data-testid="link-contact"
+              >
+                تماس با ما
+              </button>
+            </Link>
+            
+            <Link href="/products">
+              <button 
+                className="px-8 py-3 rounded-2xl backdrop-blur-lg bg-white/20 border border-white/40 hover:bg-white/30 transition-all duration-300 shadow-lg text-white font-semibold"
+                data-testid="link-products"
+              >
+                محصولات
+              </button>
+            </Link>
+          </div>
           
-          <Link href="/products">
-            <button 
-              className="px-8 py-3 rounded-2xl backdrop-blur-lg bg-white/20 border border-white/40 hover:bg-white/30 transition-all duration-300 shadow-lg text-white font-semibold"
-              data-testid="link-products"
-            >
-              محصولات
-            </button>
-          </Link>
+          {/* Share Button */}
+          <button 
+            onClick={handleShareWhatsApp}
+            className="flex items-center gap-2 px-6 py-2.5 rounded-2xl backdrop-blur-lg bg-green-500/80 border border-green-400/60 hover:bg-green-500/90 transition-all duration-300 shadow-lg text-white font-semibold"
+            data-testid="button-share-whatsapp"
+          >
+            <Share2 className="w-4 h-4" />
+            <span>معرفی به دوستان</span>
+          </button>
         </nav>
       </div>
 
