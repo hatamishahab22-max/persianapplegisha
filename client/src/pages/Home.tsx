@@ -6,6 +6,7 @@ import locationIcon from "@assets/photo-output_1763702984960.png";
 import logoImage from "@assets/a87b21c6-86b6-44fc-a01c-c6759e712c0b_1763764875125.jpeg";
 import { Link } from "wouter";
 import { Phone } from "lucide-react";
+import { InstallButton } from "@/components/InstallButton";
 
 export default function Home() {
   const [userName, setUserName] = useState<string>("");
@@ -17,6 +18,9 @@ export default function Home() {
 
   return (
     <div className="h-screen w-full overflow-hidden relative bg-black font-['Vazirmatn']">
+      {/* Install Button */}
+      <InstallButton />
+
       {/* Background Video */}
       <video 
         className="h-full w-full object-cover absolute inset-0"
