@@ -11,7 +11,8 @@ import {
   Settings,
   Home,
   MessageSquare,
-  QrCode
+  QrCode,
+  TrendingUp
 } from "lucide-react";
 
 import { lazy, Suspense } from "react";
@@ -26,6 +27,7 @@ const WhatsappOrdersManager = lazy(() => import("@/components/admin/whatsapp-ord
 const SettingsManager = lazy(() => import("@/components/admin/settings-manager"));
 const QRCodeGenerator = lazy(() => import("@/components/admin/qr-code-generator"));
 const SeedDatabase = lazy(() => import("@/components/admin/seed-database"));
+const ReferralAnalytics = lazy(() => import("@/components/admin/referral-analytics"));
 
 export default function Admin() {
   const [match, params] = useRoute("/admin/:section");
@@ -37,6 +39,13 @@ export default function Admin() {
       icon: BarChart, 
       path: "/admin/dashboard",
       description: "آمار و گزارشات فروشگاه"
+    },
+    { 
+      title: "تحلیل معرفی‌ها", 
+      titleEn: "Referrals",
+      icon: TrendingUp, 
+      path: "/admin/referrals",
+      description: "آمار بازدیدکنندگان و منابع معرفی"
     },
     { 
       title: "مدیریت محصولات", 
@@ -143,6 +152,9 @@ export default function Admin() {
             <Switch>
               <Route path="/admin/dashboard">
                 <AnalyticsDashboard />
+              </Route>
+              <Route path="/admin/referrals">
+                <ReferralAnalytics />
               </Route>
               <Route path="/admin/products">
                 <ProductManager />
