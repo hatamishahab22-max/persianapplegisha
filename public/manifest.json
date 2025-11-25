@@ -5,11 +5,12 @@
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
   "background_color": "#000000",
   "theme_color": "#FFD700",
   "dir": "rtl",
   "lang": "fa",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/attached_assets/generated_images/app_icon_192x192.png",
