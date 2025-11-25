@@ -1388,6 +1388,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ========== REFERRAL TRACKING ROUTES ==========
+  
+  app.post("/api/referrals", async (req: Request, res: Response) => {
+    try {
+      const { source, sessionId, landingPage } = req.body;
+      
+      if (!source) {
+        return res.status(400).json({ error: "Source is required" });
+      }
+
+      const referral = await storage.createReferral({
+        source,
+        sessionId: sessionId || null,
+        ip: req.ip || null,
+        userAgent: req.headers['user-agent'] || null,
+        landingPage: landingPage || '/',
+        converted: false
+      });
+      
+      res.json(referral);
+    } catch (error) {
+      console.error('Error creating referral:', error);
+      res.status(500).json({ error: "Failed to create referral" });
+    }
+  });
+
+  app.get("/api/referrals", requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const referrals = await storage.getAllReferrals();
+      res.json(referrals);
+    } catch (error) {
+      console.error('Error getting referrals:', error);
+      res.status(500).json({ error: "Failed to get referrals" });
+    }
+  });
+
+  app.get("/api/referrals/stats", requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const stats = await storage.getReferralStats();
+      res.json(stats);
+    } catch (error) {
+      console.error('Error getting referral stats:', error);
+      res.status(500).json({ error: "Failed to get referral stats" });
+    }
+  });
+
   // Initialize all product models (one-time setup)
   app.post("/api/admin/init-iphone-models", requireAdmin, async (req: Request, res: Response) => {
     try {
