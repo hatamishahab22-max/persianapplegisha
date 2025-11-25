@@ -16,6 +16,50 @@ export default function Home() {
     setUserName(name);
   }, []);
 
+  // Track referrals
+  useEffect(() => {
+    const trackReferral = async () => {
+      // Check if already tracked this session
+      const alreadyTracked = sessionStorage.getItem("referralTracked");
+      if (alreadyTracked) return;
+
+      // Get ref parameter from URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const refSource = urlParams.get("ref");
+
+      // If no ref parameter, track as "direct"
+      const source = refSource || "direct";
+
+      // Generate a session ID if not exists
+      let sessionId = sessionStorage.getItem("sessionId");
+      if (!sessionId) {
+        sessionId = Math.random().toString(36).substring(2) + Date.now().toString(36);
+        sessionStorage.setItem("sessionId", sessionId);
+      }
+
+      try {
+        await fetch("/api/referrals", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            source,
+            sessionId,
+            landingPage: window.location.pathname + window.location.search,
+          }),
+        });
+
+        // Mark as tracked for this session
+        sessionStorage.setItem("referralTracked", "true");
+      } catch (error) {
+        console.error("Failed to track referral:", error);
+      }
+    };
+
+    trackReferral();
+  }, []);
+
   return (
     <div className="h-screen w-full overflow-hidden relative bg-black font-['Vazirmatn']">
       {/* Install Button */}
