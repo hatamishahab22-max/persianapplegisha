@@ -3,24 +3,40 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import session from "express-session";
 import MemoryStore from "memorystore";
+import cors from "cors";
 
 const app = express();
+
+// Security: CORS configuration - restrict to specific origins
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN || 'http://localhost:5000',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+app.use(cors(corsOptions));
 
 // Session store - using MemoryStore for development
 // In production, you'd use PostgreSQL or Redis
 const MemStore = MemoryStore(session);
 
+// Security: Require SESSION_SECRET in production
+if (!process.env.SESSION_SECRET && process.env.NODE_ENV === 'production') {
+  throw new Error('SESSION_SECRET environment variable is required in production');
+}
+
 // Session middleware - MUST be before routes
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'persian-apple-store-secret-key-change-in-production',
+  secret: process.env.SESSION_SECRET || 'dev-secret-key-not-for-production',
   resave: false,
   saveUninitialized: false,
   store: new MemStore({
     checkPeriod: 86400000 // prune expired entries every 24h
   }),
   cookie: {
-    secure: false, // Set to true in production with HTTPS
+    secure: process.env.NODE_ENV === 'production', // HTTPS only in production
     httpOnly: true,
+    sameSite: 'strict',
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
 }));
@@ -53,8 +69,11 @@ app.use((req, res, next) => {
     const duration = Date.now() - start;
     if (path.startsWith("/api")) {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+      
+      // Security: Don't log sensitive data
+      if (capturedJsonResponse && !path.includes('/auth/login') && !path.includes('/password') && !path.includes('/secret')) {
+        const responseStr = JSON.stringify(capturedJsonResponse);
+        logLine += ` :: ${responseStr.substring(0, 100)}`;
       }
 
       if (logLine.length > 80) {

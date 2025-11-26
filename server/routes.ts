@@ -39,7 +39,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     next();
   };
 
-  // Auth routes
+  // Auth routes - Security: Check admin credentials from environment
   app.post("/api/auth/login", async (req: Request, res: Response) => {
     const { username, password } = req.body;
 
@@ -47,10 +47,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(400).json({ error: "Username and password required" });
     }
 
+    // Security: Validate input length to prevent buffer overflow attacks
+    if (username.length > 50 || password.length > 100) {
+      return res.status(400).json({ error: "Invalid input" });
+    }
+
     try {
-      // For demo purposes, we'll check hardcoded admin credentials
-      // In production, you'd check against database
-      if (username === 'admin' && password === 'selena@2523') {
+      const adminUser = process.env.ADMIN_USERNAME || 'admin';
+      const adminPass = process.env.ADMIN_PASSWORD;
+
+      // Security: In production, ADMIN_PASSWORD MUST be set
+      if (!adminPass && process.env.NODE_ENV === 'production') {
+        console.error('ERROR: ADMIN_PASSWORD not set in production');
+        return res.status(500).json({ error: "Server configuration error" });
+      }
+
+      if (username === adminUser && password === (adminPass || 'admin')) {
         req.session.userId = '1';
         req.session.username = 'admin';
         req.session.role = 'admin';
@@ -65,10 +77,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      return res.status(401).json({ error: "Invalid username or password" });
+      // Security: Don't reveal which field is wrong (username vs password)
+      return res.status(401).json({ error: "Invalid credentials" });
     } catch (error) {
-      console.error('Login error:', error);
-      return res.status(500).json({ error: "Login failed" });
+      // Security: Don't expose internal errors
+      console.error('Login error - server issue');
+      return res.status(500).json({ error: "Authentication failed" });
     }
   });
 
