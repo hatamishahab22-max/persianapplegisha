@@ -160,101 +160,26 @@ export default function DreamDeals() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="max-w-2xl mx-auto space-y-3">
             {availablePhones.map((phone) => {
-              const discount = calculateDiscount(phone.price, phone.originalPrice);
+              const parts = [phone.model];
+              if (phone.storage) parts.push(phone.storage);
+              if (phone.colorFa) parts.push(phone.colorFa);
+              const textContent = parts.join(" ") + " قیمت " + formatPrice(phone.price) + " تومان";
               
               return (
-                <Card 
+                <a 
                   key={phone.id}
-                  className="bg-gray-800/50 border-gray-700 backdrop-blur-sm overflow-hidden hover:border-purple-500/50 transition-all"
-                  data-testid={`card-phone-${phone.id}`}
+                  href="tel:+989121149079"
+                  className="block"
+                  data-testid={`text-product-${phone.id}`}
                 >
-                  {phone.images && phone.images.length > 0 ? (
-                    <div className="aspect-square relative">
-                      <img
-                        src={phone.images[0]}
-                        alt={phone.model}
-                        className="w-full h-full object-cover"
-                      />
-                      {discount && (
-                        <Badge className="absolute top-3 left-3 bg-red-500 text-white font-bold">
-                          {discount}% تخفیف
-                        </Badge>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="aspect-square bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
-                      <Phone className="w-16 h-16 text-gray-500" />
-                      {discount && (
-                        <Badge className="absolute top-3 left-3 bg-red-500 text-white font-bold">
-                          {discount}% تخفیف
-                        </Badge>
-                      )}
-                    </div>
-                  )}
-
-                  <CardContent className="p-4 space-y-3">
-                    <h3 className="text-lg font-bold text-white">
-                      {phone.model}
-                    </h3>
-
-                    <div className="flex flex-wrap gap-2">
-                      {phone.storage && (
-                        <Badge variant="secondary" className="bg-gray-700 text-gray-200">
-                          {phone.storage}
-                        </Badge>
-                      )}
-                      {phone.colorFa && (
-                        <Badge variant="secondary" className="bg-gray-700 text-gray-200">
-                          {phone.colorFa}
-                        </Badge>
-                      )}
-                      {phone.conditionFa && (
-                        <Badge 
-                          variant="secondary" 
-                          className={phone.condition === 'new' ? 'bg-green-600 text-white' : 'bg-yellow-600 text-white'}
-                        >
-                          {phone.conditionFa}
-                        </Badge>
-                      )}
-                    </div>
-
-                    {phone.description && (
-                      <p className="text-sm text-gray-400 line-clamp-2">
-                        {phone.description}
-                      </p>
-                    )}
-
-                    <div className="space-y-1">
-                      {phone.originalPrice && (
-                        <p className="text-sm text-gray-500 line-through">
-                          {formatPrice(phone.originalPrice)} تومان
-                        </p>
-                      )}
-                      <p className="text-2xl font-bold text-green-400">
-                        {formatPrice(phone.price)} تومان
-                      </p>
-                    </div>
-
-                    {phone.sellerName && (
-                      <p className="text-xs text-gray-500">
-                        فروشنده: {phone.sellerName}
-                      </p>
-                    )}
-
-                    <a 
-                      href="tel:+989121149079"
-                      className="block"
-                      data-testid={`button-call-${phone.id}`}
-                    >
-                      <Button className="w-full bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 font-bold">
-                        <Phone className="w-4 h-4 ml-2" />
-                        تماس برای خرید
-                      </Button>
-                    </a>
-                  </CardContent>
-                </Card>
+                  <div className="p-4 bg-gray-800/50 border border-gray-700 rounded-lg hover:bg-gray-700/50 hover:border-purple-500/50 transition-all group cursor-pointer">
+                    <p className="text-base text-gray-200 group-hover:text-white transition-colors">
+                      {textContent}
+                    </p>
+                  </div>
+                </a>
               );
             })}
           </div>
