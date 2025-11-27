@@ -5,7 +5,7 @@ import whatsappIcon from "@assets/photo-output_1763702810818.png";
 import locationIcon from "@assets/photo-output_1763702984960.png";
 import logoImage from "@assets/a87b21c6-86b6-44fc-a01c-c6759e712c0b_1763764875125.jpeg";
 import { Link } from "wouter";
-import { Phone, Share2 } from "lucide-react";
+import { Phone, Sparkles } from "lucide-react";
 import { InstallButton } from "@/components/InstallButton";
 
 export default function Home() {
@@ -137,15 +137,16 @@ export default function Home() {
             </Link>
           </div>
           
-          {/* Share Button */}
-          <button 
-            onClick={handleShareWhatsApp}
-            className="flex items-center gap-2 px-6 py-2.5 rounded-2xl backdrop-blur-lg bg-green-500/80 border border-green-400/60 hover:bg-green-500/90 transition-all duration-300 shadow-lg text-white font-semibold"
-            data-testid="button-share-whatsapp"
-          >
-            <Share2 className="w-4 h-4" />
-            <span>معرفی به دوستان</span>
-          </button>
+          {/* Dream Deals Button */}
+          <Link href="/dream-deals">
+            <button 
+              className="flex items-center gap-2 px-6 py-2.5 rounded-2xl backdrop-blur-lg bg-gradient-to-r from-purple-500/80 to-pink-500/80 border border-purple-400/60 hover:from-purple-500/90 hover:to-pink-500/90 transition-all duration-300 shadow-lg text-white font-semibold animate-pulse"
+              data-testid="button-dream-deals"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>پیشنهاد رویایی</span>
+            </button>
+          </Link>
         </nav>
       </div>
 
