@@ -12,7 +12,9 @@ import {
   type ProductStorageOption, type InsertProductStorageOption,
   type ProductPrice, type InsertProductPrice,
   type AppleIdOrder, type InsertAppleIdOrder,
-  type Referral, type InsertReferral
+  type Referral, type InsertReferral,
+  type Seller, type InsertSeller,
+  type DreamPhone, type InsertDreamPhone
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 
@@ -133,6 +135,23 @@ export interface IStorage {
     bySource: Array<{ source: string; count: number }>;
     converted: number;
   }>;
+
+  // Seller methods
+  getAllSellers(): Promise<Seller[]>;
+  getSeller(id: string): Promise<Seller | undefined>;
+  getSellerByUsername(username: string): Promise<Seller | undefined>;
+  createSeller(seller: InsertSeller): Promise<Seller>;
+  updateSeller(id: string, seller: Partial<InsertSeller>): Promise<Seller | undefined>;
+  deleteSeller(id: string): Promise<boolean>;
+
+  // Dream Phones methods
+  getAllDreamPhones(): Promise<DreamPhone[]>;
+  getAvailableDreamPhones(): Promise<DreamPhone[]>;
+  getDreamPhone(id: string): Promise<DreamPhone | undefined>;
+  getDreamPhonesBySeller(sellerId: string): Promise<DreamPhone[]>;
+  createDreamPhone(phone: InsertDreamPhone): Promise<DreamPhone>;
+  updateDreamPhone(id: string, phone: Partial<InsertDreamPhone>): Promise<DreamPhone | undefined>;
+  deleteDreamPhone(id: string): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {

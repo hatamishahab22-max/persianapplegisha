@@ -23,6 +23,9 @@ import UsedPhones from "@/pages/UsedPhones";
 import UsedPhonesAvailable from "@/pages/UsedPhonesAvailable";
 import PriceManager from "@/pages/PriceManager";
 import AppleIdManager from "@/pages/AppleIdManager";
+import DreamDeals from "@/pages/DreamDeals";
+import SellerLogin from "@/pages/SellerLogin";
+import SellerPanel from "@/pages/SellerPanel";
 import NotFound from "@/pages/not-found";
 
 // Loading component
@@ -88,6 +91,9 @@ function Router() {
         <Route path="/used-phones" component={UsedPhones} />
         <Route path="/used-phones/available" component={UsedPhonesAvailable} />
         <Route path="/used-phone-order" component={UsedPhoneOrder} />
+        <Route path="/dream-deals" component={DreamDeals} />
+        <Route path="/seller/login" component={SellerLogin} />
+        <Route path="/seller/panel" component={SellerPanel} />
         <Route path="/cart" component={CartPage} />
         <Route path="/checkout" component={CheckoutPage} />
         <Route path="/login" component={LoginPage} />

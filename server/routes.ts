@@ -12,6 +12,8 @@ declare module 'express-session' {
     userId?: string;
     username?: string;
     role?: string;
+    sellerId?: string;
+    sellerName?: string;
   }
 }
 
@@ -1623,6 +1625,353 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error("Error initializing models:", error);
       res.status(500).json({ error: error.message });
+    }
+  });
+
+  // ========== SELLER AUTH ROUTES ==========
+  
+  // Seller login
+  app.post("/api/seller/login", async (req: Request, res: Response) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({ message: "نام کاربری و رمز عبور الزامی است" });
+    }
+
+    if (username.length > 50 || password.length > 100) {
+      return res.status(400).json({ message: "ورودی نامعتبر" });
+    }
+
+    try {
+      const seller = await storage.getSellerByUsername(username);
+      if (!seller) {
+        return res.status(401).json({ message: "نام کاربری یا رمز عبور اشتباه است" });
+      }
+
+      if (!seller.isActive) {
+        return res.status(403).json({ message: "حساب کاربری غیرفعال است" });
+      }
+
+      const passwordMatch = await bcrypt.compare(password, seller.password);
+      if (!passwordMatch) {
+        return res.status(401).json({ message: "نام کاربری یا رمز عبور اشتباه است" });
+      }
+
+      req.session.sellerId = seller.id;
+      req.session.sellerName = seller.name;
+
+      res.json({
+        success: true,
+        seller: {
+          id: seller.id,
+          name: seller.name,
+          username: seller.username,
+          phone: seller.phone,
+          storeName: seller.storeName
+        }
+      });
+    } catch (error) {
+      console.error("Seller login error:", error);
+      res.status(500).json({ message: "خطا در ورود" });
+    }
+  });
+
+  // Seller check authentication
+  app.get("/api/seller/check", (req: Request, res: Response) => {
+    if (req.session?.sellerId) {
+      res.json({
+        authenticated: true,
+        seller: {
+          id: req.session.sellerId,
+          name: req.session.sellerName
+        }
+      });
+    } else {
+      res.json({ authenticated: false });
+    }
+  });
+
+  // Seller logout
+  app.post("/api/seller/logout", (req: Request, res: Response) => {
+    req.session.sellerId = undefined;
+    req.session.sellerName = undefined;
+    res.json({ success: true });
+  });
+
+  // Middleware to require seller auth
+  const requireSeller = (req: Request, res: Response, next: Function) => {
+    if (!req.session?.sellerId) {
+      return res.status(401).json({ error: "Seller authentication required" });
+    }
+    next();
+  };
+
+  // ========== SELLER PHONE MANAGEMENT ==========
+
+  // Get seller's phones
+  app.get("/api/seller/phones", requireSeller, async (req: Request, res: Response) => {
+    try {
+      const phones = await storage.getDreamPhonesBySeller(req.session.sellerId!);
+      res.json(phones);
+    } catch (error) {
+      console.error("Error fetching seller phones:", error);
+      res.status(500).json({ error: "Failed to fetch phones" });
+    }
+  });
+
+  // Add new phone
+  app.post("/api/seller/phones", requireSeller, async (req: Request, res: Response) => {
+    try {
+      const { model, storage: storageSize, color, colorFa, condition, conditionFa, price, originalPrice, description, images } = req.body;
+
+      if (!model || !price) {
+        return res.status(400).json({ error: "Model and price are required" });
+      }
+
+      const phone = await storage.createDreamPhone({
+        sellerId: req.session.sellerId!,
+        model,
+        storage: storageSize || null,
+        color: color || null,
+        colorFa: colorFa || null,
+        condition: condition || "new",
+        conditionFa: conditionFa || "آکبند",
+        price,
+        originalPrice: originalPrice || null,
+        description: description || null,
+        images: images || [],
+        isAvailable: true,
+        isSold: false
+      });
+
+      res.json(phone);
+    } catch (error) {
+      console.error("Error creating phone:", error);
+      res.status(500).json({ error: "Failed to create phone" });
+    }
+  });
+
+  // Update phone
+  app.put("/api/seller/phones/:id", requireSeller, async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const phone = await storage.getDreamPhone(id);
+
+      if (!phone) {
+        return res.status(404).json({ error: "Phone not found" });
+      }
+
+      if (phone.sellerId !== req.session.sellerId) {
+        return res.status(403).json({ error: "Not authorized" });
+      }
+
+      const updated = await storage.updateDreamPhone(id, req.body);
+      res.json(updated);
+    } catch (error) {
+      console.error("Error updating phone:", error);
+      res.status(500).json({ error: "Failed to update phone" });
+    }
+  });
+
+  // Mark phone as sold
+  app.put("/api/seller/phones/:id/sold", requireSeller, async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const phone = await storage.getDreamPhone(id);
+
+      if (!phone) {
+        return res.status(404).json({ error: "Phone not found" });
+      }
+
+      if (phone.sellerId !== req.session.sellerId) {
+        return res.status(403).json({ error: "Not authorized" });
+      }
+
+      const updated = await storage.updateDreamPhone(id, { isSold: true, isAvailable: false });
+      res.json(updated);
+    } catch (error) {
+      console.error("Error marking phone as sold:", error);
+      res.status(500).json({ error: "Failed to update phone" });
+    }
+  });
+
+  // Delete phone
+  app.delete("/api/seller/phones/:id", requireSeller, async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const phone = await storage.getDreamPhone(id);
+
+      if (!phone) {
+        return res.status(404).json({ error: "Phone not found" });
+      }
+
+      if (phone.sellerId !== req.session.sellerId) {
+        return res.status(403).json({ error: "Not authorized" });
+      }
+
+      await storage.deleteDreamPhone(id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting phone:", error);
+      res.status(500).json({ error: "Failed to delete phone" });
+    }
+  });
+
+  // ========== PUBLIC DREAM PHONES ROUTES ==========
+
+  // Get all available dream phones (public)
+  app.get("/api/dream-phones", async (req: Request, res: Response) => {
+    try {
+      const phones = await storage.getAvailableDreamPhones();
+      
+      // Add seller name to each phone
+      const phonesWithSellers = await Promise.all(
+        phones.map(async (phone) => {
+          const seller = await storage.getSeller(phone.sellerId);
+          return {
+            ...phone,
+            sellerName: seller?.name || "فروشنده"
+          };
+        })
+      );
+
+      res.json(phonesWithSellers);
+    } catch (error) {
+      console.error("Error fetching dream phones:", error);
+      res.status(500).json({ error: "Failed to fetch phones" });
+    }
+  });
+
+  // ========== ADMIN SELLER MANAGEMENT ==========
+
+  // Get all sellers (admin only)
+  app.get("/api/admin/sellers", requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const allSellers = await storage.getAllSellers();
+      // Don't send passwords
+      const safeSellers = allSellers.map(s => ({
+        id: s.id,
+        name: s.name,
+        username: s.username,
+        phone: s.phone,
+        storeName: s.storeName,
+        storeAddress: s.storeAddress,
+        isActive: s.isActive,
+        createdAt: s.createdAt
+      }));
+      res.json(safeSellers);
+    } catch (error) {
+      console.error("Error fetching sellers:", error);
+      res.status(500).json({ error: "Failed to fetch sellers" });
+    }
+  });
+
+  // Create new seller (admin only)
+  app.post("/api/admin/sellers", requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const { name, username, password, phone, storeName, storeAddress } = req.body;
+
+      if (!name || !username || !password) {
+        return res.status(400).json({ error: "Name, username, and password are required" });
+      }
+
+      // Check if username already exists
+      const existing = await storage.getSellerByUsername(username);
+      if (existing) {
+        return res.status(400).json({ error: "Username already exists" });
+      }
+
+      // Hash password
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const seller = await storage.createSeller({
+        name,
+        username,
+        password: hashedPassword,
+        phone: phone || null,
+        storeName: storeName || null,
+        storeAddress: storeAddress || null,
+        isActive: true
+      });
+
+      res.json({
+        id: seller.id,
+        name: seller.name,
+        username: seller.username,
+        phone: seller.phone,
+        storeName: seller.storeName
+      });
+    } catch (error) {
+      console.error("Error creating seller:", error);
+      res.status(500).json({ error: "Failed to create seller" });
+    }
+  });
+
+  // Update seller (admin only)
+  app.put("/api/admin/sellers/:id", requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const updates = { ...req.body };
+
+      // If password is being updated, hash it
+      if (updates.password) {
+        updates.password = await bcrypt.hash(updates.password, 10);
+      }
+
+      const updated = await storage.updateSeller(id, updates);
+      if (!updated) {
+        return res.status(404).json({ error: "Seller not found" });
+      }
+
+      res.json({
+        id: updated.id,
+        name: updated.name,
+        username: updated.username,
+        phone: updated.phone,
+        storeName: updated.storeName,
+        isActive: updated.isActive
+      });
+    } catch (error) {
+      console.error("Error updating seller:", error);
+      res.status(500).json({ error: "Failed to update seller" });
+    }
+  });
+
+  // Delete seller (admin only)
+  app.delete("/api/admin/sellers/:id", requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const deleted = await storage.deleteSeller(id);
+      if (!deleted) {
+        return res.status(404).json({ error: "Seller not found" });
+      }
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting seller:", error);
+      res.status(500).json({ error: "Failed to delete seller" });
+    }
+  });
+
+  // Get all dream phones (admin only)
+  app.get("/api/admin/dream-phones", requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const phones = await storage.getAllDreamPhones();
+      
+      // Add seller name to each phone
+      const phonesWithSellers = await Promise.all(
+        phones.map(async (phone) => {
+          const seller = await storage.getSeller(phone.sellerId);
+          return {
+            ...phone,
+            sellerName: seller?.name || "فروشنده"
+          };
+        })
+      );
+
+      res.json(phonesWithSellers);
+    } catch (error) {
+      console.error("Error fetching all dream phones:", error);
+      res.status(500).json({ error: "Failed to fetch phones" });
     }
   });
 

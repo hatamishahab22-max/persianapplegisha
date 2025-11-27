@@ -1,8 +1,9 @@
-import { eq, desc, sql, or, inArray } from "drizzle-orm";
+import { eq, desc, sql, or, inArray, and } from "drizzle-orm";
 import { db } from "./db";
 import { 
   users, categories, products, productVariations, usedPhones, visits, errorLogs, whatsappOrders,
   productModels, productColors, productStorageOptions, productPrices, appleIdOrders, referrals,
+  sellers, dreamPhones,
   type User, type InsertUser, 
   type UsedPhone, type InsertUsedPhone,
   type Category, type InsertCategory,
@@ -16,7 +17,9 @@ import {
   type ProductStorageOption, type InsertProductStorageOption,
   type ProductPrice, type InsertProductPrice,
   type AppleIdOrder, type InsertAppleIdOrder,
-  type Referral, type InsertReferral
+  type Referral, type InsertReferral,
+  type Seller, type InsertSeller,
+  type DreamPhone, type InsertDreamPhone
 } from "@shared/schema";
 import type { IStorage } from "./storage";
 
@@ -653,5 +656,78 @@ export class DbStorage implements IStorage {
       bySource,
       converted
     };
+  }
+
+  // Seller methods
+  async getAllSellers(): Promise<Seller[]> {
+    return await db.select().from(sellers).orderBy(desc(sellers.createdAt));
+  }
+
+  async getSeller(id: string): Promise<Seller | undefined> {
+    const result = await db.select().from(sellers).where(eq(sellers.id, id));
+    return result[0];
+  }
+
+  async getSellerByUsername(username: string): Promise<Seller | undefined> {
+    const result = await db.select().from(sellers).where(eq(sellers.username, username));
+    return result[0];
+  }
+
+  async createSeller(seller: InsertSeller): Promise<Seller> {
+    const result = await db.insert(sellers).values(seller).returning();
+    return result[0];
+  }
+
+  async updateSeller(id: string, updates: Partial<InsertSeller>): Promise<Seller | undefined> {
+    const result = await db.update(sellers)
+      .set(updates)
+      .where(eq(sellers.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async deleteSeller(id: string): Promise<boolean> {
+    const result = await db.delete(sellers).where(eq(sellers.id, id));
+    return result.rowCount ? result.rowCount > 0 : false;
+  }
+
+  // Dream Phones methods
+  async getAllDreamPhones(): Promise<DreamPhone[]> {
+    return await db.select().from(dreamPhones).orderBy(desc(dreamPhones.createdAt));
+  }
+
+  async getAvailableDreamPhones(): Promise<DreamPhone[]> {
+    return await db.select().from(dreamPhones)
+      .where(and(eq(dreamPhones.isAvailable, true), eq(dreamPhones.isSold, false)))
+      .orderBy(desc(dreamPhones.createdAt));
+  }
+
+  async getDreamPhone(id: string): Promise<DreamPhone | undefined> {
+    const result = await db.select().from(dreamPhones).where(eq(dreamPhones.id, id));
+    return result[0];
+  }
+
+  async getDreamPhonesBySeller(sellerId: string): Promise<DreamPhone[]> {
+    return await db.select().from(dreamPhones)
+      .where(eq(dreamPhones.sellerId, sellerId))
+      .orderBy(desc(dreamPhones.createdAt));
+  }
+
+  async createDreamPhone(phone: InsertDreamPhone): Promise<DreamPhone> {
+    const result = await db.insert(dreamPhones).values(phone).returning();
+    return result[0];
+  }
+
+  async updateDreamPhone(id: string, updates: Partial<InsertDreamPhone>): Promise<DreamPhone | undefined> {
+    const result = await db.update(dreamPhones)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(dreamPhones.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async deleteDreamPhone(id: string): Promise<boolean> {
+    const result = await db.delete(dreamPhones).where(eq(dreamPhones.id, id));
+    return result.rowCount ? result.rowCount > 0 : false;
   }
 }

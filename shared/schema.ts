@@ -445,3 +445,53 @@ export const insertReferralSchema = createInsertSchema(referrals).omit({
 
 export type InsertReferral = z.infer<typeof insertReferralSchema>;
 export type Referral = typeof referrals.$inferSelect;
+
+// Sellers table (for Dream Deals marketplace)
+export const sellers = pgTable("sellers", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(), // Seller's display name
+  username: text("username").notNull().unique(), // Login username
+  password: text("password").notNull(), // Hashed password
+  phone: text("phone"), // Seller's phone number
+  storeName: text("store_name"), // Shop name
+  storeAddress: text("store_address"), // Shop address
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertSellerSchema = createInsertSchema(sellers).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertSeller = z.infer<typeof insertSellerSchema>;
+export type Seller = typeof sellers.$inferSelect;
+
+// Dream Phones table (special priced phones from sellers)
+export const dreamPhones = pgTable("dream_phones", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  sellerId: varchar("seller_id").references(() => sellers.id).notNull(),
+  model: text("model").notNull(), // iPhone 15 Pro Max, etc.
+  storage: text("storage"), // 256GB, 512GB
+  color: text("color"), // Color name
+  colorFa: text("color_fa"), // Persian color name
+  condition: text("condition").default("new"), // new, like_new, used
+  conditionFa: text("condition_fa").default("آکبند"),
+  price: decimal("price", { precision: 10, scale: 0 }).notNull(), // Price in Toman
+  originalPrice: decimal("original_price", { precision: 10, scale: 0 }), // Original price to show discount
+  description: text("description"), // Additional notes
+  images: text().array(), // Array of image URLs
+  isAvailable: boolean("is_available").default(true),
+  isSold: boolean("is_sold").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertDreamPhoneSchema = createInsertSchema(dreamPhones).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertDreamPhone = z.infer<typeof insertDreamPhoneSchema>;
+export type DreamPhone = typeof dreamPhones.$inferSelect;
