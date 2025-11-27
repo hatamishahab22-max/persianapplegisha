@@ -12,7 +12,8 @@ import {
   Home,
   MessageSquare,
   QrCode,
-  TrendingUp
+  TrendingUp,
+  Sparkles
 } from "lucide-react";
 
 import { lazy, Suspense } from "react";
@@ -28,6 +29,7 @@ const SettingsManager = lazy(() => import("@/components/admin/settings-manager")
 const QRCodeGenerator = lazy(() => import("@/components/admin/qr-code-generator"));
 const SeedDatabase = lazy(() => import("@/components/admin/seed-database"));
 const ReferralAnalytics = lazy(() => import("@/components/admin/referral-analytics"));
+const SellerManager = lazy(() => import("@/components/admin/seller-manager"));
 
 export default function Admin() {
   const [match, params] = useRoute("/admin/:section");
@@ -102,6 +104,13 @@ export default function Admin() {
       icon: Package, 
       path: "/admin/seed",
       description: "پر کردن دیتابیس با مدل‌ها و رنگ‌ها"
+    },
+    { 
+      title: "پیشنهاد رویایی", 
+      titleEn: "Dream Deals",
+      icon: Sparkles, 
+      path: "/admin/sellers",
+      description: "مدیریت فروشندگان پیشنهاد رویایی"
     },
   ];
 
@@ -179,6 +188,9 @@ export default function Admin() {
               </Route>
               <Route path="/admin/seed">
                 <SeedDatabase />
+              </Route>
+              <Route path="/admin/sellers">
+                <SellerManager />
               </Route>
               <Route>
                 <DefaultDashboard menuItems={menuItems} />
