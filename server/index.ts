@@ -7,9 +7,11 @@ import cors from "cors";
 
 const app = express();
 
-// Security: CORS configuration - restrict to specific origins
+// Security: CORS configuration
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5000',
+  origin: process.env.NODE_ENV === 'production' 
+    ? true  // Allow same-origin in production
+    : 'http://localhost:5000',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -36,7 +38,7 @@ app.use(session({
   cookie: {
     secure: process.env.NODE_ENV === 'production', // HTTPS only in production
     httpOnly: true,
-    sameSite: 'strict',
+    sameSite: 'lax', // 'lax' allows redirects to work properly
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
 }));
