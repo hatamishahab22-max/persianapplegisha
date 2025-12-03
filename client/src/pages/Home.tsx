@@ -1,11 +1,6 @@
 import { useState, useEffect } from "react";
-import videoFile from "@assets/video-output-597A6071-A019-439B-9B22-BF4D6A546A02-1_1763702148716.mov";
-import instagramIcon from "@assets/photo-output_1763702787471.png";
-import whatsappIcon from "@assets/photo-output_1763702810818.png";
-import locationIcon from "@assets/photo-output_1763702984960.png";
-import logoImage from "@assets/a87b21c6-86b6-44fc-a01c-c6759e712c0b_1763764875125.jpeg";
 import { Link } from "wouter";
-import { Phone, Sparkles } from "lucide-react";
+import { Phone, Sparkles, MapPin, Instagram, MessageCircle } from "lucide-react";
 import { InstallButton } from "@/components/InstallButton";
 
 export default function Home() {
@@ -84,35 +79,19 @@ export default function Home() {
       {/* Install Button */}
       <InstallButton />
 
-      {/* Background Video */}
-      <video 
-        className="h-full w-full object-cover absolute inset-0"
-        autoPlay 
-        muted 
-        loop 
-        playsInline
-        preload="auto"
-        poster="/attached_assets/a87b21c6-86b6-44fc-a01c-c6759e712c0b_1763764875125.jpeg"
-        data-testid="video-background"
-      >
-        <source src={videoFile} type="video/mp4" />
-      </video>
+      {/* Background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-800 to-black" data-testid="video-background" />
 
       {/* Dark Overlay */}
       <div className="absolute inset-0 bg-black/10" />
       
       {/* Top Section - Logo and Buttons */}
       <div className="absolute top-0 left-0 right-0 z-10 pt-6 px-4">
-        {/* Logo Image */}
+        {/* Logo */}
         <div className="flex justify-center mb-8">
-          <img 
-            src={logoImage} 
-            alt="Persian Apple Store" 
-            className="w-auto h-10 object-contain"
-            loading="eager"
-            decoding="async"
-            data-testid="img-logo"
-          />
+          <h1 className="text-2xl font-bold text-white data-testid='text-logo'">
+            🍎 Persian Apple
+          </h1>
         </div>
         
         {/* Buttons */}
@@ -157,11 +136,11 @@ export default function Home() {
           href="https://maps.google.com/?q=تهران+گیشا+بازار+بزرگ+نصر+پلاک+261"
           target="_blank"
           rel="noopener noreferrer"
-          className="w-16 h-16 rounded-full shadow-lg hover:scale-110 transition-transform cursor-pointer overflow-hidden hover:shadow-xl"
+          className="w-16 h-16 rounded-full shadow-lg hover:scale-110 transition-transform cursor-pointer overflow-hidden hover:shadow-xl bg-red-500 flex items-center justify-center"
           data-testid="button-location"
           title="نشانی"
         >
-          <img src={locationIcon} alt="Location" className="w-full h-full object-cover" />
+          <MapPin className="w-8 h-8 text-white" />
         </a>
 
         {/* Phone */}
@@ -179,11 +158,11 @@ export default function Home() {
           href="https://instagram.com/persianapple.gisha"
           target="_blank"
           rel="noopener noreferrer"
-          className="w-16 h-16 rounded-full shadow-lg hover:scale-110 transition-transform cursor-pointer overflow-hidden hover:shadow-xl"
+          className="w-16 h-16 rounded-full shadow-lg hover:scale-110 transition-transform cursor-pointer overflow-hidden hover:shadow-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center"
           data-testid="button-instagram"
           title="اینستاگرام"
         >
-          <img src={instagramIcon} alt="Instagram" className="w-full h-full object-cover" />
+          <Instagram className="w-8 h-8 text-white" />
         </a>
 
         {/* WhatsApp */}
@@ -191,11 +170,11 @@ export default function Home() {
           href="https://wa.me/989121149079"
           target="_blank"
           rel="noopener noreferrer"
-          className="w-16 h-16 rounded-full shadow-lg hover:scale-110 transition-transform cursor-pointer overflow-hidden hover:shadow-xl"
+          className="w-16 h-16 rounded-full shadow-lg hover:scale-110 transition-transform cursor-pointer overflow-hidden hover:shadow-xl bg-green-500 flex items-center justify-center"
           data-testid="button-whatsapp"
           title="واتس‌اپ"
         >
-          <img src={whatsappIcon} alt="WhatsApp" className="w-full h-full object-cover" />
+          <MessageCircle className="w-8 h-8 text-white" />
         </a>
       </div>
 
