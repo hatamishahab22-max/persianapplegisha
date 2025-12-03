@@ -3,6 +3,8 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import session from "express-session";
 import MemoryStore from "memorystore";
+import PostgresStore from "connect-pg-simple";
+import { Pool } from "@neondatabase/serverless";
 import cors from "cors";
 
 const app = express();
@@ -18,13 +20,27 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-// Session store - using MemoryStore for development
-// In production, you'd use PostgreSQL or Redis
-const MemStore = MemoryStore(session);
-
 // Security: Require SESSION_SECRET in production
 if (!process.env.SESSION_SECRET && process.env.NODE_ENV === 'production') {
   throw new Error('SESSION_SECRET environment variable is required in production');
+}
+
+// Session store - PostgreSQL in production, MemoryStore in development
+let store: any;
+if (process.env.NODE_ENV === 'production' && process.env.DATABASE_URL) {
+  const pgPool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+  });
+  const PgStore = PostgresStore(session);
+  store = new PgStore({
+    pool: pgPool,
+    tableName: 'session'
+  });
+} else {
+  const MemStore = MemoryStore(session);
+  store = new MemStore({
+    checkPeriod: 86400000 // prune expired entries every 24h
+  });
 }
 
 // Session middleware - MUST be before routes
@@ -32,9 +48,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'dev-secret-key-not-for-production',
   resave: false,
   saveUninitialized: false,
-  store: new MemStore({
-    checkPeriod: 86400000 // prune expired entries every 24h
-  }),
+  store: store,
   cookie: {
     secure: process.env.NODE_ENV === 'production', // HTTPS only in production
     httpOnly: true,
