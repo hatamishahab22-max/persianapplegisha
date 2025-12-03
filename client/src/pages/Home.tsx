@@ -3,6 +3,11 @@ import { Link } from "wouter";
 import { Phone, Sparkles, MapPin, Instagram, MessageCircle } from "lucide-react";
 import { InstallButton } from "@/components/InstallButton";
 
+const logoImage = "/attached_assets/a87b21c6-86b6-44fc-a01c-c6759e712c0b_1763764875125.jpeg";
+const locationIcon = "/attached_assets/IMG_4148_1763105490467.png";
+const instagramIcon = "/attached_assets/IMG_6518_1762994518098.jpeg";
+const whatsappIcon = "/attached_assets/IMG_0117_1763253633956.jpeg";
+
 export default function Home() {
   const [userName, setUserName] = useState<string>("");
 
@@ -79,7 +84,7 @@ export default function Home() {
       {/* Install Button */}
       <InstallButton />
 
-      {/* Background */}
+      {/* Background - Static gradient since video files not available */}
       <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-800 to-black" data-testid="video-background" />
 
       {/* Dark Overlay */}
@@ -89,9 +94,12 @@ export default function Home() {
       <div className="absolute top-0 left-0 right-0 z-10 pt-6 px-4">
         {/* Logo */}
         <div className="flex justify-center mb-8">
-          <h1 className="text-2xl font-bold text-white data-testid='text-logo'">
-            🍎 Persian Apple
-          </h1>
+          <img 
+            src={logoImage} 
+            alt="Persian Apple Store" 
+            className="w-auto h-12 object-contain"
+            data-testid="img-logo"
+          />
         </div>
         
         {/* Buttons */}
@@ -136,11 +144,11 @@ export default function Home() {
           href="https://maps.google.com/?q=تهران+گیشا+بازار+بزرگ+نصر+پلاک+261"
           target="_blank"
           rel="noopener noreferrer"
-          className="w-16 h-16 rounded-full shadow-lg hover:scale-110 transition-transform cursor-pointer overflow-hidden hover:shadow-xl bg-red-500 flex items-center justify-center"
+          className="w-16 h-16 rounded-full shadow-lg hover:scale-110 transition-transform cursor-pointer overflow-hidden hover:shadow-xl"
           data-testid="button-location"
           title="نشانی"
         >
-          <MapPin className="w-8 h-8 text-white" />
+          <img src={locationIcon} alt="Location" className="w-full h-full object-cover" />
         </a>
 
         {/* Phone */}
@@ -158,11 +166,11 @@ export default function Home() {
           href="https://instagram.com/persianapple.gisha"
           target="_blank"
           rel="noopener noreferrer"
-          className="w-16 h-16 rounded-full shadow-lg hover:scale-110 transition-transform cursor-pointer overflow-hidden hover:shadow-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center"
+          className="w-16 h-16 rounded-full shadow-lg hover:scale-110 transition-transform cursor-pointer overflow-hidden hover:shadow-xl"
           data-testid="button-instagram"
           title="اینستاگرام"
         >
-          <Instagram className="w-8 h-8 text-white" />
+          <img src={instagramIcon} alt="Instagram" className="w-full h-full object-cover" />
         </a>
 
         {/* WhatsApp */}
@@ -170,11 +178,11 @@ export default function Home() {
           href="https://wa.me/989121149079"
           target="_blank"
           rel="noopener noreferrer"
-          className="w-16 h-16 rounded-full shadow-lg hover:scale-110 transition-transform cursor-pointer overflow-hidden hover:shadow-xl bg-green-500 flex items-center justify-center"
+          className="w-16 h-16 rounded-full shadow-lg hover:scale-110 transition-transform cursor-pointer overflow-hidden hover:shadow-xl"
           data-testid="button-whatsapp"
           title="واتس‌اپ"
         >
-          <MessageCircle className="w-8 h-8 text-white" />
+          <img src={whatsappIcon} alt="WhatsApp" className="w-full h-full object-cover" />
         </a>
       </div>
 
