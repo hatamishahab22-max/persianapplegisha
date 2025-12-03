@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
+import videoFile from "@assets/video-output-597A6071-A019-439B-9B22-BF4D6A546A02-1_1763702148716.mov";
+import instagramIcon from "@assets/photo-output_1763702787471.png";
+import whatsappIcon from "@assets/photo-output_1763702810818.png";
+import locationIcon from "@assets/photo-output_1763702984960.png";
+import logoImage from "@assets/a87b21c6-86b6-44fc-a01c-c6759e712c0b_1763764875125.jpeg";
 import { Link } from "wouter";
-import { Phone, Sparkles, MapPin, Instagram, MessageCircle } from "lucide-react";
+import { Phone, Sparkles } from "lucide-react";
 import { InstallButton } from "@/components/InstallButton";
-
-const logoImage = "/attached_assets/a87b21c6-86b6-44fc-a01c-c6759e712c0b_1763764875125.jpeg";
-const locationIcon = "/attached_assets/IMG_4148_1763105490467.png";
-const instagramIcon = "/attached_assets/IMG_6518_1762994518098.jpeg";
-const whatsappIcon = "/attached_assets/IMG_0117_1763253633956.jpeg";
 
 export default function Home() {
   const [userName, setUserName] = useState<string>("");
@@ -84,20 +84,33 @@ export default function Home() {
       {/* Install Button */}
       <InstallButton />
 
-      {/* Background - Static gradient since video files not available */}
-      <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-800 to-black" data-testid="video-background" />
+      {/* Background Video */}
+      <video 
+        className="h-full w-full object-cover absolute inset-0"
+        autoPlay 
+        muted 
+        loop 
+        playsInline
+        preload="auto"
+        poster="/attached_assets/a87b21c6-86b6-44fc-a01c-c6759e712c0b_1763764875125.jpeg"
+        data-testid="video-background"
+      >
+        <source src={videoFile} type="video/mp4" />
+      </video>
 
       {/* Dark Overlay */}
       <div className="absolute inset-0 bg-black/10" />
       
       {/* Top Section - Logo and Buttons */}
       <div className="absolute top-0 left-0 right-0 z-10 pt-6 px-4">
-        {/* Logo */}
+        {/* Logo Image */}
         <div className="flex justify-center mb-8">
           <img 
             src={logoImage} 
             alt="Persian Apple Store" 
-            className="w-auto h-12 object-contain"
+            className="w-auto h-10 object-contain"
+            loading="eager"
+            decoding="async"
             data-testid="img-logo"
           />
         </div>
