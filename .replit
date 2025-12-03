@@ -105,7 +105,7 @@ mockupState = "FULLSTACK"
 [userenv]
 
 [userenv.shared]
-ADMIN_PASSWORD = "selena@2523"
-ADMIN_USERNAME = "admin"
 
 [userenv.production]
+ADMIN_PASSWORD = "selena@2523"
+ADMIN_USERNAME = "admin"
